@@ -1,3 +1,8 @@
-# scProject
+---
+title: "scProject"
+---
 
-* [scRNA-seq Comparison](simulation/scRNAseq_simulation_comparison.html)
+---
+
+* Simulation
+  * [scRNA-seq Comparison](simulation/scRNAseq_simulation_comparison.html)
