@@ -1492,11 +1492,16 @@ border-radius: 0px;
 </div>
 
 
-<p>Install packages if necessary:</p>
-<pre class="r"><code>library(devtools)
+<p>The purpose of this page is to compare the performance of different
+scRNA-seq simulation packages to the count data from which they are
+derived.</p>
+<p>Install non-CRAN packages if necessary:</p>
+<pre class="r"><code>if (!require(devtools)) install.packages(&quot;devtools&quot;)
 devtools::install_github(&quot;UcarLab/IA-SVA&quot;)
 devtools::install_github(&quot;dleelab/iasvaExamples&quot;)
 devtools::install_github(&quot;JSB-UCLA/scDesign2&quot;)
+
+if (!require(BiocManager)) install.packages(&quot;BiocManager&quot;)
 BiocManager::install(&quot;splatter&quot;)</code></pre>
 <div id="load-packages" class="section level2">
 <h2>Load packages</h2>
@@ -1507,7 +1512,11 @@ library(scDesign2)
 library(tidyverse)</code></pre>
 </div>
 <div id="load-islet-single-cell-rna-seq-data" class="section level2">
-<h2>Load islet single cell RNA-Seq data</h2>
+<h2>Load islet single-cell RNA-Seq data</h2>
+<p>We load the islet scRNA-seq data and place the count matrix into
+<code>counts</code>. The column names are replaced with the
+corresponding cell type from the annotations data,
+<code>anns</code>.</p>
 <pre class="r"><code>data(&quot;Lawlor_Islet_scRNAseq_Read_Counts&quot;)
 data(&quot;Lawlor_Islet_scRNAseq_Annotations&quot;)
 
@@ -1527,14 +1536,28 @@ cell_types</code></pre>
 </div>
 <div id="simulate-via-splatter" class="section level2">
 <h2>Simulate via <code>splatter</code></h2>
-<pre class="r"><code># fit model and simulate data
+<ul>
+<li><a href="https://doi.org/10.1186/s13059-017-1305-0">Paper</a></li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/splatter.html">Site</a></li>
+</ul>
+<p><code>splatter</code> uses a count matrix to estimate parameters.
+Cell groups proportions from the original data are used to generate cell
+types in similar proportions in the simulated data. The number of genes
+and cells simulated are the same as the original count matrix if not
+explicitly changed.</p>
+<pre class="r"><code># Note: this cell is not knitted in the interest of saving time
+# Results are loaded in the next cell
+
+# Fit model from original count data
 set.seed(1)
 splatter_params &lt;- splatEstimate(
   counts,
   params = newSplatParams(
     group.prob = as.numeric(cell_type_prob)
-  ))
+    )
+  )
 
+# Simulate new data 
 splatter_sim &lt;- splatSimulate(
   splatter_params,
   method = &quot;groups&quot;,
@@ -1599,7 +1622,24 @@ dim(counts(splatter_sim))</code></pre>
 </div>
 <div id="simulate-via-scdesign2" class="section level2">
 <h2>Simulate via <code>scDesign2</code></h2>
-<pre class="r"><code># fit model and simulate data
+<ul>
+<li><a href="https://doi.org/10.1186/s13059-021-02367-2">Paper</a></li>
+<li><a href="https://github.com/JSB-UCLA/scDesign2">Site</a></li>
+</ul>
+<p><code>scDesign2</code> also uses a count matrix to estimate
+distribution parameters. The <code>cell_types</code> function parameter
+specifies which cell types are to be used to fit the models. The
+simulation method of <code>copula</code> will simulate gene models that
+have dependent marginal distributions.</p>
+<p>The simulation function requires a model parameter object
+(<code>copula_result</code>), the number of cells to simulate (number of
+columns in <code>counts</code>), the simulation method used in model
+fitting (<code>copula</code>), and the proportion of cell types to
+generate (<code>cell_type_prob</code>).</p>
+<pre class="r"><code># Note: this cell is not knitted in the interest of saving time
+# Results are loaded in the next cell
+
+# Fit model using a copula
 RNGkind(&quot;L&#39;Ecuyer-CMRG&quot;)
 set.seed(1)
 
@@ -1609,6 +1649,7 @@ copula_result &lt;- fit_model_scDesign2(
   sim_method = &quot;copula&quot;
   )
 
+# Simulate data using a copula
 sim_count_copula &lt;- simulate_count_scDesign2(
   copula_result,
   ncol(counts),
@@ -1627,6 +1668,13 @@ dim(sim_count_copula)</code></pre>
 </div>
 <div id="comparison-of-data" class="section level2">
 <h2>Comparison of Data</h2>
+<p>The <code>splatter</code> package provides some excellent utility
+functions to compare common metrics used in scRNA-seq analysis. The
+original data and simulated data from <code>scDesign2</code> are
+converted to <code>SingleCellExperiment</code> (SCE) objects (note: the
+default object from a <code>splatter</code> simulation is an SCE). The
+<code>compareSCEs</code> function calculates various statistics for the
+genes/cells as well as generating multiple plots.</p>
 <pre class="r"><code>orig_sce &lt;- SingleCellExperiment(list(counts=counts))
 scdesign2_sce &lt;- SingleCellExperiment(list(counts=sim_count_copula))
 
