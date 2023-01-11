@@ -4,8 +4,8 @@ author: "Joey Hastings"
 date: "`r Sys.Date()`"
 output:
   html_document:
-  toc: true
-  toc_float: true
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include = FALSE}
@@ -113,7 +113,7 @@ sim_count_copula <- readRDS("sim_count_copula.rds")
 dim(sim_count_copula)
 ```
 
-## Comparison of Original vs. Simulated Data
+## Comparison of Data
 ```{r simulation_comparison}
 orig_sce <- SingleCellExperiment(list(counts=counts))
 scdesign2_sce <- SingleCellExperiment(list(counts=sim_count_copula))
