@@ -1,0 +1,138 @@
+---
+title: "scRNA-seq Simulation Comparison"
+author: "Joey Hastings"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align = "center")
+```
+
+```{r install_packages, eval = FALSE}
+library(devtools)
+devtools::install_github("UcarLab/IA-SVA")
+devtools::install_github("dleelab/iasvaExamples")
+devtools::install_github("JSB-UCLA/scDesign2")
+BiocManager::install("splatter")
+```
+
+## Load packages
+```{r load_packages, message = FALSE}
+library(iasva)
+library(iasvaExamples)
+library(splatter)
+library(scDesign2)
+library(tidyverse)
+```
+
+## Load islet single cell RNA-Seq data
+```{r load_data}
+data("Lawlor_Islet_scRNAseq_Read_Counts")
+data("Lawlor_Islet_scRNAseq_Annotations")
+
+counts <- Lawlor_Islet_scRNAseq_Read_Counts
+anns <- Lawlor_Islet_scRNAseq_Annotations
+
+colnames(counts) <- anns$cell.type
+cell_types <- unique(anns$cell.type)
+cell_type_prob <- table(anns$cell.type) / sum(table(anns$cell.type))
+```
+
+## Simulate via `splatter`
+```{r splatter_simulation, eval = FALSE}
+# fit model and simulate data
+set.seed(1)
+splatter_params <- splatEstimate(
+  counts,
+  params = newSplatParams(
+    group.prob = as.numeric(cell_type_prob)
+  ))
+
+splatter_sim <- splatSimulate(
+  splatter_params,
+  method = "groups",
+  group.prob = as.numeric(cell_type_prob)
+  )
+
+saveRDS(splatter_params, file = "splatter_params.rds")
+saveRDS(splatter_sim, file = "splatter_sim.rds")
+```
+
+Estimated parameters:
+
+```{r splatter_simulation_load}
+splatter_params <- readRDS("splatter_params.rds")
+splatter_params
+
+splatter_sim <- readRDS("splatter_sim.rds")
+```
+
+## Simulate via `scDesign2`
+```{r scdesign2_simulation, eval = FALSE}
+# fit model and simulate data
+RNGkind("L'Ecuyer-CMRG")
+set.seed(1)
+
+copula_result <- fit_model_scDesign2(
+  counts,
+  cell_types,
+  sim_method = "copula"
+  )
+
+sim_count_copula <- simulate_count_scDesign2(
+  copula_result,
+  ncol(counts),
+  sim_method = "copula",
+  cell_type_prop = cell_type_prob
+  )
+
+saveRDS(copula_result, file = "copula_result.rds")
+saveRDS(sim_count_copula, file = "sim_count_copula.rds")
+```
+
+```{r scdesign2_simulation_load}
+# copula_result <- readRDS("copula_result.rds")
+sim_count_copula <- readRDS("sim_count_copula.rds")
+```
+
+## Comparison of Original vs. Simulated Data
+```{r simulation_comparison}
+orig_sce <- SingleCellExperiment(list(counts=counts))
+scdesign2_sce <- SingleCellExperiment(list(counts=sim_count_copula))
+
+comparison <- compareSCEs(list(Original = orig_sce, Splat = splatter_sim, scDesign2 = scdesign2_sce))
+```
+
+## Visualizations of Data
+```{r simulation_comparison}
+# Boxplot of mean distribution
+comparison$Plots$Means
+
+# Boxplot of variance distribution
+comparison$Plots$Variances
+
+# Scatter plot with fitted lines showing the mean-variance relationship
+comparison$Plots$MeanVar
+
+# Boxplot of the library size distribution
+comparison$Plots$LibrarySizes
+
+# Boxplot of the percentage of each gene that is zero
+comparison$Plots$ZerosGene
+
+# Boxplot of the percentage of each cell that is zero
+comparison$Plots$ZerosCell
+
+# Scatter plot with fitted lines showing the mean-zeros relationship
+comparison$Plots$MeanZeros
+
+# Heatmap of correlation of the 100 most variable genes
+comparison$Plots$VarGeneCor
+```
+
+## Session Information
+```{r session_info}
+sessionInfo()
+```
+
