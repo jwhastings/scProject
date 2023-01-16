@@ -182,6 +182,8 @@ comparison$Plots$MeanZeros
 comparison$Plots$VarGeneCor
 ```
 
+---
+
 ## Session Information
 ```{r session_info}
 sessionInfo()
