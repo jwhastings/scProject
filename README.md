@@ -1,8 +1,3 @@
----
-title: "scProject"
----
+Repository for single-cell data project
 
----
-
-* Simulation
-  * [scRNA-seq Comparison](simulation/scRNAseq_simulation_comparison.html)
+[Site](https://jwhastings.github.io/scProject/)

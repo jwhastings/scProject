@@ -1,0 +1,175 @@
+---
+title: "Splatter Simulations and Integration"
+author: "Joey Hastings"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::html_clean:
+    highlight: kate
+    thumbnails: FALSE
+    toc_depth: 2
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  fig.dim = c(9, 6)
+  )
+```
+
+# Load Packages
+
+```{r load_packages, message = FALSE}
+library(tictoc)
+library(tidyverse)
+library(cowplot)
+
+library(splatter)
+library(scater)
+library(r.jive)
+library(Seurat)
+```
+
+# Simulation 1
+
+* Three cell types/groups (unbalanced)
+* Two batches (balanced)
+* Small dropout
+
+```{r sim1}
+nGenes <- 5000
+
+tic("Data Simulation")
+sim1 <- splatSimulate(
+  # Parameters to tweak in each simulation
+  batchCells = c(500, 500),
+  dropout.mid = 0.05,
+  # Parameters to remain the same
+  method = "groups",
+  seed = 1,
+  dropout.type = "experiment",
+  dropout.shape = -1,
+  nGenes = nGenes,
+  group.prob = c(0.6, 0.3, 0.1),
+  de.prob = c(0.5, 0.2, 0.1),
+  de.downProb = c(0.3, 0.4, 0.7),
+  de.facLoc = 0.5,
+  de.facScale = 0.2,
+  verbose = FALSE
+  )
+toc()
+
+sim1 <- logNormCounts(sim1)
+
+# t-SNE visualization
+sim1 <- runTSNE(sim1)
+plotTSNE(sim1, color_by = "Group", shape_by = "Batch")
+```
+
+## Separate Batches
+
+```{r sim1_batches}
+set.seed(1)
+batches <- sim1$Batch
+groups <- sim1$Group
+
+rawcounts <- counts(sim1)
+dim(rawcounts)
+
+b1 <- rawcounts[, batches == "Batch1"]
+grp_b1 <- groups[batches == "Batch1"]
+dim(b1)
+table(grp_b1) # Frequency of cell types in batch 1
+
+b2 <- rawcounts[, batches == "Batch2"]
+grp_b2 <- groups[batches == "Batch2"]
+dim(b2)
+table(grp_b2) # Frequency of cell types in batch 2
+```
+
+## Compare Batches
+
+```{r sim1_batches_comp}
+b1_sce <- SingleCellExperiment(list(counts = b1))
+b2_sce <- SingleCellExperiment(list(counts = b2))
+
+comparison <- compareSCEs(list(
+  Batch1 = b1_sce,
+  Batch2 = b2_sce
+  ))
+
+plot_grid(plotlist = comparison$Plots[1:4])
+plot_grid(plotlist = comparison$Plots[5:8])
+```
+
+## Seurat
+
+### Setup
+
+```{r seurat_setup}
+b1_seurat <- CreateSeuratObject(counts = b1, project = "simulation")
+b1_seurat$BatchNum <- "Batch 1"
+
+b2_seurat <- CreateSeuratObject(counts = b2, project = "simulation")
+b2_seurat$BatchNum <- "Batch 2"
+
+seurat_list <- list(Batch1 = b1_seurat, Batch2 = b2_seurat)
+
+# normalize and identify variable features for each dataset independently
+seurat_list <- lapply(X = seurat_list, FUN = function(x) {
+    x <- NormalizeData(x)
+    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+})
+
+# select features that are repeatedly variable across datasets for integration
+features <- SelectIntegrationFeatures(object.list = seurat_list)
+```
+
+### Integration
+
+```{r seurat_integration}
+anchors <- FindIntegrationAnchors(object.list = seurat_list, anchor.features = features)
+combined <- IntegrateData(anchorset = anchors)
+```
+
+### Integrated Analysis
+
+```{r seurat_integrated_analysis}
+# specify that we will perform downstream analysis on the corrected data note that the
+# original unmodified data still resides in the 'RNA' assay
+DefaultAssay(combined) <- "integrated"
+
+# Run the standard workflow for visualization and clustering
+combined <- ScaleData(combined, verbose = FALSE)
+combined <- RunPCA(combined, npcs = 30, verbose = FALSE)
+combined <- RunTSNE(combined, reduction = "pca", dims = 1:30)
+combined <- FindNeighbors(combined, reduction = "pca", dims = 1:30)
+combined <- FindClusters(combined, resolution = 0.5)
+
+# Visualization
+p1 <- DimPlot(combined, reduction = "tsne", group.by = "BatchNum")
+p2 <- DimPlot(combined, reduction = "tsne", label = TRUE, repel = TRUE)
+plot_grid(p1, p2)
+```
+
+## JIVE
+
+```{r jive1}
+sim1_data <- NULL
+sim1_data$Batch1 <- b1
+sim1_data$Batch2 <- b2
+
+tic("JIVE Analysis")
+JIVE_results <- jive(sim1_data)
+toc()
+
+saveRDS(JIVE_results, file = "JIVE_results.rds")
+
+summary(JIVE_results)
+```
+
+# Session Information
+
+```{r session_info}
+sessionInfo()
+```
