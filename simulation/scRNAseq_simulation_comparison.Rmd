@@ -66,7 +66,7 @@ cell_types
 `splatter` uses a count matrix to estimate parameters. Cell groups proportions from the original data are used to generate cell types in similar proportions in the simulated data. The number of genes and cells simulated are the same as the original count matrix if not explicitly changed.
 
 ```{r splatter_simulation, eval = FALSE}
-# Note: this cell is not knitted in the interest of saving time
+# Note: this cell is not evaluated when knitting in the interest of saving time
 # Results are loaded in the next cell
 
 # Fit model from original count data
@@ -111,7 +111,7 @@ dim(counts(splatter_sim))
 The simulation function requires a model parameter object (`copula_result`), the number of cells to simulate (number of columns in `counts`), the simulation method used in model fitting (`copula`), and the proportion of cell types to generate (`cell_type_prob`).
 
 ```{r scdesign2_simulation, eval = FALSE}
-# Note: this cell is not knitted in the interest of saving time
+# Note: this cell is not evaluated when knitting in the interest of saving time
 # Results are loaded in the next cell
 
 # Fit model using a copula
