@@ -32,36 +32,126 @@ library(Seurat)
 
 # Simulation 1
 
-* Three cell types/groups (unbalanced)
+```{r sim1_param_spec}
+nGenes <- 5000
+```
+
+* Three cell types/groups balanced)
 * Two batches (balanced)
 * Small dropout
 
-```{r sim1}
-nGenes <- 5000
-
+```{r sim1_simultaneous, eval = FALSE}
 tic("Data Simulation")
 sim1 <- splatSimulate(
   # Parameters to tweak in each simulation
   batchCells = c(500, 500),
+  batch.facLoc = c(0.001, 0.5),
+  batch.facScale = c(0.001, 0.5),
   dropout.mid = 0.05,
   # Parameters to remain the same
+  nGenes = nGenes,
   method = "groups",
   seed = 1,
   dropout.type = "experiment",
   dropout.shape = -1,
-  nGenes = nGenes,
   group.prob = c(0.6, 0.3, 0.1),
-  de.prob = c(0.5, 0.2, 0.1),
-  de.downProb = c(0.3, 0.4, 0.7),
-  de.facLoc = 0.5,
-  de.facScale = 0.2,
+  de.prob = c(0.01, 0.1, 0.5),
+  de.downProb = c(0.01, 0.4, 0.9),
+  de.facLoc = c(0.6, 1, 0.2),
+  de.facScale = c(0.1, 0.4, 0.8),
   verbose = FALSE
   )
 toc()
+```
 
+```{r sim1_by_group}
+tic("Data Simulation")
+sim1a <- splatSimulate(
+  # Parameters to tweak in each simulation
+  batchCells = c(50, 50),
+  batch.facLoc = c(0.001, 0.5),
+  batch.facScale = c(0.001, 0.5),
+  dropout.mid = 0.05,
+  # Parameters to remain the same
+  nGenes = nGenes,
+  method = "single",
+  seed = 1,
+  dropout.type = "experiment",
+  dropout.shape = -1,
+  de.prob = 0.01,
+  de.downProb = 0.01,
+  de.facLoc = 0.6,
+  de.facScale = 0.1,
+  verbose = FALSE
+)
+
+sim1a_counts <- counts(sim1a)
+sim1a_group <- rep("Group1", dim(sim1a_counts)[2])
+sim1a_batch <- colData(sim1a)$Batch
+
+sim1b <- splatSimulate(
+  # Parameters to tweak in each simulation
+  batchCells = c(150, 150),
+  batch.facLoc = c(0.001, 0.5),
+  batch.facScale = c(0.001, 0.5),
+  dropout.mid = 0.05,
+  # Parameters to remain the same
+  nGenes = nGenes,
+  method = "single",
+  seed = 2,
+  dropout.type = "experiment",
+  dropout.shape = -1,
+  de.prob = 0.1,
+  de.downProb = 0.4,
+  de.facLoc = 1,
+  de.facScale = 0.4,
+  verbose = FALSE
+)
+
+sim1b_counts <- counts(sim1b)
+sim1b_group <- rep("Group2", dim(sim1b_counts)[2])
+sim1b_batch <- colData(sim1b)$Batch
+
+sim1c <- splatSimulate(
+  # Parameters to tweak in each simulation
+  batchCells = c(300, 300),
+  batch.facLoc = c(0.001, 0.5),
+  batch.facScale = c(0.001, 0.5),
+  dropout.mid = 0.05,
+  # Parameters to remain the same
+  nGenes = nGenes,
+  method = "single",
+  seed = 3,
+  dropout.type = "experiment",
+  dropout.shape = -1,
+  de.prob = 0.5,
+  de.downProb = 0.9,
+  de.facLoc = 0.2,
+  de.facScale = 0.8,
+  verbose = FALSE
+)
+toc()
+
+sim1c_counts <- counts(sim1c)
+sim1c_group <- rep("Group3", dim(sim1c_counts)[2])
+sim1c_batch <- colData(sim1c)$Batch
+
+sim1_counts <- cbind(sim1a_counts, sim1b_counts, sim1c_counts)
+colnames(sim1_counts) <- paste0("Cell", 1:ncol(sim1_counts))
+sim1_group <- c(sim1a_group, sim1b_group, sim1c_group)
+sim1_batch <- c(sim1a_batch, sim1b_batch, sim1c_batch)
+
+sim1 <- SingleCellExperiment(list(counts = sim1_counts))
+colData(sim1)$Cell <- paste0("Cell", 1:ncol(sim1_counts))
+colData(sim1)$Group <- sim1_group
+colData(sim1)$Batch <- sim1_batch
+```
+
+```{r sim1_viz}
 sim1 <- logNormCounts(sim1)
 
 # t-SNE visualization
+set.seed(1)
 sim1 <- runTSNE(sim1)
 plotTSNE(sim1, color_by = "Group", shape_by = "Batch")
 ```
@@ -93,10 +183,12 @@ table(grp_b2) # Frequency of cell types in batch 2
 b1_sce <- SingleCellExperiment(list(counts = b1))
 b2_sce <- SingleCellExperiment(list(counts = b2))
 
-comparison <- compareSCEs(list(
-  Batch1 = b1_sce,
-  Batch2 = b2_sce
-  ))
+comparison <- compareSCEs(
+  list(
+    Batch1 = b1_sce,
+    Batch2 = b2_sce
+    )
+  )
 
 plot_grid(plotlist = comparison$Plots[1:4])
 plot_grid(plotlist = comparison$Plots[5:8])
@@ -154,19 +246,53 @@ plot_grid(p1, p2)
 
 ## JIVE
 
-```{r jive1}
+```{r jive1, eval = FALSE}
 sim1_data <- NULL
 sim1_data$Batch1 <- b1
 sim1_data$Batch2 <- b2
 
+set.seed(1)
 tic("JIVE Analysis")
-JIVE_results <- jive(sim1_data)
+JIVE_results <- jive(sim1_data) # 26min runtime
+# JIVE_results <- jive(sim1_data, method = "given", rankJ = 2, rankA = c(2, 2))
+# JIVE_results <- jive(sim1_data, method = "bic")
+# JIVE_results <- jive(sim1_data, method = "bic", maxiter = 50)
 toc()
 
 saveRDS(JIVE_results, file = "JIVE_results.rds")
-
-summary(JIVE_results)
 ```
+
+```{r jive1_viz}
+JIVE_results <- readRDS(file = "JIVE_results.rds")
+summary(JIVE_results)
+
+jive_pca_col <- case_when(
+  grp_b1 == "Group1" ~ scales::hue_pal()(3)[1],
+  grp_b1 == "Group2" ~ scales::hue_pal()(3)[2],
+  grp_b1 == "Group3" ~ scales::hue_pal()(3)[3],
+)
+showPCA(JIVE_results, n_joint = 2, Colors = jive_pca_col)
+
+JIVE_joint <- cbind(JIVE_results$joint[[1]], JIVE_results$joint[[2]])
+
+JIVE_joint_sce <- SingleCellExperiment(list(logcounts = JIVE_joint))
+colData(JIVE_joint_sce)$Group <- c(grp_b1, grp_b2)
+colData(JIVE_joint_sce)$Batch <- batches
+
+# t-SNE visualization
+set.seed(1)
+JIVE_joint_sce <- runTSNE(JIVE_joint_sce, normalize = F, scale = F)
+
+plotTSNE(JIVE_joint_sce, color_by = "Group", shape_by = "Batch")
+```
+
+
+## SLIDE
+
+```{r slide}
+
+```
+
 
 # Session Information
 
