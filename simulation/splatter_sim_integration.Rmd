@@ -26,21 +26,30 @@ library(cowplot)
 
 library(splatter)
 library(scater)
+library(scran)
 library(r.jive)
 library(Seurat)
+library(factoextra)
 ```
 
 # Simulation 1
 
-```{r sim1_param_spec}
-nGenes <- 5000
-```
+## Generate Cell Counts
 
-* Three cell types/groups balanced)
+* Three cell types/groups (unbalanced)
 * Two batches (balanced)
 * Small dropout
 
-```{r sim1_simultaneous, eval = FALSE}
+```{r sim1_param_spec}
+# Parameters that remain the same for all cell types
+nGenes <- 5000
+method = "single"
+dropout.type = "experiment"
+dropout.shape = -1
+verbose = FALSE
+```
+
+```{r sim1_simultaneous, eval = FALSE, echo = FALSE}
 tic("Data Simulation")
 sim1 <- splatSimulate(
   # Parameters to tweak in each simulation
@@ -66,81 +75,90 @@ toc()
 
 ```{r sim1_by_group}
 tic("Data Simulation")
+
+# Simulation for first cell type
 sim1a <- splatSimulate(
+  # Parameters to remain the same for all simulations/cell types
+  nGenes = nGenes,
+  method = method,
+  dropout.type = dropout.type,
+  dropout.shape = dropout.shape,
+  verbose = verbose,
   # Parameters to tweak in each simulation
-  batchCells = c(50, 50),
-  batch.facLoc = c(0.001, 0.5),
+  batchCells =     c(50, 50),
+  batch.facLoc =   c(0.001, 0.5),
   batch.facScale = c(0.001, 0.5),
   dropout.mid = 0.05,
-  # Parameters to remain the same
-  nGenes = nGenes,
-  method = "single",
+  # Parameters to tweak for each cell type
   seed = 1,
-  dropout.type = "experiment",
-  dropout.shape = -1,
   de.prob = 0.01,
   de.downProb = 0.01,
   de.facLoc = 0.6,
-  de.facScale = 0.1,
-  verbose = FALSE
+  de.facScale = 0.1
 )
 
 sim1a_counts <- counts(sim1a)
 sim1a_group <- rep("Group1", dim(sim1a_counts)[2])
 sim1a_batch <- colData(sim1a)$Batch
 
+# Simulation for second cell type
 sim1b <- splatSimulate(
+  # Parameters to remain the same for all simulations/cell types
+  nGenes = nGenes,
+  method = method,
+  dropout.type = "experiment",
+  dropout.shape = -1,
+  verbose = FALSE,
   # Parameters to tweak in each simulation
   batchCells = c(150, 150),
   batch.facLoc = c(0.001, 0.5),
   batch.facScale = c(0.001, 0.5),
   dropout.mid = 0.05,
-  # Parameters to remain the same
-  nGenes = nGenes,
-  method = "single",
+  # Parameters to tweak for each cell type
   seed = 2,
-  dropout.type = "experiment",
-  dropout.shape = -1,
   de.prob = 0.1,
   de.downProb = 0.4,
   de.facLoc = 1,
   de.facScale = 0.4,
-  verbose = FALSE
 )
 
 sim1b_counts <- counts(sim1b)
 sim1b_group <- rep("Group2", dim(sim1b_counts)[2])
 sim1b_batch <- colData(sim1b)$Batch
 
+# Simulation for third cell type
 sim1c <- splatSimulate(
-  # Parameters to tweak in each simulation
+  # Parameters to remain the same for all simulations/cell types
+  nGenes = nGenes,
+  method = method,
+  dropout.type = dropout.type,
+  dropout.shape = dropout.shape,
+  verbose = verbose,
+    # Parameters to tweak in each simulation
   batchCells = c(300, 300),
   batch.facLoc = c(0.001, 0.5),
   batch.facScale = c(0.001, 0.5),
   dropout.mid = 0.05,
   # Parameters to remain the same
-  nGenes = nGenes,
-  method = "single",
   seed = 3,
-  dropout.type = "experiment",
-  dropout.shape = -1,
   de.prob = 0.5,
   de.downProb = 0.9,
   de.facLoc = 0.2,
-  de.facScale = 0.8,
-  verbose = FALSE
+  de.facScale = 0.8
 )
-toc()
 
 sim1c_counts <- counts(sim1c)
 sim1c_group <- rep("Group3", dim(sim1c_counts)[2])
 sim1c_batch <- colData(sim1c)$Batch
+toc()
 
+# Combine cell types into unified count matrix
 sim1_counts <- cbind(sim1a_counts, sim1b_counts, sim1c_counts)
 colnames(sim1_counts) <- paste0("Cell", 1:ncol(sim1_counts))
 sim1_group <- c(sim1a_group, sim1b_group, sim1c_group)
 sim1_batch <- c(sim1a_batch, sim1b_batch, sim1c_batch)
 
+# Create SCE object using unified count matrix, cell names, cell types, and batch numbers
 sim1 <- SingleCellExperiment(list(counts = sim1_counts))
 colData(sim1)$Cell <- paste0("Cell", 1:ncol(sim1_counts))
 colData(sim1)$Group <- sim1_group
@@ -150,36 +168,46 @@ colData(sim1)$Batch <- sim1_batch
 ```{r sim1_viz}
 sim1 <- logNormCounts(sim1)
 
-# t-SNE visualization
+# Dimension reduction visualization
 set.seed(1)
-sim1 <- runTSNE(sim1)
-plotTSNE(sim1, color_by = "Group", shape_by = "Batch")
+sim1 <- runUMAP(sim1)
+orig_p1 <- plotUMAP(sim1, color_by = "Batch", shape_by = "Group")
+orig_p1
 ```
 
 ## Separate Batches
 
 ```{r sim1_batches}
-set.seed(1)
 batches <- sim1$Batch
+# Frequency of batches in simulation
+table(batches)
+
 groups <- sim1$Group
+# Frequency of cell types in simulation
+table(groups)
 
 rawcounts <- counts(sim1)
 dim(rawcounts)
 
 b1 <- rawcounts[, batches == "Batch1"]
 grp_b1 <- groups[batches == "Batch1"]
+# Dimension of batch 1
 dim(b1)
-table(grp_b1) # Frequency of cell types in batch 1
+# Frequency of cell types in batch 1
+table(grp_b1)
 
 b2 <- rawcounts[, batches == "Batch2"]
 grp_b2 <- groups[batches == "Batch2"]
+# Dimension of batch 2
 dim(b2)
-table(grp_b2) # Frequency of cell types in batch 2
+# Frequency of cell types in batch 2
+table(grp_b2)
 ```
 
 ## Compare Batches
 
 ```{r sim1_batches_comp}
+# Convert count matrices for batch 1 and 2 in to SCE objects for comparison via splatter
 b1_sce <- SingleCellExperiment(list(counts = b1))
 b2_sce <- SingleCellExperiment(list(counts = b2))
 
@@ -196,14 +224,24 @@ plot_grid(plotlist = comparison$Plots[5:8])
 
 ## Seurat
 
+Perform cell batch integration as in their tutorial.
+
 ### Setup
+
+* Create Seurat objects for each batch
+  * Assign metadata to each object (batch number, cell type)
+* Normalize the cell counts
+* Identify most variable features (genes) 
+* Choose most variable features from both batches for use in integration
 
 ```{r seurat_setup}
 b1_seurat <- CreateSeuratObject(counts = b1, project = "simulation")
-b1_seurat$BatchNum <- "Batch 1"
+b1_seurat <- AddMetaData(b1_seurat, "Batch 1", col.name = "BatchNum")
+b1_seurat <- AddMetaData(b1_seurat, grp_b1, col.name = "Group")
 
 b2_seurat <- CreateSeuratObject(counts = b2, project = "simulation")
-b2_seurat$BatchNum <- "Batch 2"
+b2_seurat <- AddMetaData(b2_seurat, "Batch 2", col.name = "BatchNum")
+b2_seurat <- AddMetaData(b2_seurat, grp_b2, col.name = "Group")
 
 seurat_list <- list(Batch1 = b1_seurat, Batch2 = b2_seurat)
 
@@ -219,12 +257,24 @@ features <- SelectIntegrationFeatures(object.list = seurat_list)
 
 ### Integration
 
+* Perform integration by finding a set of anchors from the two batches (via CCA)
+* Use the anchor list to integrate the two batches
+
 ```{r seurat_integration}
 anchors <- FindIntegrationAnchors(object.list = seurat_list, anchor.features = features)
 combined <- IntegrateData(anchorset = anchors)
+GetAssay(combined, "integrated")
 ```
 
 ### Integrated Analysis
+
+* Integrated/combined data is centered/scaled
+* First 30 PCs are computed/stored
+* PC1-PC30 are used to perform t-SNE and UMAP dimensionality reduction
+* Calculates k-nearest neighbors (`k = 20` by default) from PC1-PC30
+* Identify clusters by using Shared Nearest Neighbors (SNN):
+  * "First calculate k-nearest neighbors and construct the SNN graph"
+  * "Then optimize the modularity function to determine clusters"
 
 ```{r seurat_integrated_analysis}
 # specify that we will perform downstream analysis on the corrected data note that the
@@ -232,60 +282,177 @@ combined <- IntegrateData(anchorset = anchors)
 DefaultAssay(combined) <- "integrated"
 
 # Run the standard workflow for visualization and clustering
+set.seed(1)
 combined <- ScaleData(combined, verbose = FALSE)
 combined <- RunPCA(combined, npcs = 30, verbose = FALSE)
 combined <- RunTSNE(combined, reduction = "pca", dims = 1:30)
+combined <- RunUMAP(combined, reduction = "pca", dims = 1:30)
 combined <- FindNeighbors(combined, reduction = "pca", dims = 1:30)
 combined <- FindClusters(combined, resolution = 0.5)
+```
 
+Visualize integrated batches and clusters using UMAP:
+
+```{r seurat_integrated_viz}
 # Visualization
-p1 <- DimPlot(combined, reduction = "tsne", group.by = "BatchNum")
-p2 <- DimPlot(combined, reduction = "tsne", label = TRUE, repel = TRUE)
-plot_grid(p1, p2)
+seurat_p1 <- DimPlot(combined, reduction = "pca", group.by = "BatchNum", shape.by = "Group")
+seurat_p2 <- DimPlot(combined, reduction = "umap", group.by = "seurat_clusters", shape.by = "Group", pt.size = 1.5)
+seurat_p1 / seurat_p2
+
+# Frequency of true cell types/groups vs. identified clusters
+table(combined@meta.data[, c("Group", "seurat_clusters")])
 ```
 
 ## JIVE
 
+Multiple approaches to rank estimation:
+
+* Permutation method (`JIVE_results_default`)
+* Pre-specifying a joint rank of 2 (individuals ranks default to 1, respectively)
+* BIC method
+
 ```{r jive1, eval = FALSE}
+#```{r jive1}
 sim1_data <- NULL
 sim1_data$Batch1 <- b1
 sim1_data$Batch2 <- b2
 
 set.seed(1)
 tic("JIVE Analysis")
-JIVE_results <- jive(sim1_data) # 26min runtime
-# JIVE_results <- jive(sim1_data, method = "given", rankJ = 2, rankA = c(2, 2))
-# JIVE_results <- jive(sim1_data, method = "bic")
-# JIVE_results <- jive(sim1_data, method = "bic", maxiter = 50)
+JIVE_results_default <- jive(sim1_data) # 26min runtime
+JIVE_results_j2 <- jive(sim1_data, method = "given", rankJ = 2)
+JIVE_results_bic <- jive(sim1_data, method = "bic") # multiple hours
 toc()
 
-saveRDS(JIVE_results, file = "JIVE_results.rds")
+saveRDS(JIVE_results_default, file = "JIVE_results_default.rds")
+saveRDS(JIVE_results_j2, file = "JIVE_results_j2.rds")
+saveRDS(JIVE_results_bic, file = "JIVE_results_bic.rds")
 ```
 
-```{r jive1_viz}
-JIVE_results <- readRDS(file = "JIVE_results.rds")
-summary(JIVE_results)
+Summary of estimated ranks and variance explained by joint/individual/residual for each approach:
 
+```{r jive1_summary}
+JIVE_results_default <- readRDS(file = "JIVE_results_default.rds")
+summary(JIVE_results_default)
+
+JIVE_results_j2 <- readRDS(file = "JIVE_results_j2.rds")
+summary(JIVE_results_j2)
+
+JIVE_results_bic <- readRDS(file = "JIVE_results_bic.rds")
+summary(JIVE_results_bic)
+```
+
+Permutation method results chosen for analysis:
+
+```{r jive1_viz}
+# Choose model
+JIVE_results <- JIVE_results_default
+# JIVE_results <- JIVE_results_j2
+# JIVE_results <- JIVE_results_bic
+
+# Vector to color each cell type/group 
 jive_pca_col <- case_when(
   grp_b1 == "Group1" ~ scales::hue_pal()(3)[1],
   grp_b1 == "Group2" ~ scales::hue_pal()(3)[2],
   grp_b1 == "Group3" ~ scales::hue_pal()(3)[3],
 )
+
+# First PC for joint structures from batch 1 (x-axis) vs. batch 2 (y-axis)
 showPCA(JIVE_results, n_joint = 2, Colors = jive_pca_col)
 
-JIVE_joint <- cbind(JIVE_results$joint[[1]], JIVE_results$joint[[2]])
-
-JIVE_joint_sce <- SingleCellExperiment(list(logcounts = JIVE_joint))
-colData(JIVE_joint_sce)$Group <- c(grp_b1, grp_b2)
-colData(JIVE_joint_sce)$Batch <- batches
-
-# t-SNE visualization
-set.seed(1)
-JIVE_joint_sce <- runTSNE(JIVE_joint_sce, normalize = F, scale = F)
-
-plotTSNE(JIVE_joint_sce, color_by = "Group", shape_by = "Batch")
+# First PC for joint/individual structures vs. each other
+showPCA(JIVE_results, n_joint = 2, n_indiv = c(1, 1), Colors = jive_pca_col)
 ```
 
+First attempt at clustering using `scater` package:
+
+* Row bind joint structure data from batch 1 and 2 into an SCE object
+  * **POTENTIAL ISSUE:** the combined joint structure is assigned as a `logcounts` array within the SCE object, which is not necessarily true. Is it possible to transform the joint structures (or individual for that matter) back to original scale?
+  * Assign true cell types/groups to object
+* Perform PCA, obtaining first 30 PCs for the top 2000 most variable features
+* Perform t-SNE/UMAP dimensionality reduction
+* Cluster cells using a SNN algorithm
+  * `louvain` clustering function used with `resolution = 0.5` (same as in Seurat above)
+
+Note that since the joint structure had an estimated rank of only 1, PC1 explains 100% of the variance, and PC2 explains none.
+
+```{r jive1_clust1}
+# JIVE_joint_b1 <- SingleCellExperiment(list(logcounts = JIVE_results$joint[[1]]))
+# colData(JIVE_joint_b1)$Group <- grp_b1
+# colData(JIVE_joint_b1)$BatchNum <- "Batch1"
+# 
+# JIVE_joint_b2 <- SingleCellExperiment(list(logcounts = JIVE_results$joint[[2]]))
+# colData(JIVE_joint_b2)$Group <- grp_b2
+# colData(JIVE_joint_b2)$BatchNum <- "Batch2"
+# 
+# JIVE_joint_sce <- cbind(JIVE_joint_b1, JIVE_joint_b2)
+
+# JIVE_joint <- cbind(JIVE_results$joint[[1]], JIVE_results$joint[[2]])
+# 
+# JIVE_joint_sce <- SingleCellExperiment(list(logcounts = JIVE_joint))
+# colData(JIVE_joint_sce)$Group <- c(grp_b1, grp_b2)
+# colData(JIVE_joint_sce)$BatchNum <- c(rep("Batch1", 500), rep("Batch2", 500))
+
+JIVE_joint <- rbind(JIVE_results$joint[[1]], JIVE_results$joint[[2]])
+
+JIVE_joint_sce <- SingleCellExperiment(list(logcounts = JIVE_joint))
+colData(JIVE_joint_sce)$Group <- grp_b1
+
+set.seed(1)
+JIVE_joint_sce <- runPCA(JIVE_joint_sce, ncomponents = 30, ntop = 2000)
+JIVE_joint_sce <- runTSNE(JIVE_joint_sce)
+JIVE_joint_sce <- runUMAP(JIVE_joint_sce)
+
+clusters <- clusterCells(
+  JIVE_joint_sce,
+  use.dimred = "PCA",
+  BLUSPARAM = bluster::SNNGraphParam(
+    cluster.fun = "louvain", 
+    cluster.args = list(resolution = 0.5)
+    )
+  )
+colData(JIVE_joint_sce)$Clusters <- clusters
+jive_p1 <- plotPCA(JIVE_joint_sce, color_by = "Clusters", shape_by = "Group")
+jive_p2 <- plotUMAP(JIVE_joint_sce, color_by = "Clusters", shape_by = "Group")
+jive_p1 / jive_p2
+```
+
+Second attempt at clustering will only attempt at using the first PC from each joint structure:
+
+* Calculate first PC from joint structure in batch 1/batch 2
+* Determine $k$ for k-means clustering
+  * Check how total within-sum-of-squares (`wss`) changes as $k$ increases
+* Use `k=3` means to determine clusters
+
+```{r jive1_clust2}
+result <- JIVE_results
+n_joint <- 2
+n_indiv <- c(0, 0)
+nPCs <- n_joint + sum(n_indiv)
+PCs <- matrix(nrow = nPCs, ncol = dim(result$data[[1]])[2])
+PC_names <- rep("", nPCs)
+
+SVD <- svd(do.call(rbind, result$joint), nu = n_joint, nv = n_joint)
+PCs[1:n_joint, ] <- diag(SVD$d)[1:n_joint, 1:n_joint] %*% t(SVD$v[, 1:n_joint])
+PC_names[1:n_joint] <- paste("Joint ", 1:n_joint)
+
+PCs_df <- data.frame(t(PCs))
+colnames(PCs_df) <-  c("PC1_Batch1", "PC1_Batch2")
+rownames(PCs_df) <- paste0("Cell", 1:nrow(PCs_df))
+
+# Find reasonable number of clusters (k) with an Elbow-plot
+fviz_nbclust(PCs_df, kmeans, method = "wss")
+
+clust <- kmeans(PCs_df, 3)
+
+PCs_df_long <- PCs_df %>%
+  rownames_to_column(var = "Cell") %>%
+  cbind(grp_b1, cluster = factor(clust$cluster))
+
+PCs_df_long %>%
+  ggplot() +
+  geom_point(aes(x = PC1_Batch1, y = PC1_Batch2, color = cluster, shape = grp_b1))
+```
 
 ## SLIDE
 
