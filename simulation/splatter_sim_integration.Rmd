@@ -30,6 +30,7 @@ library(scran)
 library(r.jive)
 library(Seurat)
 library(factoextra)
+library(SLIDE)
 ```
 
 # Simulation 1
@@ -342,13 +343,13 @@ JIVE_results_bic <- readRDS(file = "JIVE_results_bic.rds")
 summary(JIVE_results_bic)
 ```
 
-Permutation method results chosen for analysis:
+BIC method results chosen for analysis:
 
 ```{r jive1_viz}
 # Choose model
-JIVE_results <- JIVE_results_default
+# JIVE_results <- JIVE_results_default
 # JIVE_results <- JIVE_results_j2
-# JIVE_results <- JIVE_results_bic
+JIVE_results <- JIVE_results_bic
 
 # Vector to color each cell type/group 
 jive_pca_col <- case_when(
@@ -456,8 +457,36 @@ PCs_df_long %>%
 
 ## SLIDE
 
-```{r slide}
+```{r slide1, eval = FALSE}
+t_b1 <- t(b1)
+t_b2 <- t(b2)
+X <- cbind(t_b1, t_b2)
+p1 <- ncol(t_b1)
+p2 <- ncol(t_b2)
 
+tic("SLIDE Analysis")
+SLIDE_results <- slide(X = X, pvec = c(p1,p2)) # ~1H45M run time
+toc()
+
+saveRDS(SLIDE_results, file = "SLIDE_results.rds")
+```
+
+```{r slide1_summary}
+SLIDE_results <- readRDS(file = "SLIDE_results.rds")
+
+# n: number of cells
+# p: number of genes
+# r: rank (?) 
+
+# Score matrix U (n by r)
+dim(SLIDE_results[["model"]][["U"]])
+
+# Loading matrix V (p by r)
+dim(SLIDE_results[["model"]][["V"]])
+
+# Block-sparse structure of V (d by r)
+SLIDE_results[["S"]]
+dim(SLIDE_results[["S"]])
 ```
 
 
