@@ -23,6 +23,8 @@ knitr::opts_chunk$set(
 library(tictoc)
 library(tidyverse)
 library(cowplot)
+library(ggExtra)
+library(ggthemes)
 
 library(splatter)
 library(scater)
@@ -79,8 +81,8 @@ sim1 <- logNormCounts(sim1)
 
 # Dimension reduction visualization
 set.seed(1)
-sim1 <- runUMAP(sim1)
-orig_p1 <- plotUMAP(sim1, color_by = "Group", shape_by = "Batch")
+sim1 <- runPCA(sim1, ncomponents = 30, ntop = 2000)
+orig_p1 <- plotPCA(sim1, color_by = "Batch", shape_by = "Group")
 orig_p1
 ```
 
@@ -145,7 +147,7 @@ set.seed(1)
 
 # Permutation
 tic("JIVE Analysis (Permutation)")
-JIVE_results_default <- jive(sim1_data) # 26min runtime
+JIVE_results_default <- jive(sim1_data, rankJ = 2, rankA = c(3, 3))
 toc()
 
 saveRDS(JIVE_results_default, file = "data/JIVE_results2_perm.rds")
@@ -168,124 +170,106 @@ summary(JIVE_results_default)
 # summary(JIVE_results_bic)
 ```
 
-Permutation method results chosen for analysis:
+### Visualization using PCA
+
+Visualize the principal components of the joint portion of the JIVE decomposition:
 
 ```{r jive1_viz}
-# Choose model
 JIVE_results <- JIVE_results_default
-# JIVE_results <- JIVE_results_j2
-# JIVE_results <- JIVE_results_bic
 
-# Vector to color each cell type/group 
-# jive_pca_col <- case_when(
-#   grp_b1 == "Group1" ~ scales::hue_pal()(3)[1],
-#   grp_b1 == "Group2" ~ scales::hue_pal()(3)[2],
-#   grp_b1 == "Group3" ~ scales::hue_pal()(3)[3],
-# )
+# showPCA(JIVE_results, 2)
 
-# First PC for joint structures from batch 1 (x-axis) vs. batch 2 (y-axis)
-showPCA(JIVE_results, n_joint = 2)#, Colors = jive_pca_col)
+joint <- do.call(rbind, JIVE_results$joint)
 
-# First PC for joint/individual structures vs. each other
-showPCA(JIVE_results, n_joint = 2, n_indiv = c(1, 1))#, Colors = jive_pca_col)
+# PCA
+# joint_prcomp <- prcomp(joint, scale. = T)
+# joint_pc <- joint_prcomp[["x"]] %>%
+#   as.data.frame() %>%
+#   select(PC1, PC2) %>%
+#   mutate(
+#     Batch = batches,
+#     Group = c(grp_b1, grp_b2)
+#   )
+# 
+# pc1_var_expl <- round(summary(joint_prcomp)[["importance"]][2, 1] * 100, digits = 1)
+# pc2_var_expl <- round(summary(joint_prcomp)[["importance"]][2, 2] * 100, digits = 1)
+
+# SVD
+joint_svd <- svd(joint)
+joint_pc <- joint_svd$u %>%
+  as.data.frame() %>%
+  select(V1, V2) %>%
+  dplyr::rename(PC1 = V1, PC2 = V2) %>%
+  mutate(
+    Batch = batches,
+    Group = c(grp_b1, grp_b2)
+  )
+
+# https://genomicsclass.github.io/book/pages/pca_svd.html
+svd_var_expl <- joint_svd$d^2 / sum(joint_svd$d^2)
+pc1_var_expl <- round(svd_var_expl[1] * 100, digits = 1)
+pc2_var_expl <- round(svd_var_expl[2] * 100, digits = 1)
+
+# Plot
+p <- ggplot(data = joint_pc) +
+  geom_point(
+    aes(x = PC1, y = PC2, color = Batch, shape = Group),
+    alpha = 0.5, size = 2
+  ) +
+  labs(
+    x = paste0("PC1 (", pc1_var_expl, "%)"),
+    y = paste0("PC2 (", pc2_var_expl, "%)")
+    ) +
+  scale_color_few() +
+  #scale_color_brewer(palette = "Dark2") +
+  theme_few() +
+  theme(legend.position = "bottom") 
+
+marg_p <- ggMarginal(p, type = "density", groupColour = TRUE, groupFill = TRUE)
+marg_p
 ```
 
-### Clustering with `SCE`
+### Visualization using `SCE`
 
 ```{r jive1_clust1}
-JIVE_joint_b1 <- SingleCellExperiment(list(logcounts = t(JIVE_results$joint[[1]])))
-colData(JIVE_joint_b1)$Group <- grp_b1
-colData(JIVE_joint_b1)$BatchNum <- "Batch1"
+JIVE_joint_b1_SCE <- SingleCellExperiment(list(logcounts = t(JIVE_results[["joint"]][[1]])))
+colData(JIVE_joint_b1_SCE)$Group <- grp_b1
+colData(JIVE_joint_b1_SCE)$BatchNum <- "Batch1"
 
-JIVE_joint_b2 <- SingleCellExperiment(list(logcounts = t(JIVE_results$joint[[2]])))
-colData(JIVE_joint_b2)$Group <- grp_b2
-colData(JIVE_joint_b2)$BatchNum <- "Batch2"
+JIVE_joint_b2_SCE <- SingleCellExperiment(list(logcounts = t(JIVE_results[["joint"]][[2]])))
+colData(JIVE_joint_b2_SCE)$Group <- grp_b2
+colData(JIVE_joint_b2_SCE)$BatchNum <- "Batch2"
 
-JIVE_joint_sce <- cbind(JIVE_joint_b1, JIVE_joint_b2)
-
-# JIVE_joint <- cbind(JIVE_results$joint[[1]], JIVE_results$joint[[2]])
-# 
-# JIVE_joint_sce <- SingleCellExperiment(list(logcounts = JIVE_joint))
-# colData(JIVE_joint_sce)$Group <- c(grp_b1, grp_b2)
-# colData(JIVE_joint_sce)$BatchNum <- c(rep("Batch1", 500), rep("Batch2", 500))
-
-# JIVE_joint <- rbind(t(JIVE_results$joint[[1]]), t(JIVE_results$joint[[2]]))
-# 
-# JIVE_joint_sce <- SingleCellExperiment(list(logcounts = JIVE_joint))
-# colData(JIVE_joint_sce)$Group <- grp_b1
+JIVE_joint_SCE <- cbind(JIVE_joint_b1_SCE, JIVE_joint_b2_SCE)
 
 set.seed(1)
-JIVE_joint_sce <- runPCA(JIVE_joint_sce, ncomponents = 30, ntop = 2000)
-JIVE_joint_sce <- runTSNE(JIVE_joint_sce)
-JIVE_joint_sce <- runUMAP(JIVE_joint_sce)
+JIVE_joint_SCE <- runPCA(JIVE_joint_SCE, ncomponents = 30, ntop = 2000)
+# JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE)
+# JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE)
 
 clusters <- clusterCells(
-  JIVE_joint_sce,
+  JIVE_joint_SCE,
   use.dimred = "PCA",
   BLUSPARAM = bluster::SNNGraphParam(
     cluster.fun = "louvain", 
     cluster.args = list(resolution = 0.5)
     )
   )
-colData(JIVE_joint_sce)$Clusters <- clusters
-# By Cluster/Group
-jive_p1 <- plotPCA(JIVE_joint_sce, color_by = "Clusters", shape_by = "Group")
-jive_p1
 
-jive_p2 <- plotUMAP(JIVE_joint_sce, color_by = "Clusters", shape_by = "Group")
-jive_p2
+colData(JIVE_joint_SCE)$Cluster <- clusters
 
 # By Batch/Group
-jive_p3 <- plotPCA(JIVE_joint_sce, color_by = "BatchNum", shape_by = "Group")
-jive_p3
+jive_p1 <- plotPCA(JIVE_joint_SCE, color_by = "BatchNum", shape_by = "Group")
+jive_p1
 
-jive_p4 <- plotPCA(JIVE_joint_sce, color_by = "Group", shape_by = "BatchNum")
-jive_p4
-```
-
-### K-means Clustering
-
-```{r jive1_clust2}
-result <- JIVE_results
-n_joint <- 2
-n_indiv <- c(0, 0)
-nPCs <- n_joint + sum(n_indiv)
-PCs <- matrix(nrow = nPCs, ncol = dim(result$data[[1]])[2])
-PC_names <- rep("", nPCs)
-
-SVD <- svd(do.call(rbind, result$joint), nu = n_joint, nv = n_joint)
-PCs[1:n_joint, ] <- diag(SVD$d)[1:n_joint, 1:n_joint] %*% t(SVD$v[, 1:n_joint])
-PC_names[1:n_joint] <- paste("Joint ", 1:n_joint)
-
-PCs_df <- data.frame(t(PCs))
-colnames(PCs_df) <-  c("PC1", "PC2")
-rownames(PCs_df) <- paste0("Cell", 1:nrow(PCs_df))
-
-# Find reasonable number of clusters (k) with an Elbow-plot
-fviz_nbclust(PCs_df, kmeans, method = "wss")
-
-clust <- kmeans(PCs_df, 3)
-
-PCs_df_long <- PCs_df %>%
-  rownames_to_column(var = "Cell") %>%
-  cbind(grp_b1, cluster = factor(clust$cluster))
-
-PCs_df_long %>%
-  ggplot() +
-  geom_point(aes(x = PC1, y = PC2, color = cluster))
+# By Batch/Cluster
+jive_p2 <- plotPCA(JIVE_joint_SCE, color_by = "Cluster", shape_by = "Group")
+jive_p2
 ```
 
 ## Seurat
 
-Perform cell batch integration as in their tutorial.
-
 ### Setup
-
-* Create Seurat objects for each batch
-  * Assign metadata to each object (batch number, cell type)
-* Normalize the cell counts
-* Identify most variable features (genes) 
-* Choose most variable features from both batches for use in integration
 
 ```{r seurat_setup}
 b1_seurat <- CreateSeuratObject(counts = b1, project = "simulation")
@@ -310,9 +294,6 @@ features <- SelectIntegrationFeatures(object.list = seurat_list)
 
 ### Integration
 
-* Perform integration by finding a set of anchors from the two batches (via CCA)
-* Use the anchor list to integrate the two batches
-
 ```{r seurat_integration}
 anchors <- FindIntegrationAnchors(object.list = seurat_list, anchor.features = features)
 combined <- IntegrateData(anchorset = anchors)
@@ -320,14 +301,6 @@ GetAssay(combined, "integrated")
 ```
 
 ### Integrated Analysis
-
-* Integrated/combined data is centered/scaled
-* First 30 PCs are computed/stored
-* PC1-PC30 are used to perform t-SNE and UMAP dimensionality reduction
-* Calculates k-nearest neighbors (`k = 20` by default) from PC1-PC30
-* Identify clusters by using Shared Nearest Neighbors (SNN):
-  * "First calculate k-nearest neighbors and construct the SNN graph"
-  * "Then optimize the modularity function to determine clusters"
 
 ```{r seurat_integrated_analysis}
 # specify that we will perform downstream analysis on the corrected data note that the
@@ -338,22 +311,14 @@ DefaultAssay(combined) <- "integrated"
 set.seed(1)
 combined <- ScaleData(combined, verbose = FALSE)
 combined <- RunPCA(combined, npcs = 30, verbose = FALSE)
-combined <- RunTSNE(combined, reduction = "pca", dims = 1:30)
-combined <- RunUMAP(combined, reduction = "pca", dims = 1:30)
-combined <- FindNeighbors(combined, reduction = "pca", dims = 1:30)
-combined <- FindClusters(combined, resolution = 0.5)
+# combined <- RunTSNE(combined, reduction = "pca", dims = 1:30)
+# combined <- RunUMAP(combined, reduction = "pca", dims = 1:30)
 ```
-
-Visualize integrated batches and clusters using UMAP:
 
 ```{r seurat_integrated_viz}
 # Visualization
 seurat_p1 <- DimPlot(combined, reduction = "pca", group.by = "BatchNum", shape.by = "Group")
-seurat_p2 <- DimPlot(combined, reduction = "umap", group.by = "seurat_clusters", shape.by = "Group", pt.size = 1.5)
-seurat_p1 / seurat_p2
-
-# Frequency of true cell types/groups vs. identified clusters
-table(combined@meta.data[, c("Group", "seurat_clusters")])
+seurat_p1
 ```
 
 # Session Information
