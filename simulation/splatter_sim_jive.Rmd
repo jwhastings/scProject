@@ -33,6 +33,10 @@ library(r.jive)
 library(Seurat)
 library(factoextra)
 library(SLIDE)
+library(cluster)
+
+library(kBET)
+library(lisi)
 ```
 
 # Simulation 1
@@ -198,8 +202,7 @@ joint <- do.call(rbind, JIVE_results$joint)
 joint_svd <- svd(joint)
 joint_pc <- joint_svd$u %>%
   as.data.frame() %>%
-  select(V1, V2) %>%
-  dplyr::rename(PC1 = V1, PC2 = V2) %>%
+  select(PC1 = V1, PC2 = V2) %>%
   mutate(
     Batch = batches,
     Group = c(grp_b1, grp_b2)
@@ -266,6 +269,158 @@ jive_p1
 jive_p2 <- plotPCA(JIVE_joint_SCE, color_by = "Cluster", shape_by = "Group")
 jive_p2
 ```
+
+### Calculate kBET
+
+* Sub-sample data at varying percentages
+  * 5%, 10%, 15%, 20%, 25%
+  * Stratified sampling so that each batch has the same number of cells selected
+    * E.g., assume 2 batches, sampling 10% of 1000 cells = 100 cells: sample 50 cells from each batch
+* Calculate kBET rejection rates at each percentage
+  * **Lower** RR indicate well-mixed batches
+  * **Higher** RR indicate poorly-mixed batches
+  
+```{r jive_kbet}
+# data: a matrix (rows: samples, columns: features (genes))
+data <- joint
+
+# batch: vector or factor with batch label of each cell 
+batch <- batches
+
+sample_size <- seq(0.05, 0.25, 0.05)
+rejection_rate <- list()
+
+set.seed(1)
+for (i in sample_size) {
+  subset_prop <- i # subsample to 10% of the data
+  subset_size_total <- floor(length(batch) * subset_prop)
+  subset_size_per_batch <- floor(subset_size_total / length(unique(batch)))
+  
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    group_by(batch) %>%
+    slice_sample(n = subset_size_per_batch, replace = F)
+  
+  table(subset_index$batch)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  batch.estimate <- kBET(data[subset_id,], batch[subset_id], plot = F)
+  
+  rejection_rate[[which(sample_size == i)]] <- batch.estimate$summary %>%
+    rownames_to_column(var = "statistic") %>%
+    mutate(sample_size = i, n_batch = subset_size_per_batch) %>%
+    select(sample_size, n_batch, statistic, kBET_rr = kBET.observed)
+}
+
+all_rr <- bind_rows(rejection_rate) %>%
+  pivot_wider(id_cols = c(sample_size, n_batch), names_from = statistic, values_from = kBET_rr)
+
+all_rr %>%
+  ggplot(aes(x = sample_size, y = mean)) +
+  geom_line(aes(y = `97.5%`), color = "darkgray", linetype = "dashed") +
+  geom_line(aes(y = `2.5%`), color = "darkgray", linetype = "dashed") +
+  geom_line() +
+  # geom_line(aes(y = `97.5%`), color = "darkgray") +
+  geom_linerange(aes(ymin = `2.5%`, ymax = `97.5%`), color = "darkgray", linetype = "dashed") +
+  geom_point() +
+  scale_x_continuous(labels = scales::percent) +
+  labs(x = "% sample size", y = "kBET (rejection rate)")
+```
+
+### Calculate Average Silhouette Width
+
+Original batch label and cell types/groups will be considered the clusters to compute $ASW_{batch}$ and $ASW_{group}$
+
+* Compute average silhouette width (ASW) for the first 30 PCs of 80% sub-sample of joint data
+  * ASW ranges between -1 and 1
+  * Values **close to 1** indicate the cell is well-matched to its cluster (i.e., batch label)
+  * Values **close to -1** indicate the cell is **not** well-matched to its cluster (i.e., batch label)
+    * We hope to see lower values for $ASW_{batch}$ since it is indicative of well-mixed batches
+    * We hope to see higher values for $ASW_{group}$ since it is indicative that distinct cell groups were preserved after batch-mixing
+* Repeat `20` times
+* Calculate the median ASW from the `20` runs to ensure stability of the measurement
+
+```{r jive_asw}
+asw_repeat <- 20
+npcs <- 30
+
+asw_batch <- list()
+asw_group <- list()
+subset_prop <- 0.8 # subsample to 80% of the data
+subset_size_total <- floor(length(batch) * subset_prop)
+
+set.seed(1)
+for (i in 1:asw_repeat) {
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    slice_sample(n = subset_size_total, replace = F)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  asw_batch_i <- silhouette(as.integer(factor(batches[subset_id])), dist(joint[subset_id, 1:npcs]))
+  asw_batch[[i]] <- as.data.frame(rbind(summary(asw_batch_i)[["si.summary"]]))
+  
+  asw_group_i <- silhouette(as.integer(factor(groups[subset_id])), dist(joint[subset_id, 1:npcs]))
+  asw_group[[i]] <- as.data.frame(rbind(summary(asw_group_i)[["si.summary"]]))
+}
+
+all_asw_batch <- bind_rows(asw_batch) %>%
+  mutate(cluster = "Batch")
+
+# ASW_batch summary
+summary(all_asw_batch$Mean)
+
+all_asw_group <- bind_rows(asw_group) %>%
+  mutate(cluster = "Group")
+
+#ASW_group summary
+summary(all_asw_group$Mean)
+```
+
+### Calculate LISI Scores
+
+```{r}
+# Repeat LISI for sub-samples??
+lisi_repeat <- 20
+npcs <- 30
+
+lisi_batch <- list()
+lisi_group <- list()
+subset_prop <- 0.8 # sub-sample to 80% of the data
+subset_size_total <- floor(length(batch) * subset_prop)
+
+set.seed(1)
+for (i in 1:lisi_repeat) {
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    slice_sample(n = subset_size_total, replace = F)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  lisi_batch[[i]] <- cbind(iter = i, compute_lisi(joint[subset_id, 1:npcs], data.frame(batch = batches[subset_id]), label_colnames = "batch"))
+  lisi_group[[i]] <- cbind(iter = i, compute_lisi(joint[subset_id, 1:npcs], data.frame(group = groups[subset_id]), label_colnames = "group"))
+}
+
+all_lisi_batch <- bind_rows(lisi_batch)
+summary(all_lisi_batch$batch) # Looking for values close to the number of batches (2)
+
+all_lisi_group <- bind_rows(lisi_group)
+summary(all_lisi_group$group) # Looking for values close to 1
+
+####
+
+# Performed for all cells
+batch_lisi <- compute_lisi(joint, data.frame(batch = batches), label_colnames = "batch")
+summary(batch_lisi)
+
+group_lisi <- compute_lisi(joint, data.frame(group = groups), label_colnames = "group")
+summary(group_lisi)
+```
+
 
 ## Seurat
 
