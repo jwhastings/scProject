@@ -33,10 +33,13 @@ library(r.jive)
 library(Seurat)
 library(factoextra)
 library(SLIDE)
-library(cluster)
 
-library(kBET)
-library(lisi)
+library(kBET) # kBET
+library(cluster) # ASW
+library(lisi) # LISI
+library(mclust) # ARI
+
+theme_set(theme_few())
 ```
 
 # Simulation 1
@@ -86,8 +89,11 @@ sim1 <- logNormCounts(sim1)
 # Dimension reduction visualization
 set.seed(1)
 sim1 <- runPCA(sim1, ncomponents = 30, ntop = 2000)
-orig_p1 <- plotPCA(sim1, color_by = "Batch", shape_by = "Group")
-orig_p1
+orig_p1 <- plotPCA(sim1, color_by = "Batch", shape_by = "Group") +
+  labs(title = "Batch vs. Cell Group (Raw Counts)")
+orig_marg <- ggMarginal(orig_p1, type = "density", groupColour = TRUE, groupFill = TRUE)
+
+orig_marg 
 ```
 
 ## Separate Batches
@@ -223,13 +229,11 @@ p <- ggplot(data = joint_pc) +
     x = paste0("PC1 (", pc1_var_expl, "%)"),
     y = paste0("PC2 (", pc2_var_expl, "%)")
     ) +
-  scale_color_few() +
-  #scale_color_brewer(palette = "Dark2") +
-  theme_few() +
-  theme(legend.position = "bottom") 
+  theme(legend.position = "bottom") +
+  labs(title = "Batch vs. Cell Group (Joint Data)")
 
 marg_p <- ggMarginal(p, type = "density", groupColour = TRUE, groupFill = TRUE)
-marg_p
+marg_p 
 ```
 
 ### Visualization using `SCE`
@@ -263,11 +267,11 @@ colData(JIVE_joint_SCE)$Cluster <- clusters
 
 # By Batch/Group
 jive_p1 <- plotPCA(JIVE_joint_SCE, color_by = "BatchNum", shape_by = "Group")
-jive_p1
+jive_p1 + labs(title = "Batch vs. Cell Group (Joint Data)")
 
-# By Batch/Cluster
+# By Cluster/Group
 jive_p2 <- plotPCA(JIVE_joint_SCE, color_by = "Cluster", shape_by = "Group")
-jive_p2
+jive_p2 + labs(title = "Cluster vs. Cell Group (Joint Data)")
 ```
 
 ### Calculate kBET
@@ -382,18 +386,44 @@ summary(all_asw_group$Mean)
 
 ### Calculate LISI Scores
 
-```{r}
-# Repeat LISI for sub-samples??
-lisi_repeat <- 20
+```{r jive_lisi}
+# Performed for all cells
+
+batch_lisi <- compute_lisi(joint, data.frame(batch = batches), label_colnames = "batch")
+
+# Looking for values close to the number of batches (2)
+summary(batch_lisi)
+
+group_lisi <- compute_lisi(joint, data.frame(group = groups), label_colnames = "group")
+
+# Looking for values close to 1
+summary(group_lisi)
+```
+
+### Calculate Adjusted Rand Index
+
+Original batch label and cell types/groups will be compared against the Louvain clusters to compute $ARI_{batch}$ and $ARI_{group}$.
+
+* Compute adjusted rand index (ARI) for the first 30 PCs of 80% sub-sample of joint data
+  * ARI ranges between 0 and 1
+  * Values **close to 1** indicate the two partition labels are similar
+  * Values **close to 0** indicate the two partition labels are not similar
+    * We hope to see lower values for $ARI_{batch}$ since it is indicative of well-mixed batches
+    * We hope to see higher values for $ARI_{group}$ since it is indicative that distinct cell groups were preserved after batch-mixing
+* Repeat `20` times
+* Calculate the median ASW from the `20` runs to ensure stability of the measurement
+
+```{r jive_ari}
+ari_repeat <- 20
 npcs <- 30
 
-lisi_batch <- list()
-lisi_group <- list()
-subset_prop <- 0.8 # sub-sample to 80% of the data
+ari_batch <- list()
+ari_group <- list()
+subset_prop <- 0.8 # subsample to 80% of the data
 subset_size_total <- floor(length(batch) * subset_prop)
 
 set.seed(1)
-for (i in 1:lisi_repeat) {
+for (i in 1:ari_repeat) {
   subset_index <- 
     data.frame(index = 1:length(batch) , batch = batch) %>%
     slice_sample(n = subset_size_total, replace = F)
@@ -401,80 +431,76 @@ for (i in 1:lisi_repeat) {
   subset_id <- subset_index %>%
     pull(index)
   
-  lisi_batch[[i]] <- cbind(iter = i, compute_lisi(joint[subset_id, 1:npcs], data.frame(batch = batches[subset_id]), label_colnames = "batch"))
-  lisi_group[[i]] <- cbind(iter = i, compute_lisi(joint[subset_id, 1:npcs], data.frame(group = groups[subset_id]), label_colnames = "group"))
+  ari_batch[[i]] <- adjustedRandIndex(factor(batches[subset_id]), clusters[subset_id])
+  ari_group[[i]] <- adjustedRandIndex(factor(groups[subset_id]), clusters[subset_id])
 }
 
-all_lisi_batch <- bind_rows(lisi_batch)
-summary(all_lisi_batch$batch) # Looking for values close to the number of batches (2)
+all_ari_batch <- data.frame(ari = unlist(ari_batch)) %>%
+  mutate(cluster = "Batch")
 
-all_lisi_group <- bind_rows(lisi_group)
-summary(all_lisi_group$group) # Looking for values close to 1
+# Lower values indicate well-mixed batches
+summary(all_ari_batch$ari)
 
-####
+all_ari_group <- data.frame(ari = unlist(ari_group)) %>%
+  mutate(cluster = "Group") 
 
-# Performed for all cells
-batch_lisi <- compute_lisi(joint, data.frame(batch = batches), label_colnames = "batch")
-summary(batch_lisi)
-
-group_lisi <- compute_lisi(joint, data.frame(group = groups), label_colnames = "group")
-summary(group_lisi)
+# Higher values indicate cell types were well preserved
+summary(all_ari_group$ari)
 ```
 
+<!-- ## Seurat -->
 
-## Seurat
+<!-- ### Setup -->
 
-### Setup
+<!-- ```{r seurat_setup} -->
+<!-- b1_seurat <- CreateSeuratObject(counts = b1, project = "simulation") -->
+<!-- b1_seurat <- AddMetaData(b1_seurat, "Batch 1", col.name = "BatchNum") -->
+<!-- b1_seurat <- AddMetaData(b1_seurat, grp_b1, col.name = "Group") -->
 
-```{r seurat_setup}
-b1_seurat <- CreateSeuratObject(counts = b1, project = "simulation")
-b1_seurat <- AddMetaData(b1_seurat, "Batch 1", col.name = "BatchNum")
-b1_seurat <- AddMetaData(b1_seurat, grp_b1, col.name = "Group")
+<!-- b2_seurat <- CreateSeuratObject(counts = b2, project = "simulation") -->
+<!-- b2_seurat <- AddMetaData(b2_seurat, "Batch 2", col.name = "BatchNum") -->
+<!-- b2_seurat <- AddMetaData(b2_seurat, grp_b2, col.name = "Group") -->
 
-b2_seurat <- CreateSeuratObject(counts = b2, project = "simulation")
-b2_seurat <- AddMetaData(b2_seurat, "Batch 2", col.name = "BatchNum")
-b2_seurat <- AddMetaData(b2_seurat, grp_b2, col.name = "Group")
+<!-- seurat_list <- list(Batch1 = b1_seurat, Batch2 = b2_seurat) -->
 
-seurat_list <- list(Batch1 = b1_seurat, Batch2 = b2_seurat)
+<!-- # normalize and identify variable features for each dataset independently -->
+<!-- seurat_list <- lapply(X = seurat_list, FUN = function(x) { -->
+<!--     x <- NormalizeData(x) -->
+<!--     x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000) -->
+<!-- }) -->
 
-# normalize and identify variable features for each dataset independently
-seurat_list <- lapply(X = seurat_list, FUN = function(x) {
-    x <- NormalizeData(x)
-    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
-})
+<!-- # select features that are repeatedly variable across datasets for integration -->
+<!-- features <- SelectIntegrationFeatures(object.list = seurat_list) -->
+<!-- ``` -->
 
-# select features that are repeatedly variable across datasets for integration
-features <- SelectIntegrationFeatures(object.list = seurat_list)
-```
+<!-- ### Integration -->
 
-### Integration
+<!-- ```{r seurat_integration} -->
+<!-- anchors <- FindIntegrationAnchors(object.list = seurat_list, anchor.features = features) -->
+<!-- combined <- IntegrateData(anchorset = anchors) -->
+<!-- GetAssay(combined, "integrated") -->
+<!-- ``` -->
 
-```{r seurat_integration}
-anchors <- FindIntegrationAnchors(object.list = seurat_list, anchor.features = features)
-combined <- IntegrateData(anchorset = anchors)
-GetAssay(combined, "integrated")
-```
+<!-- ### Integrated Analysis -->
 
-### Integrated Analysis
+<!-- ```{r seurat_integrated_analysis} -->
+<!-- # specify that we will perform downstream analysis on the corrected data note that the -->
+<!-- # original unmodified data still resides in the 'RNA' assay -->
+<!-- DefaultAssay(combined) <- "integrated" -->
 
-```{r seurat_integrated_analysis}
-# specify that we will perform downstream analysis on the corrected data note that the
-# original unmodified data still resides in the 'RNA' assay
-DefaultAssay(combined) <- "integrated"
+<!-- # Run the standard workflow for visualization and clustering -->
+<!-- set.seed(1) -->
+<!-- combined <- ScaleData(combined, verbose = FALSE) -->
+<!-- combined <- RunPCA(combined, npcs = 30, verbose = FALSE) -->
+<!-- # combined <- RunTSNE(combined, reduction = "pca", dims = 1:30) -->
+<!-- # combined <- RunUMAP(combined, reduction = "pca", dims = 1:30) -->
+<!-- ``` -->
 
-# Run the standard workflow for visualization and clustering
-set.seed(1)
-combined <- ScaleData(combined, verbose = FALSE)
-combined <- RunPCA(combined, npcs = 30, verbose = FALSE)
-# combined <- RunTSNE(combined, reduction = "pca", dims = 1:30)
-# combined <- RunUMAP(combined, reduction = "pca", dims = 1:30)
-```
-
-```{r seurat_integrated_viz}
-# Visualization
-seurat_p1 <- DimPlot(combined, reduction = "pca", group.by = "BatchNum", shape.by = "Group")
-seurat_p1
-```
+<!-- ```{r seurat_integrated_viz} -->
+<!-- # Visualization -->
+<!-- seurat_p1 <- DimPlot(combined, reduction = "pca", group.by = "BatchNum", shape.by = "Group") -->
+<!-- seurat_p1 -->
+<!-- ``` -->
 
 # Session Information
 
