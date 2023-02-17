@@ -1,0 +1,457 @@
+---
+title: "JIVE Integration (Dataset 2)"
+author: "Joey Hastings"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::html_clean:
+    highlight: kate
+    thumbnails: FALSE
+    toc_depth: 2
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  fig.dim = c(9, 6)
+  )
+```
+
+# Load Packages
+
+```{r load_packages, message = FALSE}
+library(tictoc)
+library(tidyverse)
+library(cowplot)
+library(ggExtra)
+library(ggthemes)
+
+library(iasvaExamples)
+library(splatter)
+library(scater)
+library(scran)
+library(r.jive)
+library(Seurat)
+library(factoextra)
+library(SLIDE)
+
+library(kBET) # kBET
+library(cluster) # ASW
+library(lisi) # LISI
+library(mclust) # ARI
+
+theme_set(theme_few())
+```
+
+# Human Pancreatic Islet Data
+
+## Load Data
+
+```{r load_data}
+data("Lawlor_Islet_scRNAseq_Read_Counts")
+data("Lawlor_Islet_scRNAseq_Annotations")
+
+counts <- Lawlor_Islet_scRNAseq_Read_Counts
+anns <- Lawlor_Islet_scRNAseq_Annotations
+
+data_SCE <- SingleCellExperiment(list(counts = counts))
+colData(data_SCE)$Batch <- anns$Batch
+colData(data_SCE)$Cell_Type <- anns$Cell_Type
+```
+
+```{r sim1_viz}
+data_SCE <- logNormCounts(data_SCE)
+data_SCE <- addPerCellQC(data_SCE)
+n.features <- colData(data_SCE)$detected
+colData(data_SCE)$PctZero <- 100 * (1 - n.features/nrow(data_SCE))
+
+# Dimension reduction visualization
+set.seed(1)
+data_SCE <- runPCA(data_SCE, ncomponents = 30, ntop = 2000)
+data_SCE <- runTSNE(data_SCE)
+orig_p1 <- plotPCA(data_SCE, color_by = "Batch") +
+  labs(title = "Batch vs. Cell Type (Raw Counts)")
+orig_marg <- ggMarginal(orig_p1, type = "density", groupColour = TRUE, groupFill = TRUE)
+
+orig_marg 
+```
+
+## Separate Batches
+
+```{r sim1_batches}
+batches <- data_SCE$Batch
+# Frequency of batches in simulation
+table(batches)
+
+groups <- data_SCE$Cell_Type
+# Frequency of cell types in simulation
+table(groups)
+
+rawcounts <- counts(data_SCE)
+dim(rawcounts)
+
+# Batch 1
+b1 <- rawcounts[, batches == "B1"]
+grp_b1 <- groups[batches == "B1"]
+# Dimension of batch 1
+dim(b1)
+# Frequency of cell types in batch 1
+table(grp_b1)
+
+# Batch 2
+b2 <- rawcounts[, batches == "B2"]
+grp_b2 <- groups[batches == "B2"]
+# Dimension of batch 2
+dim(b2)
+# Frequency of cell types in batch 2
+table(grp_b2)
+
+# Batch 3
+b3 <- rawcounts[, batches == "B3"]
+grp_b3 <- groups[batches == "B3"]
+# Dimension of batch 3
+dim(b3)
+# Frequency of cell types in batch 3
+table(grp_b3)
+```
+
+## JIVE
+
+This time we transpose the matrices so that the common genes are the columns and the cells are the rows:
+
+```{r jive1, eval = FALSE}
+dataset2_data <- NULL
+dataset2_data$Batch1 <- t(b1)
+dataset2_data$Batch2 <- t(b2)
+dataset2_data$Batch3 <- t(b3)
+
+set.seed(1)
+
+# Given Ranks
+tic("JIVE Analysis (Given Ranks)")
+JIVE_results <- jive(dataset2_data, rankJ = 3, rankA = c(3, 3, 3), method = "given")
+toc()
+# JIVE Analysis (Permutation Test): 37931.98 sec elapsed
+saveRDS(JIVE_results, file = "data/JIVE_dataset2_given_3_3_3_3.rds")
+```
+
+Summary of estimated ranks and variance explained by joint/individual/residual for each approach:
+
+```{r jive1_summary}
+JIVE_results <- readRDS(file = "data/JIVE_dataset2_perm.rds")
+summary(JIVE_results)
+```
+
+### Visualization using PCA
+
+Visualize the principal components of the joint portion of the JIVE decomposition:
+
+```{r jive1_viz1}
+joint <- do.call(rbind, JIVE_results$joint)
+indiv <- do.call(rbind, JIVE_results$individual)
+
+# SVD
+# only the most variable genes?
+# ntop <- 2000
+# ncomp <- 30
+# var_genes_indices <- head(sort(colWeightedVars(joint), index.return = T)$ix, ntop)
+# joint_svd <- svd(joint[, var_genes_indices], nu = ncomp, nv = ncomp)
+
+joint_svd <- svd(joint)
+joint_pc <- joint_svd$u %>%
+  as.data.frame() %>%
+  select(1:5) %>%
+  mutate(
+    Batch = batches,
+    Group = c(grp_b1, grp_b2, grp_b3)
+  )
+
+joint_zeros <- data.frame(
+  joint_pc1 = joint_pc[, 1],
+  pct_zero = colData(data_SCE)$PctZero,
+  batch = batches,
+  group = c(grp_b1, grp_b2, grp_b3)
+)
+
+joint_pc1_zeros <- ggplot(data = joint_zeros) +
+  geom_point(aes(x = joint_pc1, y = pct_zero, color = batch)) +
+  labs(x = "Joint PC1", y = "Cell Zero %", title = "Joint PC1 vs. Cell Zero Percentage")
+
+joint_pc1_zeros
+```
+
+```{r jive1_viz2}
+# Remove first PC as it is associated with the cell zero percentage
+joint_final <- joint_svd$u#[, -1]
+
+# https://genomicsclass.github.io/book/pages/pca_svd.html
+svd_var_expl <- round(100 * (joint_svd$d^2 / sum(joint_svd$d^2)), digits = 1)
+
+# Plot
+p <- ggplot(data = joint_pc) +
+  geom_point(
+    aes(x = V2, y = V3, color = Batch),
+    alpha = 0.5, size = 2
+  ) +
+  labs(
+    x = paste0("PC2 (", svd_var_expl[2], "%)"),
+    y = paste0("PC3 (", svd_var_expl[3], "%)")
+    ) +
+  theme(legend.position = "bottom") +
+  labs(title = "Batch vs. Cell Group (Joint Data)")
+
+marg_p <- ggMarginal(p, type = "density", groupColour = TRUE, groupFill = TRUE)
+marg_p 
+```
+
+### Visualization using `SCE`
+
+```{r jive1_clust1}
+JIVE_joint_b1_SCE <- SingleCellExperiment(list(logcounts = t(JIVE_results[["joint"]][[1]])))
+colData(JIVE_joint_b1_SCE)$Group <- grp_b1
+colData(JIVE_joint_b1_SCE)$BatchNum <- "Batch1"
+
+JIVE_joint_b2_SCE <- SingleCellExperiment(list(logcounts = t(JIVE_results[["joint"]][[2]])))
+colData(JIVE_joint_b2_SCE)$Group <- grp_b2
+colData(JIVE_joint_b2_SCE)$BatchNum <- "Batch2"
+
+JIVE_joint_SCE <- cbind(JIVE_joint_b1_SCE, JIVE_joint_b2_SCE)
+
+set.seed(1)
+# Original PCA based on joint matrices for each batch
+JIVE_joint_SCE <- runPCA(JIVE_joint_SCE, ncomponents = 30, ntop = 2000)
+
+# t-SNE based on original PC
+JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE)
+
+# UMAP based on original PC
+JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE)
+
+dr1 <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA", color_by = "BatchNum", shape_by = "Group")
+dr2 <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE", color_by = "BatchNum", shape_by = "Group")
+dr3 <- plotReducedDim(JIVE_joint_SCE, dimred = "UMAP", color_by = "BatchNum", shape_by = "Group")
+
+# first align the top-row plot (dr1) with the left-most plot of the
+# bottom row (dr2)
+plots <- align_plots(dr1, dr2, align = 'v', axis = 'l')
+# then build the bottom row
+bottom_row <- plot_grid(plots[[2]], dr3, labels = c('B', 'C'), label_size = 12)
+
+# then combine with the top row for final plot
+plot_grid(plots[[1]], bottom_row, labels = c('A', ''), label_size = 12, ncol = 1)
+
+###
+
+# First PC removed
+reducedDim(JIVE_joint_SCE, type = "PCA_alt") <- joint_final
+
+# t-SNE based on modified PCA
+JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE, dimred = "PCA_alt", name = "TSNE_alt")
+
+# UMAP based on modified PCA
+JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE, dimred = "PCA_alt", name = "UMAP_alt")
+
+dr1_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA_alt", color_by = "BatchNum", shape_by = "Group")
+dr2_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE_alt", color_by = "BatchNum", shape_by = "Group")
+dr3_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "UMAP_alt", color_by = "BatchNum", shape_by = "Group")
+
+plots <- align_plots(dr1_alt, dr2_alt, align = 'v', axis = 'l')
+# then build the bottom row
+bottom_row <- plot_grid(plots[[2]], dr3_alt, labels = c('E', 'F'), label_size = 12)
+
+# then combine with the top row for final plot
+plot_grid(plots[[1]], bottom_row, labels = c('D', ''), label_size = 12, ncol = 1)
+
+###
+
+# Clusters
+clusters <- clusterCells(
+  JIVE_joint_SCE,
+  use.dimred = "PCA_alt",
+  BLUSPARAM = bluster::SNNGraphParam(
+    cluster.fun = "louvain", 
+    cluster.args = list(resolution = 0.5)
+    )
+  )
+
+colData(JIVE_joint_SCE)$Cluster <- clusters
+```
+
+### Calculate kBET
+
+* Sub-sample data at varying percentages
+  * 5%, 10%, 15%, 20%, 25%
+  * Stratified sampling so that each batch has the same number of cells selected
+    * E.g., assume 2 batches, sampling 10% of 1000 cells = 100 cells: sample 50 cells from each batch
+* Calculate kBET rejection rates at each percentage
+  * **Lower** RR indicate well-mixed batches
+  * **Higher** RR indicate poorly-mixed batches
+  
+```{r jive_kbet}
+# data: a matrix (rows: samples, columns: features (genes))
+data <- joint_final
+
+# batch: vector or factor with batch label of each cell 
+batch <- batches
+
+sample_size <- seq(0.05, 0.25, 0.05)
+rejection_rate <- list()
+
+set.seed(1)
+for (i in sample_size) {
+  subset_prop <- i # subsample to 10% of the data
+  subset_size_total <- floor(length(batch) * subset_prop)
+  subset_size_per_batch <- floor(subset_size_total / length(unique(batch)))
+  
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    group_by(batch) %>%
+    slice_sample(n = subset_size_per_batch, replace = F)
+  
+  table(subset_index$batch)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  batch.estimate <- kBET(data[subset_id, ], batch[subset_id], plot = F)
+  
+  rejection_rate[[which(sample_size == i)]] <- batch.estimate$summary %>%
+    rownames_to_column(var = "statistic") %>%
+    mutate(sample_size = i, n_batch = subset_size_per_batch) %>%
+    select(sample_size, n_batch, statistic, kBET_rr = kBET.observed)
+}
+
+all_rr <- bind_rows(rejection_rate) %>%
+  pivot_wider(id_cols = c(sample_size, n_batch), names_from = statistic, values_from = kBET_rr)
+
+all_rr %>%
+  ggplot(aes(x = sample_size, y = mean)) +
+  geom_line(aes(y = `97.5%`), color = "darkgray", linetype = "dashed") +
+  geom_line(aes(y = `2.5%`), color = "darkgray", linetype = "dashed") +
+  geom_line() +
+  # geom_line(aes(y = `97.5%`), color = "darkgray") +
+  geom_linerange(aes(ymin = `2.5%`, ymax = `97.5%`), color = "darkgray", linetype = "dashed") +
+  geom_point() +
+  scale_x_continuous(labels = scales::percent) +
+  labs(x = "% sample size", y = "kBET (rejection rate)")
+```
+
+### Calculate Average Silhouette Width
+
+Original batch label and cell types/groups will be considered the clusters to compute $ASW_{batch}$ and $ASW_{group}$
+
+* Compute average silhouette width (ASW) for the first 30 PCs of 80% sub-sample of joint data
+  * ASW ranges between -1 and 1
+  * Values **close to 1** indicate the cell is well-matched to its cluster (i.e., batch label)
+  * Values **close to -1** indicate the cell is **not** well-matched to its cluster (i.e., batch label)
+    * We hope to see lower values for $ASW_{batch}$ since it is indicative of well-mixed batches
+    * We hope to see higher values for $ASW_{group}$ since it is indicative that distinct cell groups were preserved after batch-mixing
+* Repeat `20` times
+* Calculate the median ASW from the `20` runs to ensure stability of the measurement
+
+```{r jive_asw}
+asw_repeat <- 20
+npcs <- 30
+
+asw_batch <- list()
+asw_group <- list()
+subset_prop <- 0.8 # subsample to 80% of the data
+subset_size_total <- floor(length(batch) * subset_prop)
+
+set.seed(1)
+for (i in 1:asw_repeat) {
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    slice_sample(n = subset_size_total, replace = F)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  asw_batch_i <- silhouette(as.integer(factor(batches[subset_id])), dist(joint[subset_id, 1:npcs]))
+  asw_batch[[i]] <- as.data.frame(rbind(summary(asw_batch_i)[["si.summary"]]))
+  
+  asw_group_i <- silhouette(as.integer(factor(groups[subset_id])), dist(joint[subset_id, 1:npcs]))
+  asw_group[[i]] <- as.data.frame(rbind(summary(asw_group_i)[["si.summary"]]))
+}
+
+all_asw_batch <- bind_rows(asw_batch) %>%
+  mutate(cluster = "Batch")
+
+# ASW_batch summary
+summary(all_asw_batch$Mean)
+
+all_asw_group <- bind_rows(asw_group) %>%
+  mutate(cluster = "Group")
+
+#ASW_group summary
+summary(all_asw_group$Mean)
+```
+
+### Calculate LISI Scores
+
+```{r jive_lisi}
+# Performed for all cells
+
+lisi <- compute_lisi(joint_final, data.frame(batch = batches, group = groups), c("batch", "group"), perplexity = 40) %>%
+  pivot_longer(cols = c("batch", "group"), names_to = "type", values_to = "lisi")
+
+# Looking for values close to the number of batches (2)
+# Looking for values close to 1
+
+ggplot(data = lisi) +
+  geom_violin(aes(x = lisi, y = type))
+```
+
+### Calculate Adjusted Rand Index
+
+Original batch label and cell types/groups will be compared against the Louvain clusters to compute $ARI_{batch}$ and $ARI_{group}$.
+
+* Compute adjusted rand index (ARI) for the first 30 PCs of 80% sub-sample of joint data
+  * ARI ranges between 0 and 1
+  * Values **close to 1** indicate the two partition labels are similar
+  * Values **close to 0** indicate the two partition labels are not similar
+    * We hope to see lower values for $ARI_{batch}$ since it is indicative of well-mixed batches
+    * We hope to see higher values for $ARI_{group}$ since it is indicative that distinct cell groups were preserved after batch-mixing
+* Repeat `20` times
+* Calculate the median ASW from the `20` runs to ensure stability of the measurement
+
+```{r jive_ari}
+ari_repeat <- 20
+npcs <- 30
+
+ari_batch <- list()
+ari_group <- list()
+subset_prop <- 0.8 # subsample to 80% of the data
+subset_size_total <- floor(length(batch) * subset_prop)
+
+set.seed(1)
+for (i in 1:ari_repeat) {
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    slice_sample(n = subset_size_total, replace = F)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  ari_batch[[i]] <- adjustedRandIndex(factor(batches[subset_id]), clusters[subset_id])
+  ari_group[[i]] <- adjustedRandIndex(factor(groups[subset_id]), clusters[subset_id])
+}
+
+all_ari_batch <- data.frame(ari = unlist(ari_batch)) %>%
+  mutate(cluster = "Batch")
+
+# Lower values indicate well-mixed batches
+summary(all_ari_batch$ari)
+
+all_ari_group <- data.frame(ari = unlist(ari_group)) %>%
+  mutate(cluster = "Group") 
+
+# Higher values indicate cell types were well preserved
+summary(all_ari_group$ari)
+```
+
+# Session Information
+
+```{r session_info}
+sessionInfo()
+```
