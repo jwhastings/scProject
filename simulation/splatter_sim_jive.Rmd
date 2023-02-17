@@ -85,6 +85,9 @@ toc()
 
 ```{r sim1_viz}
 sim1 <- logNormCounts(sim1)
+sim1 <- addPerCellQC(sim1)
+n.features <- colData(sim1)$detected
+colData(sim1)$PctZero <- 100 * (1 - n.features/nrow(sim1))
 
 # Dimension reduction visualization
 set.seed(1)
@@ -125,59 +128,31 @@ dim(b2)
 table(grp_b2)
 ```
 
-## Compare Batches
-
-```{r sim1_batches_comp}
-# Convert count matrices for batch 1 and 2 in to SCE objects for comparison via splatter
-b1_sce <- SingleCellExperiment(list(counts = b1))
-b2_sce <- SingleCellExperiment(list(counts = b2))
-
-comparison <- compareSCEs(
-  list(
-    Batch1 = b1_sce,
-    Batch2 = b2_sce
-    )
-  )
-
-plot_grid(plotlist = comparison$Plots[1:4])
-plot_grid(plotlist = comparison$Plots[5:8])
-```
-
 ## JIVE
 
 This time we transpose the matrices so that the common genes ($n$ = `r nGenes`) are the columns and the cells are the rows:
 
 ```{r jive1, eval = FALSE}
-#```{r jive1}
 sim1_data <- NULL
 sim1_data$Batch1 <- t(b1)
 sim1_data$Batch2 <- t(b2)
 
 set.seed(1)
 
-# Permutation
-tic("JIVE Analysis (Permutation)")
-JIVE_results_default <- jive(sim1_data, rankJ = 2, rankA = c(3, 3))
+# Given Ranks
+tic("JIVE Analysis (Given Ranks: 3, 3, 3)")
+JIVE_results_333 <- jive(sim1_data, rankJ = 3, rankA = c(3, 3), method = "given")
 toc()
-
-saveRDS(JIVE_results_default, file = "data/JIVE_results2_perm.rds")
-
-# BIC
-# tic("JIVE Analysis (BIC)")
-# JIVE_results_bic <- jive(sim1_data, method = "bic") # did not converge over multiple days
-# toc()
-# 
-# saveRDS(JIVE_results_bic, file = "data/JIVE_results2_bic.rds")
+# JIVE Analysis (Given Ranks): 4536.59 sec elapsed
+saveRDS(JIVE_results_333, file = "data/JIVE_results_given_3_3_3.rds")
 ```
 
 Summary of estimated ranks and variance explained by joint/individual/residual for each approach:
 
 ```{r jive1_summary}
-JIVE_results_default <- readRDS(file = "data/JIVE_results2_perm.rds")
-summary(JIVE_results_default)
-
-# JIVE_results_bic <- readRDS(file = "JIVE_results2_bic.rds")
-# summary(JIVE_results_bic)
+JIVE_results <- readRDS(file = "data/JIVE_results_given_3_3_3.rds")
+# JIVE_results <- readRDS(file = "data/JIVE_results2_perm.rds")
+summary(JIVE_results)
 ```
 
 ### Visualization using PCA
@@ -185,49 +160,53 @@ summary(JIVE_results_default)
 Visualize the principal components of the joint portion of the JIVE decomposition:
 
 ```{r jive1_viz}
-JIVE_results <- JIVE_results_default
-
-# showPCA(JIVE_results, 2)
-
 joint <- do.call(rbind, JIVE_results$joint)
-
-# PCA
-# joint_prcomp <- prcomp(joint, scale. = T)
-# joint_pc <- joint_prcomp[["x"]] %>%
-#   as.data.frame() %>%
-#   select(PC1, PC2) %>%
-#   mutate(
-#     Batch = batches,
-#     Group = c(grp_b1, grp_b2)
-#   )
-# 
-# pc1_var_expl <- round(summary(joint_prcomp)[["importance"]][2, 1] * 100, digits = 1)
-# pc2_var_expl <- round(summary(joint_prcomp)[["importance"]][2, 2] * 100, digits = 1)
+indiv <- do.call(rbind, JIVE_results$individual)
 
 # SVD
+# only the most variable genes?
+# ntop <- 2000
+# ncomp <- 30
+# var_genes_indices <- head(sort(colWeightedVars(joint), index.return = T)$ix, ntop)
+# joint_svd <- svd(joint[, var_genes_indices], nu = ncomp, nv = ncomp)
+
 joint_svd <- svd(joint)
 joint_pc <- joint_svd$u %>%
   as.data.frame() %>%
-  select(PC1 = V1, PC2 = V2) %>%
+  select(1:5) %>%
   mutate(
     Batch = batches,
     Group = c(grp_b1, grp_b2)
   )
 
+joint_zeros <- data.frame(
+  joint_pc1 = joint_pc[, 1],
+  pct_zero = colData(sim1)$PctZero,
+  batch = batches,
+  group = c(grp_b1, grp_b2)
+)
+
+joint_pc1_zeros <- ggplot(data = joint_zeros) +
+  geom_point(aes(x = joint_pc1, y = pct_zero, color = batch, shape = group)) +
+  labs(x = "Joint PC1", y = "Cell Zero %", title = "Joint PC1 vs. Cell Zero Percentage")
+
+joint_pc1_zeros
+
+# Remove first PC as it is associated with the cell zero percentage
+joint_final <- joint_svd$u[, -1]
+
 # https://genomicsclass.github.io/book/pages/pca_svd.html
-svd_var_expl <- joint_svd$d^2 / sum(joint_svd$d^2)
-pc1_var_expl <- round(svd_var_expl[1] * 100, digits = 1)
-pc2_var_expl <- round(svd_var_expl[2] * 100, digits = 1)
+svd_var_expl <- round(100 * (joint_svd$d^2 / sum(joint_svd$d^2)), digits = 1)
 
 # Plot
 p <- ggplot(data = joint_pc) +
   geom_point(
-    aes(x = PC1, y = PC2, color = Batch, shape = Group),
+    aes(x = V2, y = V3, color = Batch, shape = Group),
     alpha = 0.5, size = 2
   ) +
   labs(
-    x = paste0("PC1 (", pc1_var_expl, "%)"),
-    y = paste0("PC2 (", pc2_var_expl, "%)")
+    x = paste0("PC2 (", svd_var_expl[2], "%)"),
+    y = paste0("PC3 (", svd_var_expl[3], "%)")
     ) +
   theme(legend.position = "bottom") +
   labs(title = "Batch vs. Cell Group (Joint Data)")
@@ -250,28 +229,71 @@ colData(JIVE_joint_b2_SCE)$BatchNum <- "Batch2"
 JIVE_joint_SCE <- cbind(JIVE_joint_b1_SCE, JIVE_joint_b2_SCE)
 
 set.seed(1)
+# Original PCA based on joint matrices for each batch
 JIVE_joint_SCE <- runPCA(JIVE_joint_SCE, ncomponents = 30, ntop = 2000)
-# JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE)
-# JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE)
 
-clusters <- clusterCells(
+# t-SNE based on original PC
+JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE)
+
+# UMAP based on original PC
+JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE)
+
+dr1 <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA", color_by = "BatchNum", shape_by = "Group")
+dr2 <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE", color_by = "BatchNum", shape_by = "Group")
+dr3 <- plotReducedDim(JIVE_joint_SCE, dimred = "UMAP", color_by = "BatchNum", shape_by = "Group")
+
+plot_grid(dr1, dr2, dr3, align = "hv")
+
+###
+
+# First PC removed
+reducedDim(JIVE_joint_SCE, type = "PCA_alt") <- joint_final
+
+# t-SNE based on modified PCA
+JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE, dimred = "PCA_alt", name = "TSNE_alt")
+
+# UMAP based on modified PCA
+JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE, dimred = "PCA_alt", name = "UMAP_alt")
+
+dr1_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA_alt", color_by = "BatchNum", shape_by = "Group")
+dr2_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE_alt", color_by = "BatchNum", shape_by = "Group")
+dr3_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "UMAP_alt", color_by = "BatchNum", shape_by = "Group")
+
+plot_grid(dr1_alt, dr2_alt, dr3_alt, align = "hv")
+
+###
+
+# Clusters
+PCA_alt_Cluster <- clusterCells(
   JIVE_joint_SCE,
-  use.dimred = "PCA",
+  use.dimred = "PCA_alt",
   BLUSPARAM = bluster::SNNGraphParam(
     cluster.fun = "louvain", 
     cluster.args = list(resolution = 0.5)
     )
   )
 
-colData(JIVE_joint_SCE)$Cluster <- clusters
+colData(JIVE_joint_SCE)$PCA_alt_Cluster <- PCA_alt_Cluster
+
+######################
+# PCA visualizations #
+######################
 
 # By Batch/Group
-jive_p1 <- plotPCA(JIVE_joint_SCE, color_by = "BatchNum", shape_by = "Group")
+jive_p1 <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA_alt", color_by = "BatchNum", shape_by = "Group")
+# jive_p1 <- plotPCA(JIVE_joint_SCE, color_by = "BatchNum", shape_by = "Group")
 jive_p1 + labs(title = "Batch vs. Cell Group (Joint Data)")
 
 # By Cluster/Group
-jive_p2 <- plotPCA(JIVE_joint_SCE, color_by = "Cluster", shape_by = "Group")
+jive_p2 <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA_alt", color_by = "Cluster", shape_by = "Group")
+# jive_p2 <- plotPCA(JIVE_joint_SCE, color_by = "Cluster", shape_by = "Group")
 jive_p2 + labs(title = "Cluster vs. Cell Group (Joint Data)")
+
+########################
+# t-SNE visualizations #
+########################
+jive_p3 <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE_alt", color_by = "BatchNum", shape_by = "Group")
+
 ```
 
 ### Calculate kBET
@@ -286,7 +308,7 @@ jive_p2 + labs(title = "Cluster vs. Cell Group (Joint Data)")
   
 ```{r jive_kbet}
 # data: a matrix (rows: samples, columns: features (genes))
-data <- joint
+data <- joint_final
 
 # batch: vector or factor with batch label of each cell 
 batch <- batches
@@ -310,7 +332,7 @@ for (i in sample_size) {
   subset_id <- subset_index %>%
     pull(index)
   
-  batch.estimate <- kBET(data[subset_id,], batch[subset_id], plot = F)
+  batch.estimate <- kBET(data[subset_id, ], batch[subset_id], plot = F)
   
   rejection_rate[[which(sample_size == i)]] <- batch.estimate$summary %>%
     rownames_to_column(var = "statistic") %>%
@@ -389,15 +411,14 @@ summary(all_asw_group$Mean)
 ```{r jive_lisi}
 # Performed for all cells
 
-batch_lisi <- compute_lisi(joint, data.frame(batch = batches), label_colnames = "batch")
+lisi <- compute_lisi(joint_final, data.frame(batch = batches, group = groups), c("batch", "group"), perplexity = 40) %>%
+  pivot_longer(cols = c("batch", "group"), names_to = "type", values_to = "lisi")
 
 # Looking for values close to the number of batches (2)
-summary(batch_lisi)
-
-group_lisi <- compute_lisi(joint, data.frame(group = groups), label_colnames = "group")
-
 # Looking for values close to 1
-summary(group_lisi)
+
+ggplot(data = lisi) +
+  geom_violin(aes(x = lisi, y = type))
 ```
 
 ### Calculate Adjusted Rand Index
