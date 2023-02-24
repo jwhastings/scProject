@@ -9,6 +9,8 @@ title: "scProject"
 * Batch Effect Removal
   * JIVE
     * [Dataset 1](batch_effect_removal\JIVE\JIVE_dataset1.html)
+  * Seurat
+    * [Dataset 1](batch_effect_removal\Seurat\Seurat_dataset1.html)
 
 * Simulation
   * [scRNA-seq Comparison](simulation/scRNAseq_simulation_comparison.html)
