@@ -51,12 +51,19 @@ theme_set(theme_few())
 data("Lawlor_Islet_scRNAseq_Read_Counts")
 data("Lawlor_Islet_scRNAseq_Annotations")
 
-counts <- Lawlor_Islet_scRNAseq_Read_Counts
 anns <- Lawlor_Islet_scRNAseq_Annotations
+anns_subset <- anns[which(anns$Cell_Type != "none"), ]
 
-data_SCE <- SingleCellExperiment(list(counts = counts))
-colData(data_SCE)$Batch <- anns$Batch
-colData(data_SCE)$Cell_Type <- anns$Cell_Type
+counts <- Lawlor_Islet_scRNAseq_Read_Counts
+counts_subset <- counts[, which(anns$Cell_Type != "none")]
+
+row_variance <- rowVars(counts_subset)
+top_5k_genevar <- tail(sort(rowVars(counts_subset), index.return = T)$ix, 15000)
+counts_subset <- counts_subset[top_5k_genevar, ]
+
+data_SCE <- SingleCellExperiment(list(counts = counts_subset))
+colData(data_SCE)$Batch <- anns_subset$Batch
+colData(data_SCE)$Cell_Type <- anns_subset$Cell_Type
 ```
 
 ```{r sim1_viz}
@@ -131,15 +138,17 @@ set.seed(1)
 tic("JIVE Analysis (Given Ranks)")
 JIVE_results <- jive(dataset2_data, rankJ = 3, rankA = c(3, 3, 3), method = "given")
 toc()
-# JIVE Analysis (Permutation Test): 37931.98 sec elapsed
+# JIVE Analysis (Permutation Test): 60470.49 sec elapsed (almost 17 hrs)
 saveRDS(JIVE_results, file = "data/JIVE_dataset2_given_3_3_3_3.rds")
 ```
 
 Summary of estimated ranks and variance explained by joint/individual/residual for each approach:
 
 ```{r jive1_summary}
-JIVE_results <- readRDS(file = "data/JIVE_dataset2_perm.rds")
+# JIVE_results <- readRDS(file = "data/JIVE_dataset2_perm.rds")
+JIVE_results <- readRDS(file = "data/JIVE_v2_dataset2.rds")
 summary(JIVE_results)
+plot(JIVE_results)
 ```
 
 ### Visualization using PCA
@@ -182,7 +191,7 @@ joint_pc1_zeros
 
 ```{r jive1_viz2}
 # Remove first PC as it is associated with the cell zero percentage
-joint_final <- joint_svd$u#[, -1]
+joint_final <- joint_svd$u
 
 # https://genomicsclass.github.io/book/pages/pca_svd.html
 svd_var_expl <- round(100 * (joint_svd$d^2 / sum(joint_svd$d^2)), digits = 1)
@@ -190,12 +199,12 @@ svd_var_expl <- round(100 * (joint_svd$d^2 / sum(joint_svd$d^2)), digits = 1)
 # Plot
 p <- ggplot(data = joint_pc) +
   geom_point(
-    aes(x = V2, y = V3, color = Batch),
+    aes(x = V1, y = V2, color = Batch),
     alpha = 0.5, size = 2
   ) +
   labs(
-    x = paste0("PC2 (", svd_var_expl[2], "%)"),
-    y = paste0("PC3 (", svd_var_expl[3], "%)")
+    x = paste0("PC1 (", svd_var_expl[1], "%)"),
+    y = paste0("PC2 (", svd_var_expl[2], "%)")
     ) +
   theme(legend.position = "bottom") +
   labs(title = "Batch vs. Cell Group (Joint Data)")
@@ -215,7 +224,11 @@ JIVE_joint_b2_SCE <- SingleCellExperiment(list(logcounts = t(JIVE_results[["join
 colData(JIVE_joint_b2_SCE)$Group <- grp_b2
 colData(JIVE_joint_b2_SCE)$BatchNum <- "Batch2"
 
-JIVE_joint_SCE <- cbind(JIVE_joint_b1_SCE, JIVE_joint_b2_SCE)
+JIVE_joint_b3_SCE <- SingleCellExperiment(list(logcounts = t(JIVE_results[["joint"]][[3]])))
+colData(JIVE_joint_b3_SCE)$Group <- grp_b3
+colData(JIVE_joint_b3_SCE)$BatchNum <- "Batch3"
+
+JIVE_joint_SCE <- cbind(JIVE_joint_b1_SCE, JIVE_joint_b2_SCE, JIVE_joint_b3_SCE)
 
 set.seed(1)
 # Original PCA based on joint matrices for each batch
@@ -227,9 +240,9 @@ JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE)
 # UMAP based on original PC
 JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE)
 
-dr1 <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA", color_by = "BatchNum", shape_by = "Group")
-dr2 <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE", color_by = "BatchNum", shape_by = "Group")
-dr3 <- plotReducedDim(JIVE_joint_SCE, dimred = "UMAP", color_by = "BatchNum", shape_by = "Group")
+dr1 <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA", color_by = "BatchNum")
+dr2 <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE", color_by = "BatchNum")
+dr3 <- plotReducedDim(JIVE_joint_SCE, dimred = "UMAP", color_by = "BatchNum")
 
 # first align the top-row plot (dr1) with the left-most plot of the
 # bottom row (dr2)
@@ -239,42 +252,6 @@ bottom_row <- plot_grid(plots[[2]], dr3, labels = c('B', 'C'), label_size = 12)
 
 # then combine with the top row for final plot
 plot_grid(plots[[1]], bottom_row, labels = c('A', ''), label_size = 12, ncol = 1)
-
-###
-
-# First PC removed
-reducedDim(JIVE_joint_SCE, type = "PCA_alt") <- joint_final
-
-# t-SNE based on modified PCA
-JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE, dimred = "PCA_alt", name = "TSNE_alt")
-
-# UMAP based on modified PCA
-JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE, dimred = "PCA_alt", name = "UMAP_alt")
-
-dr1_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA_alt", color_by = "BatchNum", shape_by = "Group")
-dr2_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE_alt", color_by = "BatchNum", shape_by = "Group")
-dr3_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "UMAP_alt", color_by = "BatchNum", shape_by = "Group")
-
-plots <- align_plots(dr1_alt, dr2_alt, align = 'v', axis = 'l')
-# then build the bottom row
-bottom_row <- plot_grid(plots[[2]], dr3_alt, labels = c('E', 'F'), label_size = 12)
-
-# then combine with the top row for final plot
-plot_grid(plots[[1]], bottom_row, labels = c('D', ''), label_size = 12, ncol = 1)
-
-###
-
-# Clusters
-clusters <- clusterCells(
-  JIVE_joint_SCE,
-  use.dimred = "PCA_alt",
-  BLUSPARAM = bluster::SNNGraphParam(
-    cluster.fun = "louvain", 
-    cluster.args = list(resolution = 0.5)
-    )
-  )
-
-colData(JIVE_joint_SCE)$Cluster <- clusters
 ```
 
 ### Calculate kBET
@@ -315,10 +292,12 @@ for (i in sample_size) {
   
   batch.estimate <- kBET(data[subset_id, ], batch[subset_id], plot = F)
   
-  rejection_rate[[which(sample_size == i)]] <- batch.estimate$summary %>%
-    rownames_to_column(var = "statistic") %>%
-    mutate(sample_size = i, n_batch = subset_size_per_batch) %>%
-    select(sample_size, n_batch, statistic, kBET_rr = kBET.observed)
+  if (class(batch.estimate) == "list") {
+    rejection_rate[[which(sample_size == i)]] <- batch.estimate$summary %>%
+      rownames_to_column(var = "statistic") %>%
+      mutate(sample_size = i, n_batch = subset_size_per_batch) %>%
+      select(sample_size, n_batch, statistic, kBET_rr = kBET.observed)
+  }
 }
 
 all_rr <- bind_rows(rejection_rate) %>%
@@ -367,10 +346,10 @@ for (i in 1:asw_repeat) {
   subset_id <- subset_index %>%
     pull(index)
   
-  asw_batch_i <- silhouette(as.integer(factor(batches[subset_id])), dist(joint[subset_id, 1:npcs]))
+  asw_batch_i <- silhouette(as.integer(factor(batches[subset_id])), dist(data[subset_id, 1:npcs]))
   asw_batch[[i]] <- as.data.frame(rbind(summary(asw_batch_i)[["si.summary"]]))
   
-  asw_group_i <- silhouette(as.integer(factor(groups[subset_id])), dist(joint[subset_id, 1:npcs]))
+  asw_group_i <- silhouette(as.integer(factor(groups[subset_id])), dist(data[subset_id, 1:npcs]))
   asw_group[[i]] <- as.data.frame(rbind(summary(asw_group_i)[["si.summary"]]))
 }
 

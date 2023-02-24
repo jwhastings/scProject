@@ -1,5 +1,5 @@
 ---
-title: "JIVE Integration (Dataset 1)"
+title: "Seurat Integration (Dataset 1)"
 author: "Joey Hastings"
 date: "`r Sys.Date()`"
 output:
@@ -102,10 +102,6 @@ orig_p3 <- plotUMAP(sim1, color_by = "Batch", shape_by = "Group")
 orig_p1
 orig_p2
 orig_p3
-
-# orig_marg <- ggMarginal(orig_p1, type = "density", groupColour = TRUE, groupFill = TRUE)
-
-# orig_marg 
 ```
 
 ## Separate Batches
@@ -137,216 +133,91 @@ dim(b2)
 table(grp_b2)
 ```
 
-## JIVE
+## Seurat
 
-This time we transpose the matrices so that the common genes ($n$ = `r nGenes`) are the columns and the cells are the rows:
+Perform cell batch integration as in their tutorial.
 
-```{r jive1, eval = FALSE}
-sim1_data <- NULL
-sim1_data$Batch1 <- t(b1)
-sim1_data$Batch2 <- t(b2)
+### Setup
 
+* Create Seurat objects for each batch
+  * Assign metadata to each object (batch number, cell type)
+* Normalize the cell counts
+* Identify most variable features (genes) 
+* Choose most variable features from both batches for use in integration
+
+```{r seurat_setup}
+b1_seurat <- CreateSeuratObject(counts = b1, project = "simulation")
+b1_seurat <- AddMetaData(b1_seurat, "Batch1", col.name = "BatchNum")
+b1_seurat <- AddMetaData(b1_seurat, grp_b1, col.name = "Group")
+
+b2_seurat <- CreateSeuratObject(counts = b2, project = "simulation")
+b2_seurat <- AddMetaData(b2_seurat, "Batch2", col.name = "BatchNum")
+b2_seurat <- AddMetaData(b2_seurat, grp_b2, col.name = "Group")
+
+seurat_list <- list(Batch1 = b1_seurat, Batch2 = b2_seurat)
+
+# normalize and identify variable features for each dataset independently
+seurat_list <- lapply(X = seurat_list, FUN = function(x) {
+    x <- NormalizeData(x)
+    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+})
+
+# select features that are repeatedly variable across datasets for integration
+features <- SelectIntegrationFeatures(object.list = seurat_list)
+```
+
+### Integration
+
+* Perform integration by finding a set of anchors from the two batches (via CCA)
+* Use the anchor list to integrate the two batches
+
+```{r seurat_integration}
+anchors <- FindIntegrationAnchors(object.list = seurat_list, anchor.features = features)
+combined <- IntegrateData(anchorset = anchors)
+GetAssay(combined, "integrated")
+```
+
+### Integrated Analysis
+
+* Integrated/combined data is centered/scaled
+* First 30 PCs are computed/stored
+* PC1-PC30 are used to perform t-SNE and UMAP dimensionality reduction
+* Calculates k-nearest neighbors (`k = 20` by default) from PC1-PC30
+* Identify clusters by using Shared Nearest Neighbors (SNN):
+  * "First calculate k-nearest neighbors and construct the SNN graph"
+  * "Then optimize the modularity function to determine clusters"
+
+```{r seurat_integrated_analysis}
+# specify that we will perform downstream analysis on the corrected data note that the
+# original unmodified data still resides in the 'RNA' assay
+DefaultAssay(combined) <- "integrated"
+
+# Run the standard workflow for visualization and clustering
 set.seed(1)
-
-# Given Ranks
-tic("JIVE Analysis (Given Ranks: 5, 7, 7)")
-JIVE_results_577 <- jive(
-  sim1_data,
-  rankJ = 5,
-  rankA = c(7, 7),
-  method = "given",
-  maxiter = 3000
-)
-toc()
-# JIVE Analysis (Given Ranks: 5, 7, 7): 18650.76 sec elapsed
-saveRDS(JIVE_results_577, file = "data/JIVE_dataset1_given_5_7_7.rds")
+combined <- ScaleData(combined, verbose = FALSE)
+combined <- RunPCA(combined, npcs = 30, verbose = FALSE)
+combined <- RunTSNE(combined, reduction = "pca", dims = 1:30)
+combined <- RunUMAP(combined, reduction = "pca", dims = 1:30)
+combined <- FindNeighbors(combined, reduction = "pca", dims = 1:30)
+combined <- FindClusters(combined, resolution = 0.5)
 ```
 
-Summary of estimated ranks and variance explained by joint/individual/residual for each approach:
+Visualize integrated batches and clusters using UMAP:
 
-```{r jive1_summary}
-# JIVE_results <- readRDS(file = "data/JIVE_dataset1_given_5_7_7.rds")
-# JIVE_results <- readRDS(file = "data/JIVE_dataset1_speedup.rds")
-JIVE_results <- readRDS(file = "data/JIVE_v2_dataset1.rds")
-summary(JIVE_results)
-plot(JIVE_results)
+```{r seurat_integrated_viz}
+# Visualization
+seurat_p1 <- DimPlot(combined, reduction = "pca", group.by = "BatchNum", shape.by = "Group")
+seurat_p2 <- DimPlot(combined, reduction = "umap", group.by = "seurat_clusters", shape.by = "Group", pt.size = 1.5)
+plot_grid(seurat_p1, seurat_p2, nrow = 2)
+
+# Frequency of true cell types/groups vs. identified clusters
+table(combined@meta.data[, c("Group", "seurat_clusters")])
 ```
 
-### Visualization using PCA
-
-Visualize the principal components of the joint portion of the JIVE decomposition:
-
-```{r jive1_viz1}
-joint <- do.call(rbind, JIVE_results$joint)
-indiv <- do.call(rbind, JIVE_results$individual)
-
-# SVD
-# only the most variable genes?
-# ntop <- 2000
-# ncomp <- 30
-# var_genes_indices <- tail(sort(colWeightedVars(joint), index.return = T)$ix, ntop)
-# joint_svd <- svd(joint[, var_genes_indices], nu = ncomp, nv = ncomp)
-
-joint_svd <- svd(joint)
-joint_pc <- joint_svd$u %>%
-  as.data.frame() %>%
-  select(1:5) %>%
-  mutate(
-    Batch = batches,
-    Group = c(grp_b1, grp_b2)
-  )
-
-joint_zeros <- data.frame(
-  joint_pc1 = joint_pc[, 1],
-  pct_zero = colData(sim1)$PctZero,
-  batch = batches,
-  group = c(grp_b1, grp_b2)
-)
-
-joint_pc1_zeros <- ggplot(data = joint_zeros) +
-  geom_point(aes(x = joint_pc1, y = pct_zero, color = batch, shape = group)) +
-  labs(x = "Joint PC1", y = "Cell Zero %", title = "Joint PC1 vs. Cell Zero Percentage")
-
-joint_pc1_zeros
+```{r}
+seurat_final <- t(as.matrix(GetAssay(combined, "integrated")@data))
 ```
 
-```{r jive1_viz2}
-joint_final <- joint
-
-# https://genomicsclass.github.io/book/pages/pca_svd.html
-svd_var_expl <- round(100 * (joint_svd$d^2 / sum(joint_svd$d^2)), digits = 1)
-
-# Plot
-p <- ggplot(data = joint_pc) +
-  geom_point(
-    aes(x = V1, y = V2, color = Batch, shape = Group),
-    alpha = 0.5, size = 2
-  ) +
-  labs(
-    x = paste0("PC1 (", svd_var_expl[1], "%)"),
-    y = paste0("PC2 (", svd_var_expl[2], "%)")
-    ) +
-  theme(legend.position = "bottom") +
-  labs(title = "Batch vs. Cell Group (Joint Data)")
-
-marg_p <- ggMarginal(p, type = "density", groupColour = TRUE, groupFill = TRUE)
-marg_p 
-```
-
-### Visualization using `SCE`
-
-```{r jive1_viz3}
-JIVE_joint_b1_SCE <- SingleCellExperiment(list(logcounts = t(JIVE_results[["joint"]][[1]])))
-colData(JIVE_joint_b1_SCE)$Group <- grp_b1
-colData(JIVE_joint_b1_SCE)$BatchNum <- "Batch1"
-
-JIVE_joint_b2_SCE <- SingleCellExperiment(list(logcounts = t(JIVE_results[["joint"]][[2]])))
-colData(JIVE_joint_b2_SCE)$Group <- grp_b2
-colData(JIVE_joint_b2_SCE)$BatchNum <- "Batch2"
-
-JIVE_joint_SCE <- cbind(JIVE_joint_b1_SCE, JIVE_joint_b2_SCE)
-
-set.seed(1)
-# Original PCA based on joint matrices for each batch
-JIVE_joint_SCE <- runPCA(JIVE_joint_SCE, ncomponents = 30, ntop = 2000)
-
-# t-SNE based on original PC
-JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE)
-
-# UMAP based on original PC
-JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE)
-
-dr1 <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA", color_by = "BatchNum", shape_by = "Group")
-dr2 <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE", color_by = "BatchNum", shape_by = "Group")
-dr3 <- plotReducedDim(JIVE_joint_SCE, dimred = "UMAP", color_by = "BatchNum", shape_by = "Group")
-
-# first align the top-row plot (dr1) with the left-most plot of the
-# bottom row (dr2)
-plots <- align_plots(dr1, dr2, align = 'v', axis = 'l')
-# then build the bottom row
-bottom_row <- plot_grid(plots[[2]], dr3, labels = c('B', 'C'), label_size = 12)
-
-# then combine with the top row for final plot
-dr_all <- plot_grid(plots[[1]], bottom_row, labels = c('A', ''), label_size = 12, ncol = 1)
-dr_all
-
-###
-
-# # First PC removed
-# reducedDim(JIVE_joint_SCE, type = "PCA_alt") <- joint_final
-# 
-# # t-SNE based on modified PCA
-# JIVE_joint_SCE <- runTSNE(JIVE_joint_SCE, dimred = "PCA_alt", name = "TSNE_alt")
-# 
-# # UMAP based on modified PCA
-# JIVE_joint_SCE <- runUMAP(JIVE_joint_SCE, dimred = "PCA_alt", name = "UMAP_alt")
-# 
-# dr1_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "PCA_alt", color_by = "BatchNum", shape_by = "Group")
-# dr2_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "TSNE_alt", color_by = "BatchNum", shape_by = "Group")
-# dr3_alt <- plotReducedDim(JIVE_joint_SCE, dimred = "UMAP_alt", color_by = "BatchNum", shape_by = "Group")
-# 
-# plots <- align_plots(dr1_alt, dr2_alt, align = 'v', axis = 'l')
-# # then build the bottom row
-# bottom_row <- plot_grid(plots[[2]], dr3_alt, labels = c('E', 'F'), label_size = 12)
-# 
-# # then combine with the top row for final plot
-# dr_alt_all <- plot_grid(plots[[1]], bottom_row, labels = c('D', ''), label_size = 12, ncol = 1)
-# dr_alt_all
-```
-
-
-```{r jive1_clust1, eval = FALSE, echo = FALSE}
-##############
-# Clustering #
-##############
-
-clusters_PCA <- clusterCells(
-  JIVE_joint_SCE,
-  use.dimred = "PCA",
-  BLUSPARAM = bluster::SNNGraphParam(
-    cluster.fun = "louvain",
-    cluster.args = list(resolution = 0.5)
-    )
-  )
-summary(clusters_PCA)
-
-###
-
-clusters_TSNE <- clusterCells(
-  JIVE_joint_SCE,
-  use.dimred = "TSNE",
-  BLUSPARAM = bluster::SNNGraphParam(
-    cluster.fun = "louvain", 
-    cluster.args = list(resolution = 0.5)
-    )
-  )
-summary(clusters_TSNE)
-
-###
-
-clusters_UMAP <- clusterCells(
-  JIVE_joint_SCE,
-  use.dimred = "UMAP",
-  BLUSPARAM = bluster::SNNGraphParam(
-    cluster.fun = "louvain", 
-    cluster.args = list(resolution = 0.5)
-    )
-  )
-summary(clusters_UMAP)
-
-###
-
-colData(JIVE_joint_SCE)$Cluster_PCA <- clusters_PCA
-colData(JIVE_joint_SCE)$Cluster_TSNE <- clusters_TSNE
-colData(JIVE_joint_SCE)$Cluster_UMAP <- clusters_UMAP
-
-# Choose clusters
-clusters <- colData(JIVE_joint_SCE)$Cluster_PCA
-
-plotReducedDim(JIVE_joint_SCE, dimred = "PCA", color_by = "Cluster_PCA", shape_by = "Group")
-plotReducedDim(JIVE_joint_SCE, dimred = "TSNE", color_by = "Cluster_TSNE", shape_by = "Group")
-plotReducedDim(JIVE_joint_SCE, dimred = "UMAP", color_by = "Cluster_UMAP", shape_by = "Group")
-```
 
 ### Calculate kBET
 
@@ -360,10 +231,10 @@ plotReducedDim(JIVE_joint_SCE, dimred = "UMAP", color_by = "Cluster_UMAP", shape
   
 ```{r kbet1}
 # data: a matrix (rows: samples, columns: features (genes))
-data <- svds(joint_final, k = 30)$u
+data <- combined@reductions$pca@cell.embeddings
 
 # batch: vector or factor with batch label of each cell 
-batch <- batches
+batch <- combined@meta.data$BatchNum
 
 sample_size <- seq(0.05, 0.25, 0.05)
 rejection_rate <- list()
@@ -399,18 +270,16 @@ p_kBET_all <- all_rr %>%
 
 all_rr %>%
   select(group, sample_size, median_rr = `50%`) %>%
-  mutate(method = "JIVE") %>%
-  write_csv(file = "output/JIVE_dataset1_kBET_all.csv")
+  mutate(method = "Seurat") %>%
+  write_csv(file = "output/Seurat_dataset1_kBET_all.csv")
 ```
-
-Try for one cell type at a time:
 
 ```{r kbet2}
 # data: a matrix (rows: samples, columns: features (genes))
-data <- svds(joint_final, k = 30)$u
+data <- combined@reductions$pca@cell.embeddings
 
 # batch: vector or factor with batch label of each cell 
-batch <- batches
+batch <- combined@meta.data$BatchNum
 
 sample_size <- seq(0.05, 0.25, 0.05)
 group_rejection_rate <- list()
@@ -449,8 +318,8 @@ p_kBET_group <- group_rr %>%
 
 group_rr %>%
   select(group, sample_size, median_rr = `50%`) %>%
-  mutate(method = "JIVE") %>%
-  write_csv(file = "output/JIVE_dataset1_kBET_bygroup.csv")
+  mutate(method = "Seurat") %>%
+  write_csv(file = "output/Seurat_dataset1_kBET_bygroup.csv")
 ```
 
 ```{r kbet_both}
@@ -468,7 +337,7 @@ bind_rows(
     y = "kBET (rejection rate)",
     color = "Cell Group",
     title = "kBET Rejection Rates",
-    subtitle = "JIVE"
+    subtitle = "Seurat"
   ) +
   #theme(legend.position = "bottom") +
   facet_grid(~ type)
@@ -487,7 +356,7 @@ bind_rows(
     y = "kBET (acceptance rate)",
     color = "Cell Group",
     title = "kBET Acceptance Rates",
-    subtitle = "JIVE"
+    subtitle = "Seurat"
   ) +
   #theme(legend.position = "bottom") +
   facet_grid(~ type)
@@ -524,7 +393,7 @@ for (i in 1:asw_repeat) {
   subset_id <- subset_index %>%
     pull(index)
   
-  data_pc <- svds(joint_final[subset_id, ], k = npcs)$u
+  data_pc <- svds(seurat_final[subset_id, ], k = npcs)$u
   
   dissimilarity_matrix <- daisy(data_pc)
   
@@ -558,8 +427,8 @@ asw_plot
 all_asw %>%
   group_by(cluster) %>%
   summarize(median_asw = median(Mean)) %>%
-  mutate(Method = "JIVE") %>%
-  write_csv(file = "output/JIVE_dataset1_ASW.csv")
+  mutate(Method = "Seurat") %>%
+  write_csv(file = "output/Seurat_dataset1_ASW.csv")
 ```
 
 <!-- ### Calculate LISI Scores -->
