@@ -138,7 +138,7 @@ set.seed(1)
 tic("JIVE Analysis (Given Ranks)")
 JIVE_results <- jive(dataset2_data, rankJ = 3, rankA = c(3, 3, 3), method = "given")
 toc()
-# JIVE Analysis (Permutation Test): 60470.49 sec elapsed (almost 17 hrs)
+# JIVE v2 runtime: 21725.232 sec elapsed
 saveRDS(JIVE_results, file = "data/JIVE_dataset2_given_3_3_3_3.rds")
 ```
 
