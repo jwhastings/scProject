@@ -2,6 +2,7 @@ suppressMessages({
   library(iasvaExamples)
   library(SingleCellExperiment)
   library(splatter)
+  library(scuttle)
   source("jive_speedup.R")
 })
 
@@ -39,18 +40,24 @@ data_SCE <- splatSimulate(
 toc()
 
 ###
-
+data_SCE <- logNormCounts(data_SCE)
 
 batches <- data_SCE$Batch
 # Frequency of batches in simulation
 table(batches)
 
-groups <- data_SCE$Cell_Type
+groups <- data_SCE$Group
 # Frequency of cell types in simulation
 table(groups)
 
-rawcounts <- counts(data_SCE)
-dim(rawcounts)
+#######################
+# Choose count matrix #
+#######################
+
+# counts <- counts(data_SCE)
+counts <- logcounts(data_SCE)
+
+dim(counts)
 
 ### Batches
 n_batches <- length(unique(data_SCE$Batch))
@@ -60,7 +67,7 @@ jive_data <- NULL
 all_groups <- NULL
 
 for (i in 1:n_batches) {
-  jive_data[[paste0("Batch", i)]] <- t(rawcounts[, batches == unq_batches[i]])
+  jive_data[[paste0("Batch", i)]] <- t(counts[, batches == unq_batches[i]])
   all_groups[[paste0("Batch", i)]] <- groups[batches == unq_batches[i]]
 }
 
@@ -71,4 +78,15 @@ JIVE_results <- jive_v2(jive_data, rankJ = 10, rankA = rep(15, length(jive_data)
 # JIVE v2 runtime: 26587.25 sec elapsed
 toc()
 
-saveRDS(JIVE_results, file = "data/JIVE_v2_dataset1.rds")
+summary(JIVE_results)
+saveRDS(JIVE_results, file = "data/JIVE_v2_dataset1_j10_a15.rds")
+
+###
+
+tic("JIVE v2 runtime")
+JIVE_results <- jive_v2(jive_data, rankJ = 5, rankA = rep(20, length(jive_data)), method = "given", maxiter = 5000)
+# JIVE v2 runtime: 2918.72 sec elapsed
+toc()
+
+summary(JIVE_results)
+saveRDS(JIVE_results, file = "data/JIVE_v2_dataset1_j5_a20.rds")
