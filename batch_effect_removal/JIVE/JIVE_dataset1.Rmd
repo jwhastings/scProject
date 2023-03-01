@@ -34,11 +34,14 @@ library(Seurat)
 library(factoextra)
 library(SLIDE)
 library(RSpectra)
+library(lme4)
 
 library(kBET) # kBET
 library(cluster) # ASW
 library(lisi) # LISI
 library(mclust) # ARI
+
+source("PVCA.R")
 
 theme_set(theme_few())
 ```
@@ -135,6 +138,27 @@ grp_b2 <- groups[batches == "Batch2"]
 dim(b2)
 # Frequency of cell types in batch 2
 table(grp_b2)
+```
+
+## PVCA
+
+```{r sim1_pvca}
+# Perform PVCA for 10 random samples of size 1000 (more computationally efficient)
+pvca.res <- matrix(nrow = 10, ncol = 3)
+meta <- cbind(batch = batches, group = groups)
+
+for (i in 1:10){
+  sample <- sample(1:ncol(rawcounts), 1000, replace = FALSE)
+  pvca.res[i, ] <- PVCA(rawcounts[, sample], meta[sample, ], threshold = 0.6, inter = FALSE)
+}
+
+# Average effect size across samples
+pvca.means <- colMeans(pvca.res)
+names(pvca.means) <- c(colnames(meta), "resid")
+
+# Plot PVCA
+pvca.plot <- PlotPVCA(pvca.means, "PVCA of Phenotype Matrix Data")
+pvca.plot
 ```
 
 ## JIVE
