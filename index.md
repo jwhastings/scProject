@@ -13,6 +13,8 @@ title: "scProject"
     * [Dataset 3](batch_effect_removal/JIVE/JIVE_dataset3.html)
   * Seurat
     * [Dataset 1](batch_effect_removal\Seurat\Seurat_dataset1.html)
+    * Dataset 2
+    * [Dataset 3](batch_effect_removal\Seurat\Seurat_dataset3.html)
 
 * Real Data
   * [`scRNAseq` Package Data](real_data/scRNAseq_data.html)
