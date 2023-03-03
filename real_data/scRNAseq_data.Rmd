@@ -1,0 +1,351 @@
+---
+title: "`scRNAseq` Datasets"
+author: "Joey Hastings"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::html_clean:
+    highlight: kate
+    thumbnails: FALSE
+    toc_depth: 2
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  fig.dim = c(9, 6)
+  )
+```
+
+# Load Packages
+
+```{r load_packages, message = FALSE}
+library(tidyverse)
+library(cowplot)
+library(ggthemes)
+
+library(splatter)
+library(scater)
+library(scran)
+library(scRNAseq)
+
+theme_set(theme_few())
+```
+
+```{r, message = FALSE}
+all_metadata <- read_csv("scRNA_coldata.csv")
+```
+
+```{r}
+batch <- all_metadata[!is.na(str_extract(all_metadata$vars, regex("batch", ignore_case = T))), ]
+tech <- all_metadata[!is.na(str_extract(all_metadata$vars, regex("tech", ignore_case = T))), ]
+
+bind_rows(batch, tech) %>% distinct(data)
+```
+
+# Aztekin Tail Data
+
+```{r, message = FALSE}
+AztekinTailData <- AztekinTailData()
+AztekinTailData
+table(Batch = colData(AztekinTailData)$batch)
+table(Cluster = colData(AztekinTailData)$cluster)
+```
+
+```{r}
+AztekinTailData <- logNormCounts(AztekinTailData)
+
+# Subset to top 10% HVG
+chosen_features <-
+  getTopHVGs(modelGeneVar(AztekinTailData, AztekinTailData$batch),
+             n = ceiling(nrow(AztekinTailData) / 10))
+AztekinTailData <- AztekinTailData[chosen_features, ]
+
+# Subset to two smallest batches
+AztekinTailData <- AztekinTailData[, colData(AztekinTailData)$batch %in% c(1, 3)]
+
+# Create default named factors for batches and cell clusters
+colData(AztekinTailData)$Batch <- factor(colData(AztekinTailData)$batch)
+colData(AztekinTailData)$Cluster <- factor(colData(AztekinTailData)$cluster)
+
+AztekinTailData <- runPCA(AztekinTailData)
+plotPCA(AztekinTailData, color_by = "Batch")
+plotPCA(AztekinTailData, color_by = "Cluster", add_legend = F)
+
+AztekinTailData <- runTSNE(AztekinTailData)
+plotTSNE(AztekinTailData, color_by = "Batch")
+plotTSNE(AztekinTailData, color_by = "Cluster", add_legend = F)
+
+AztekinTailData <- runUMAP(AztekinTailData)
+plotUMAP(AztekinTailData, color_by = "Batch")
+plotUMAP(AztekinTailData, color_by = "Cluster", add_legend = F)
+```
+
+# Bacher T-Cell Data
+
+```{r, message = FALSE}
+BacherTCellData <- BacherTCellData()
+BacherTCellData
+table(Batch = colData(BacherTCellData)$batch)
+table(Cluster = colData(BacherTCellData)$new_cluster_names)
+```
+
+```{r}
+BacherTCellData <- logNormCounts(BacherTCellData)
+
+# Subset to top 10% HVG
+chosen_features <-
+  getTopHVGs(modelGeneVar(BacherTCellData, BacherTCellData$batch),
+             n = ceiling(nrow(BacherTCellData) / 10))
+BacherTCellData <- BacherTCellData[chosen_features, ]
+
+# Subset to three smallest batches
+BacherTCellData <- BacherTCellData[, colData(BacherTCellData)$batch %in% c(10, 16, 17)]
+
+# Create default named factors for batches and cell clusters
+colData(BacherTCellData)$Batch <- factor(colData(BacherTCellData)$batch)
+colData(BacherTCellData)$Cluster <- factor(colData(BacherTCellData)$new_cluster_names)
+
+BacherTCellData <- runPCA(BacherTCellData)
+plotPCA(BacherTCellData, color_by = "Batch")
+plotPCA(BacherTCellData, color_by = "Cluster")
+
+BacherTCellData <- runTSNE(BacherTCellData)
+plotTSNE(BacherTCellData, color_by = "Batch")
+plotTSNE(BacherTCellData, color_by = "Cluster")
+
+BacherTCellData <- runUMAP(BacherTCellData)
+plotUMAP(BacherTCellData, color_by = "Batch")
+plotUMAP(BacherTCellData, color_by = "Cluster")
+```
+
+# Campbell Brain Data
+
+```{r, message = FALSE}
+CampbellBrainData <- CampbellBrainData()
+CampbellBrainData
+table(Batch = colData(CampbellBrainData)$batches)
+table(Cluster = colData(CampbellBrainData)$clust_all)
+```
+
+```{r}
+CampbellBrainData <- logNormCounts(CampbellBrainData)
+
+# Subset to top 10% HVG
+chosen_features <-
+  getTopHVGs(modelGeneVar(CampbellBrainData, CampbellBrainData$batches),
+             n = ceiling(nrow(CampbellBrainData) / 10))
+CampbellBrainData <- CampbellBrainData[chosen_features, ]
+
+# Subset to two smallest batches
+CampbellBrainData <- CampbellBrainData[, colData(CampbellBrainData)$batches %in% c("b3", "b6")]
+
+# Create default named factors for batches and cell clusters
+colData(CampbellBrainData)$Batch <- factor(colData(CampbellBrainData)$batches)
+colData(CampbellBrainData)$Cluster <- factor(colData(CampbellBrainData)$clust_all)
+
+CampbellBrainData <- runPCA(CampbellBrainData)
+plotPCA(CampbellBrainData, color_by = "Batch")
+plotPCA(CampbellBrainData, color_by = "Cluster", add_legend = F)
+
+CampbellBrainData <- runTSNE(CampbellBrainData)
+plotTSNE(CampbellBrainData, color_by = "Batch")
+plotTSNE(CampbellBrainData, color_by = "Cluster", add_legend = F)
+
+CampbellBrainData <- runUMAP(CampbellBrainData)
+plotUMAP(CampbellBrainData, color_by = "Batch")
+plotUMAP(CampbellBrainData, color_by = "Cluster", add_legend = F)
+```
+
+# Messmer ESC Data
+
+```{r, message = FALSE}
+MessmerESCData <- MessmerESCData()
+MessmerESCData
+table(Batch = colData(MessmerESCData)$`experiment batch`)
+table(Cluster = colData(MessmerESCData)$phenotype)
+```
+
+```{r}
+MessmerESCData <- logNormCounts(MessmerESCData)
+
+# Subset to top 10% HVG
+chosen_features <-
+  getTopHVGs(modelGeneVar(MessmerESCData, MessmerESCData$`experiment batch`),
+             n = ceiling(nrow(MessmerESCData) / 10))
+MessmerESCData <- MessmerESCData[chosen_features, ]
+
+# Create default named factors for batches and cell clusters
+colData(MessmerESCData)$Batch <- factor(colData(MessmerESCData)$`experiment batch`)
+colData(MessmerESCData)$Cluster <- factor(colData(MessmerESCData)$phenotype)
+
+MessmerESCData <- runPCA(MessmerESCData)
+plotPCA(MessmerESCData, color_by = "Batch")
+plotPCA(MessmerESCData, color_by = "Cluster")
+
+MessmerESCData <- runTSNE(MessmerESCData)
+plotTSNE(MessmerESCData, color_by = "Batch")
+plotTSNE(MessmerESCData, color_by = "Cluster")
+
+MessmerESCData <- runUMAP(MessmerESCData)
+plotUMAP(MessmerESCData, color_by = "Batch")
+plotUMAP(MessmerESCData, color_by = "Cluster")
+```
+
+# Paul HSC Data
+
+```{r, message = FALSE}
+PaulHSCData <- PaulHSCData() 
+PaulHSCData
+table(Batch = colData(PaulHSCData)$Seq_batch_ID)
+table(Cluster = colData(PaulHSCData)$Batch_desc)
+```
+
+```{r}
+PaulHSCData <- logNormCounts(PaulHSCData)
+
+# Subset to top 10% HVG
+chosen_features <-
+  getTopHVGs(modelGeneVar(PaulHSCData, PaulHSCData$Seq_batch_ID),
+             n = ceiling(nrow(PaulHSCData) / 10))
+PaulHSCData <- PaulHSCData[chosen_features, ]
+
+# Subset to two smallest batches
+PaulHSCData <- PaulHSCData[, colData(PaulHSCData)$Seq_batch_ID %in% c("SB17", "SB20")]
+
+# Create default named factors for batches and cell clusters
+colData(PaulHSCData)$Batch <- factor(colData(PaulHSCData)$Seq_batch_ID)
+colData(PaulHSCData)$Cluster <- factor(colData(PaulHSCData)$Batch_desc)
+
+PaulHSCData <- runPCA(PaulHSCData)
+plotPCA(PaulHSCData, color_by = "Batch")
+plotPCA(PaulHSCData, color_by = "Cluster")
+
+PaulHSCData <- runTSNE(PaulHSCData)
+plotTSNE(PaulHSCData, color_by = "Batch")
+plotTSNE(PaulHSCData, color_by = "Cluster")
+
+PaulHSCData <- runUMAP(PaulHSCData)
+plotUMAP(PaulHSCData, color_by = "Batch")
+plotUMAP(PaulHSCData, color_by = "Cluster")
+```
+
+# Zilionis Lung Data
+
+```{r, message = FALSE}
+ZilionisLungData <- ZilionisLungData('mouse')
+ZilionisLungData
+table(Batch = colData(ZilionisLungData)$`Library prep batch`)
+table(Cluster = colData(ZilionisLungData)$`Major cell type`)
+```
+
+```{r}
+ZilionisLungData <- logNormCounts(ZilionisLungData)
+
+# Subset to top 10% HVG
+chosen_features <-
+  getTopHVGs(
+    modelGeneVar(ZilionisLungData, ZilionisLungData$`Library prep batch`),
+    n = ceiling(nrow(ZilionisLungData) / 10)
+  )
+ZilionisLungData <- ZilionisLungData[chosen_features, ]
+
+# Subset to two smallest batches
+ZilionisLungData <- ZilionisLungData[, colData(ZilionisLungData)$`Library prep batch` %in% c("round1_20151128", "round2_20151217")]
+
+# Create default named factors for batches and cell clusters
+colData(ZilionisLungData)$Batch <- factor(colData(ZilionisLungData)$`Library prep batch`)
+colData(ZilionisLungData)$Cluster <- factor(colData(ZilionisLungData)$`Major cell type`)
+
+ZilionisLungData <- runPCA(ZilionisLungData)
+plotPCA(ZilionisLungData, color_by = "Batch")
+plotPCA(ZilionisLungData, color_by = "Cluster")
+
+ZilionisLungData <- runTSNE(ZilionisLungData)
+plotTSNE(ZilionisLungData, color_by = "Batch")
+plotTSNE(ZilionisLungData, color_by = "Cluster")
+
+ZilionisLungData <- runUMAP(ZilionisLungData)
+plotUMAP(ZilionisLungData, color_by = "Batch")
+plotUMAP(ZilionisLungData, color_by = "Cluster")
+```
+
+# Wu Kidney Data
+
+```{r, message = FALSE}
+WuKidneyData <- WuKidneyData()
+WuKidneyData
+table(Batch = colData(WuKidneyData)$Technology)
+table(Cluster = colData(WuKidneyData)$Status)
+```
+
+```{r}
+WuKidneyData <- logNormCounts(WuKidneyData)
+
+# Subset to top 10% HVG
+chosen_features <-
+  getTopHVGs(modelGeneVar(WuKidneyData, WuKidneyData$Technology),
+             n = ceiling(nrow(WuKidneyData) / 10))
+WuKidneyData <- WuKidneyData[chosen_features, ]
+
+# Subset to two smallest batches
+WuKidneyData <- WuKidneyData[, colData(WuKidneyData)$Technology %in% c("sCellDropseq", "sNuc-10x")]
+
+# Create default named factors for batches and cell clusters
+colData(WuKidneyData)$Batch <- factor(colData(WuKidneyData)$Technology)
+colData(WuKidneyData)$Cluster <- factor(colData(WuKidneyData)$Status)
+
+WuKidneyData <- runPCA(WuKidneyData)
+plotPCA(WuKidneyData, color_by = "Batch")
+plotPCA(WuKidneyData, color_by = "Cluster")
+
+WuKidneyData <- runTSNE(WuKidneyData)
+plotTSNE(WuKidneyData, color_by = "Batch")
+plotTSNE(WuKidneyData, color_by = "Cluster")
+
+WuKidneyData <- runUMAP(WuKidneyData)
+plotUMAP(WuKidneyData, color_by = "Batch")
+plotUMAP(WuKidneyData, color_by = "Cluster")
+```
+
+<!-- # Giladi HSC Data -->
+
+<!-- ```{r, message = FALSE} -->
+<!-- GiladiHSCData <- GiladiHSCData(mode="rna") -->
+<!-- GiladiHSCData -->
+<!-- table(batch = colData(GiladiHSCData)$batches) -->
+<!-- table(cluster = colData(GiladiHSCData)$clust_all) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- GiladiHSCData <- logNormCounts(GiladiHSCData) -->
+
+<!-- # Subset to top 10% HVG -->
+<!-- chosen_features <- getTopHVGs(modelGeneVar(GiladiHSCData), prop = 0.1) -->
+<!-- GiladiHSCData <- GiladiHSCData[chosen_features, ] -->
+
+<!-- # Subset to two smallest batches -->
+<!-- GiladiHSCData <- GiladiHSCData[, colData(GiladiHSCData)$batches %in% c("b3", "b6")] -->
+
+<!-- # Create default named factors for batches and cell clusters -->
+<!-- colData(GiladiHSCData)$Batch <- factor(colData(GiladiHSCData)$batches) -->
+<!-- colData(GiladiHSCData)$Cluster <- factor(colData(GiladiHSCData)$clust_all) -->
+
+<!-- GiladiHSCData <- runPCA(GiladiHSCData) -->
+<!-- plotPCA(GiladiHSCData, color_by = "Batch") -->
+<!-- plotPCA(GiladiHSCData, color_by = "Cluster", add_legend = F) -->
+
+<!-- GiladiHSCData <- runTSNE(GiladiHSCData) -->
+<!-- plotTSNE(GiladiHSCData, color_by = "Batch") -->
+<!-- plotTSNE(GiladiHSCData, color_by = "Cluster", add_legend = F) -->
+
+<!-- GiladiHSCData <- runUMAP(GiladiHSCData) -->
+<!-- plotUMAP(GiladiHSCData, color_by = "Batch") -->
+<!-- plotUMAP(GiladiHSCData, color_by = "Cluster", add_legend = F) -->
+<!-- ``` -->
+
+# Session Information
+
+```{r session_info}
+sessionInfo()
+```
