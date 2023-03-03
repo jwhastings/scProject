@@ -1,0 +1,592 @@
+data,vars
+AztekinTailData(),cell
+AztekinTailData(),sample
+AztekinTailData(),DevelopmentalStage
+AztekinTailData(),DaysPostAmputation
+AztekinTailData(),cluster
+AztekinTailData(),CellCyclePhase
+AztekinTailData(),Lane
+AztekinTailData(),Condition
+AztekinTailData(),batch
+BachMammaryData(),Barcode
+BachMammaryData(),Sample
+BachMammaryData(),Condition
+BacherTCellData(),orig.ident
+BacherTCellData(),nCount_RNA
+BacherTCellData(),nFeature_RNA
+BacherTCellData(),sample
+BacherTCellData(),percent.mt
+BacherTCellData(),percent.rrna
+BacherTCellData(),percent.rps
+BacherTCellData(),percent.rpl
+BacherTCellData(),batch
+BacherTCellData(),seq_run
+BacherTCellData(),RNA_snn_res.0.3
+BacherTCellData(),seurat_clusters
+BacherTCellData(),RNA_snn_res.0.2
+BacherTCellData(),barcode
+BacherTCellData(),diagnosis
+BacherTCellData(),raw_clonotype_id
+BacherTCellData(),cdr3
+BacherTCellData(),v_gene
+BacherTCellData(),new_cluster_names
+BacherTCellData(),retained
+BacherTCellData(),who_class
+BacherTCellData(),severity
+BaronPancreasData('human'),donor
+BaronPancreasData('human'),label
+BaronPancreasData('mouse'),strain
+BaronPancreasData('mouse'),label
+BhaduriOrganoidData(),title
+BhaduriOrganoidData(),age (weeks)
+BhaduriOrganoidData(),cloneid
+BhaduriOrganoidData(),donorid
+BhaduriOrganoidData(),protocol
+BhaduriOrganoidData(),Sex
+BhaduriOrganoidData(),tissue
+BuettnerESCData(),phase
+BunisHSPCData(),Sample
+BunisHSPCData(),demux.doublet.call
+BunisHSPCData(),demux.RD.TOTL
+BunisHSPCData(),demux.RD.PASS
+BunisHSPCData(),demux.RD.UNIQ
+BunisHSPCData(),demux.N.SNP
+BunisHSPCData(),demux.PRB.DBL
+BunisHSPCData(),age
+BunisHSPCData(),labels
+BunisHSPCData(),DevStageScoring
+CampbellBrainData(),ID
+CampbellBrainData(),group
+CampbellBrainData(),batches
+CampbellBrainData(),sex
+CampbellBrainData(),Diet
+CampbellBrainData(),FvF
+CampbellBrainData(),clust_all
+CampbellBrainData(),clust_all_neurons
+CampbellBrainData(),clust_all_micro
+CampbellBrainData(),clust_neurons
+CampbellBrainData(),Sex_pred
+ChenBrainData(),Cell_ID_temp
+ChenBrainData(),SVM_clusterID
+DarmanisBrainData(),age
+DarmanisBrainData(),c1.chip.id
+DarmanisBrainData(),cell.type
+DarmanisBrainData(),experiment_sample_name
+DarmanisBrainData(),tissue
+ErnstSpermatogenesisData(),Sample
+ErnstSpermatogenesisData(),Barcode
+ErnstSpermatogenesisData(),Library
+ErnstSpermatogenesisData(),is_cell_control
+ErnstSpermatogenesisData(),total_features_by_counts
+ErnstSpermatogenesisData(),log10_total_features_by_counts
+ErnstSpermatogenesisData(),total_counts
+ErnstSpermatogenesisData(),log10_total_counts
+ErnstSpermatogenesisData(),pct_counts_in_top_50_features
+ErnstSpermatogenesisData(),pct_counts_in_top_100_features
+ErnstSpermatogenesisData(),pct_counts_in_top_200_features
+ErnstSpermatogenesisData(),pct_counts_in_top_500_features
+ErnstSpermatogenesisData(),AnnotatedClusters
+ErnstSpermatogenesisData(),P15Clusters
+FletcherOlfactoryData(),sample_sequencing_id
+FletcherOlfactoryData(),MD_expt_condition
+FletcherOlfactoryData(),MD_sequencing_run_id
+FletcherOlfactoryData(),MD_c1_run_id
+FletcherOlfactoryData(),MD_single_bulk_pool
+FletcherOlfactoryData(),MD_dilution_plate_coordinate
+FletcherOlfactoryData(),MD_c1_position
+FletcherOlfactoryData(),MD_library_plate_name
+FletcherOlfactoryData(),MD_library_plate_position
+FletcherOlfactoryData(),MD_barcode
+FletcherOlfactoryData(),MD_index_set
+FletcherOlfactoryData(),MD_lane
+FletcherOlfactoryData(),MD_cdna_concentration
+FletcherOlfactoryData(),MD_number_of_animals
+FletcherOlfactoryData(),MD_dob
+FletcherOlfactoryData(),MD_sex
+FletcherOlfactoryData(),MD_age
+FletcherOlfactoryData(),MD_facs_c1_date
+FletcherOlfactoryData(),MD_c1_chip
+FletcherOlfactoryData(),MD_cell_type
+FletcherOlfactoryData(),MD_cell_description
+FletcherOlfactoryData(),MD_c1
+FletcherOlfactoryData(),MD_capture_program_temp
+FletcherOlfactoryData(),MD_spikein_dilution
+FletcherOlfactoryData(),sample_sequencing_id
+FletcherOlfactoryData(),NREADS
+FletcherOlfactoryData(),NALIGNED
+FletcherOlfactoryData(),RALIGN
+FletcherOlfactoryData(),TOTAL_DUP
+FletcherOlfactoryData(),PRIMER
+FletcherOlfactoryData(),INSERT_SZ
+FletcherOlfactoryData(),INSERT_SZ_STD
+FletcherOlfactoryData(),COMPLEXITY
+FletcherOlfactoryData(),NDUPR
+FletcherOlfactoryData(),PCT_RIBOSOMAL_BASES
+FletcherOlfactoryData(),PCT_CODING_BASES
+FletcherOlfactoryData(),PCT_UTR_BASES
+FletcherOlfactoryData(),PCT_INTRONIC_BASES
+FletcherOlfactoryData(),PCT_INTERGENIC_BASES
+FletcherOlfactoryData(),PCT_MRNA_BASES
+FletcherOlfactoryData(),MEDIAN_CV_COVERAGE
+FletcherOlfactoryData(),MEDIAN_5PRIME_BIAS
+FletcherOlfactoryData(),MEDIAN_3PRIME_BIAS
+FletcherOlfactoryData(),MEDIAN_5PRIME_TO_3PRIME_BIAS
+FletcherOlfactoryData(),cluster_id
+FletcherOlfactoryData(),cluster_label
+FletcherOlfactoryData(),cluster_description
+GrunHSCData(),sample
+GrunHSCData(),protocol
+GrunPancreasData(),donor
+GrunPancreasData(),sample
+GiladiHSCData(mode='rna'),well
+GiladiHSCData(mode='rna'),Amp_batch_ID
+GiladiHSCData(mode='rna'),Seq_batch_ID
+GiladiHSCData(mode='rna'),tier
+GiladiHSCData(mode='rna'),treatment
+GiladiHSCData(mode='rna'),virus.mix
+GiladiHSCData(mode='rna'),cytokines
+GiladiHSCData(mode='rna'),well_coordinates
+GiladiHSCData(mode='rna'),Subject_ID
+GiladiHSCData(mode='rna'),plate_ID
+GiladiHSCData(mode='rna'),Pool_barcode
+GiladiHSCData(mode='rna'),Cell_barcode
+GiladiHSCData(mode='rna'),Number_of_cells
+GiladiHSCData(mode='rna'),CD11c
+GiladiHSCData(mode='rna'),CD150
+GiladiHSCData(mode='rna'),CD22
+GiladiHSCData(mode='rna'),CD34
+GiladiHSCData(mode='rna'),CD48
+GiladiHSCData(mode='rna'),Csf1r
+GiladiHSCData(mode='rna'),FcgR
+GiladiHSCData(mode='rna'),Flt3
+GiladiHSCData(mode='rna'),IL7Ra
+GiladiHSCData(mode='rna'),Itgb7
+GiladiHSCData(mode='rna'),Lgals3
+GiladiHSCData(mode='rna'),Lineage
+GiladiHSCData(mode='rna'),Ly6C
+GiladiHSCData(mode='rna'),MHCII
+GiladiHSCData(mode='rna'),Sca1
+GiladiHSCData(mode='rna'),SiglecH
+GiladiHSCData(mode='rna'),cKit
+GiladiHSCData(mode='rna'),retained
+GiladiHSCData(mode='rna'),sample
+HeOrganAtlasData(),Tissue
+HeOrganAtlasData(),nCount_RNA
+HeOrganAtlasData(),nFeature_RNA
+HeOrganAtlasData(),percent.mito
+HeOrganAtlasData(),RNA_snn_res.orig
+HeOrganAtlasData(),seurat_clusters
+HeOrganAtlasData(),Cell_type_in_each_tissue
+HeOrganAtlasData(),Cell_type_in_merged_data
+HeOrganAtlasData(),reclustered.broad
+HeOrganAtlasData(),reclustered.fine
+HermannSpermatogenesisData(),celltype
+HuCortexData(),Mode
+HuCortexData(),Sample
+KolodziejczykESCData(),culture
+KolodziejczykESCData(),plate
+JessaBrainData(),Cell
+JessaBrainData(),Sample
+JessaBrainData(),nGene
+JessaBrainData(),nUMI
+JessaBrainData(),percent_mito
+JessaBrainData(),Sample_Cluster
+JessaBrainData(),Sample_Cluster_number
+JessaBrainData(),retained
+JessaBrainData(),Forebrain_Joint_cluster_number
+JessaBrainData(),Forebrain_Joint_cluster
+JessaBrainData(),Pons_Joint_cluster_number
+JessaBrainData(),Pons_Joint_cluster
+LaMannoBrainData('human-es'),Cell_ID
+LaMannoBrainData('human-es'),Cell_type
+LaMannoBrainData('human-es'),Timepoint
+LaMannoBrainData('human-embryo'),Cell_ID
+LaMannoBrainData('human-embryo'),Cell_type
+LaMannoBrainData('human-embryo'),Timepoint
+LaMannoBrainData('human-ips'),Cell_ID
+LaMannoBrainData('human-ips'),Cell_type
+LaMannoBrainData('human-ips'),Timepoint
+LaMannoBrainData('mouse-adult'),CELL_ID
+LaMannoBrainData('mouse-adult'),Cell_type
+LaMannoBrainData('mouse-embryo'),Cell_ID
+LaMannoBrainData('mouse-embryo'),Cell_type
+LaMannoBrainData('mouse-embryo'),Timepoint
+LaMannoBrainData('mouse-embryo'),Total_Molecules
+LawlorPancreasData(),title
+LawlorPancreasData(),age
+LawlorPancreasData(),bmi
+LawlorPancreasData(),cell type
+LawlorPancreasData(),disease
+LawlorPancreasData(),islet unos id
+LawlorPancreasData(),race
+LawlorPancreasData(),Sex
+LedergorMyelomaData(),well
+LedergorMyelomaData(),well_coordinates
+LedergorMyelomaData(),Amp_batch_ID
+LedergorMyelomaData(),Cell_barcode
+LedergorMyelomaData(),Number_of_cells
+LedergorMyelomaData(),Pool_barcode
+LedergorMyelomaData(),Experiment_ID
+LedergorMyelomaData(),Subject_ID
+LedergorMyelomaData(),Condition
+LedergorMyelomaData(),Tissue
+LedergorMyelomaData(),Treated
+LengESCData(),CellLine
+LengESCData(),Experiment
+LengESCData(),Phase
+LunSpikeInData('416b'),Source Name
+LunSpikeInData('416b'),cell line
+LunSpikeInData('416b'),cell type
+LunSpikeInData('416b'),single cell well quality
+LunSpikeInData('416b'),genotype
+LunSpikeInData('416b'),phenotype
+LunSpikeInData('416b'),strain
+LunSpikeInData('416b'),spike-in addition
+LunSpikeInData('416b'),block
+LunSpikeInData('tropho'),Source Name
+LunSpikeInData('tropho'),cell line
+LunSpikeInData('tropho'),cell type
+LunSpikeInData('tropho'),single cell well quality
+LunSpikeInData('tropho'),genotype
+LunSpikeInData('tropho'),phenotype
+LunSpikeInData('tropho'),strain
+LunSpikeInData('tropho'),spike-in addition
+LunSpikeInData('tropho'),block
+MacoskoRetinaData(),cell.id
+MacoskoRetinaData(),cluster
+ReprocessedTh2Data(),NREADS
+ReprocessedTh2Data(),NALIGNED
+ReprocessedTh2Data(),RALIGN
+ReprocessedTh2Data(),TOTAL_DUP
+ReprocessedTh2Data(),PRIMER
+ReprocessedTh2Data(),INSERT_SZ
+ReprocessedTh2Data(),INSERT_SZ_STD
+ReprocessedTh2Data(),COMPLEXITY
+ReprocessedTh2Data(),NDUPR
+ReprocessedTh2Data(),PCT_RIBOSOMAL_BASES
+ReprocessedTh2Data(),PCT_CODING_BASES
+ReprocessedTh2Data(),PCT_UTR_BASES
+ReprocessedTh2Data(),PCT_INTRONIC_BASES
+ReprocessedTh2Data(),PCT_INTERGENIC_BASES
+ReprocessedTh2Data(),PCT_MRNA_BASES
+ReprocessedTh2Data(),MEDIAN_CV_COVERAGE
+ReprocessedTh2Data(),MEDIAN_5PRIME_BIAS
+ReprocessedTh2Data(),MEDIAN_3PRIME_BIAS
+ReprocessedTh2Data(),MEDIAN_5PRIME_TO_3PRIME_BIAS
+ReprocessedTh2Data(),id
+ReprocessedTh2Data(),single
+ReprocessedTh2Data(),Buettner_filter
+MairPBMCData(),Sample_Tag
+MairPBMCData(),Sample_Name
+MairPBMCData(),Cartridge
+KotliarovPBMCData(),nGene
+KotliarovPBMCData(),nUMI
+KotliarovPBMCData(),orig.ident
+KotliarovPBMCData(),pctMT
+KotliarovPBMCData(),barcode_check
+KotliarovPBMCData(),tenx_lane
+KotliarovPBMCData(),cohort
+KotliarovPBMCData(),batch
+KotliarovPBMCData(),hash_maxID
+KotliarovPBMCData(),hash_secondID
+KotliarovPBMCData(),hash_margin
+KotliarovPBMCData(),hto_classification
+KotliarovPBMCData(),hto_classification_global
+KotliarovPBMCData(),hash_ID
+KotliarovPBMCData(),adjmfc.time
+KotliarovPBMCData(),DEMUXLET.RD.PASS
+KotliarovPBMCData(),DEMUXLET.N.SNP
+KotliarovPBMCData(),DMX_GLOBAL_BEST
+KotliarovPBMCData(),DEMUXLET.BARCODE
+KotliarovPBMCData(),sample
+KotliarovPBMCData(),sampleid
+KotliarovPBMCData(),joint_classification_global
+KotliarovPBMCData(),dmx_hto_match
+KotliarovPBMCData(),timepoint
+MarquesBrainData(),title
+MarquesBrainData(),source_name
+MarquesBrainData(),age
+MarquesBrainData(),inferred cell type
+MarquesBrainData(),Sex
+MarquesBrainData(),strain
+MarquesBrainData(),treatment
+MessmerESCData(),Source Name
+MessmerESCData(),phenotype
+MessmerESCData(),single cell quality
+MessmerESCData(),post-analysis well quality
+MessmerESCData(),experiment batch
+MessmerESCData(),sequencing run
+MuraroPancreasData(),label
+MuraroPancreasData(),donor
+MuraroPancreasData(),plate
+NestorowaHSCData(),cell.type
+NestorowaHSCData(),FACS
+NowakowskiCortexData(),WGCNAcluster
+NowakowskiCortexData(),Name
+NowakowskiCortexData(),Age_in_Weeks
+NowakowskiCortexData(),RegionName
+NowakowskiCortexData(),Laminae
+NowakowskiCortexData(),Area
+PaulHSCData(),Well_ID
+PaulHSCData(),Seq_batch_ID
+PaulHSCData(),Amp_batch_ID
+PaulHSCData(),well_coordinates
+PaulHSCData(),Mouse_ID
+PaulHSCData(),Plate_ID
+PaulHSCData(),Batch_desc
+PaulHSCData(),Pool_barcode
+PaulHSCData(),Cell_barcode
+PaulHSCData(),RMT_sequence
+PaulHSCData(),Number_of_cells
+PaulHSCData(),CD34_measurement
+PaulHSCData(),FcgR3_measurement
+ReprocessedFluidigmData(),NREADS
+ReprocessedFluidigmData(),NALIGNED
+ReprocessedFluidigmData(),RALIGN
+ReprocessedFluidigmData(),TOTAL_DUP
+ReprocessedFluidigmData(),PRIMER
+ReprocessedFluidigmData(),INSERT_SZ
+ReprocessedFluidigmData(),INSERT_SZ_STD
+ReprocessedFluidigmData(),COMPLEXITY
+ReprocessedFluidigmData(),NDUPR
+ReprocessedFluidigmData(),PCT_RIBOSOMAL_BASES
+ReprocessedFluidigmData(),PCT_CODING_BASES
+ReprocessedFluidigmData(),PCT_UTR_BASES
+ReprocessedFluidigmData(),PCT_INTRONIC_BASES
+ReprocessedFluidigmData(),PCT_INTERGENIC_BASES
+ReprocessedFluidigmData(),PCT_MRNA_BASES
+ReprocessedFluidigmData(),MEDIAN_CV_COVERAGE
+ReprocessedFluidigmData(),MEDIAN_5PRIME_BIAS
+ReprocessedFluidigmData(),MEDIAN_3PRIME_BIAS
+ReprocessedFluidigmData(),MEDIAN_5PRIME_TO_3PRIME_BIAS
+ReprocessedFluidigmData(),sample_id.x
+ReprocessedFluidigmData(),Lane_ID
+ReprocessedFluidigmData(),LibraryName
+ReprocessedFluidigmData(),avgLength
+ReprocessedFluidigmData(),spots
+ReprocessedFluidigmData(),Biological_Condition
+ReprocessedFluidigmData(),Coverage_Type
+ReprocessedFluidigmData(),Cluster1
+ReprocessedFluidigmData(),Cluster2
+PollenGliaData(),Cell
+PollenGliaData(),Anatomical Source
+PollenGliaData(),Age
+PollenGliaData(),Brain
+PollenGliaData(),Area
+PollenGliaData(),Inferred Cell Type
+PollenGliaData(),Inferred RG type
+PollenGliaData(),"LibrarySize (Read Pairs, Million)"
+PollenGliaData(),MappedPairs
+PollenGliaData(),"AlignmentRate, Pairs"
+PollenGliaData(),GenesTagged
+RichardTCellData(),age
+RichardTCellData(),individual
+RichardTCellData(),single cell well quality
+RichardTCellData(),post-analysis well quality
+RichardTCellData(),single cell quality
+RichardTCellData(),CD69 measurement (log10)
+RichardTCellData(),CD25 measurement (log10)
+RichardTCellData(),CD44 measurement (log10)
+RichardTCellData(),CD62L measurement (log10)
+RichardTCellData(),sorting plate well
+RichardTCellData(),sequencing plate well
+RichardTCellData(),stimulus
+RichardTCellData(),time
+RomanovBrainData(),cellID
+RomanovBrainData(),level1 class
+RomanovBrainData(),level2 class (neurons only)
+RomanovBrainData(),level2 cluster number (neurons only)
+RomanovBrainData(),age (days postnatal)
+RomanovBrainData(),"sex (female=1,male=-1)"
+RomanovBrainData(),cell diameter
+RomanovBrainData(),acute stress (true=1)
+RomanovBrainData(),total molecules
+SegerstolpePancreasData(),Source Name
+SegerstolpePancreasData(),individual
+SegerstolpePancreasData(),single cell well quality
+SegerstolpePancreasData(),cell type
+SegerstolpePancreasData(),disease
+SegerstolpePancreasData(),sex
+SegerstolpePancreasData(),age
+SegerstolpePancreasData(),body mass index
+ShekharRetinaData(),NAME
+ShekharRetinaData(),CLUSTER
+ShekharRetinaData(),SUB-CLUSTER
+UsoskinBrainData(),Sample ID
+UsoskinBrainData(),Picking sessions
+UsoskinBrainData(),Picking ToC
+UsoskinBrainData(),Library
+UsoskinBrainData(),Reads
+UsoskinBrainData(),Sex
+UsoskinBrainData(),Level 1
+UsoskinBrainData(),Level 2
+UsoskinBrainData(),Level 3
+UsoskinBrainData(),Content
+TasicBrainData(),sample_title
+TasicBrainData(),mouse_line
+TasicBrainData(),cre_driver_1
+TasicBrainData(),cre_driver_2
+TasicBrainData(),cre_reporter
+TasicBrainData(),dissection
+TasicBrainData(),tdTomato
+TasicBrainData(),pass_qc_checks
+TasicBrainData(),broad_type
+TasicBrainData(),core_intermediate
+TasicBrainData(),primary_type
+TasicBrainData(),secondary_type
+TasicBrainData(),aibs_vignette_id
+ReprocessedAllenData(),NREADS
+ReprocessedAllenData(),NALIGNED
+ReprocessedAllenData(),RALIGN
+ReprocessedAllenData(),TOTAL_DUP
+ReprocessedAllenData(),PRIMER
+ReprocessedAllenData(),PCT_RIBOSOMAL_BASES
+ReprocessedAllenData(),PCT_CODING_BASES
+ReprocessedAllenData(),PCT_UTR_BASES
+ReprocessedAllenData(),PCT_INTRONIC_BASES
+ReprocessedAllenData(),PCT_INTERGENIC_BASES
+ReprocessedAllenData(),PCT_MRNA_BASES
+ReprocessedAllenData(),MEDIAN_CV_COVERAGE
+ReprocessedAllenData(),MEDIAN_5PRIME_BIAS
+ReprocessedAllenData(),MEDIAN_3PRIME_BIAS
+ReprocessedAllenData(),MEDIAN_5PRIME_TO_3PRIME_BIAS
+ReprocessedAllenData(),driver_1_s
+ReprocessedAllenData(),dissection_s
+ReprocessedAllenData(),Core.Type
+ReprocessedAllenData(),Primary.Type
+ReprocessedAllenData(),Secondary.Type
+ReprocessedAllenData(),Animal.ID
+ReprocessedAllenData(),passes_qc_checks_s
+WuKidneyData(),Technology
+WuKidneyData(),Status
+XinPancreasData(),Sample.name
+XinPancreasData(),donor.id
+XinPancreasData(),condition
+XinPancreasData(),age
+XinPancreasData(),ethnicity
+XinPancreasData(),gender
+XinPancreasData(),cell.type
+ZeiselBrainData(),tissue
+ZeiselBrainData(),group #
+ZeiselBrainData(),total mRNA mol
+ZeiselBrainData(),well
+ZeiselBrainData(),sex
+ZeiselBrainData(),age
+ZeiselBrainData(),diameter
+ZeiselBrainData(),cell_id
+ZeiselBrainData(),level1class
+ZeiselBrainData(),level2class
+ZeiselNervousData(),Age
+ZeiselNervousData(),AnalysisPool
+ZeiselNervousData(),CellConc
+ZeiselNervousData(),CellID
+ZeiselNervousData(),ChipID
+ZeiselNervousData(),Class
+ZeiselNervousData(),ClusterName
+ZeiselNervousData(),Clusters
+ZeiselNervousData(),Comment
+ZeiselNervousData(),Comments
+ZeiselNervousData(),DateCaptured
+ZeiselNervousData(),Description
+ZeiselNervousData(),Developmental_compartment
+ZeiselNervousData(),DonorID
+ZeiselNervousData(),Estimated.Number.of.Cells
+ZeiselNervousData(),Flowcell
+ZeiselNervousData(),Fraction.Reads.in.Cells
+ZeiselNervousData(),Label
+ZeiselNervousData(),LeafOrder
+ZeiselNervousData(),Location_based_on
+ZeiselNervousData(),Mean.Reads.per.Cell
+ZeiselNervousData(),Median.Genes.per.Cell
+ZeiselNervousData(),Median.UMI.Counts.per.Cell
+ZeiselNervousData(),MitoRiboRatio
+ZeiselNervousData(),Neurotransmitter
+ZeiselNervousData(),NumPooledAnimals
+ZeiselNervousData(),Number.of.Reads
+ZeiselNervousData(),OriginalClusters
+ZeiselNervousData(),Outliers
+ZeiselNervousData(),PCRCycles
+ZeiselNervousData(),PassedQC
+ZeiselNervousData(),Probable_location
+ZeiselNervousData(),Q30.Bases.in.Barcode
+ZeiselNervousData(),Q30.Bases.in.RNA.Read
+ZeiselNervousData(),Q30.Bases.in.Sample.Index
+ZeiselNervousData(),Q30.Bases.in.UMI
+ZeiselNervousData(),Reads.Mapped.Confidently.to.Exonic.Regions
+ZeiselNervousData(),Reads.Mapped.Confidently.to.Intergenic.Regions
+ZeiselNervousData(),Reads.Mapped.Confidently.to.Intronic.Regions
+ZeiselNervousData(),Reads.Mapped.Confidently.to.Transcriptome
+ZeiselNervousData(),Region
+ZeiselNervousData(),SampleID
+ZeiselNervousData(),SampleIndex
+ZeiselNervousData(),SampleOK
+ZeiselNervousData(),SeqComment
+ZeiselNervousData(),SeqLibDate
+ZeiselNervousData(),SeqLibOk
+ZeiselNervousData(),Sequencing.Saturation
+ZeiselNervousData(),Serial_Number
+ZeiselNervousData(),Sex
+ZeiselNervousData(),Strain
+ZeiselNervousData(),Subclass
+ZeiselNervousData(),TargetNumCells
+ZeiselNervousData(),TaxonomyRank1
+ZeiselNervousData(),TaxonomyRank2
+ZeiselNervousData(),TaxonomyRank3
+ZeiselNervousData(),TaxonomyRank4
+ZeiselNervousData(),TaxonomySymbol
+ZeiselNervousData(),Taxonomy_group
+ZeiselNervousData(),Tissue
+ZeiselNervousData(),Total.Genes.Detected
+ZeiselNervousData(),Valid.Barcodes
+ZeiselNervousData(),KMeans_10
+ZeiselNervousData(),LogCV
+ZeiselNervousData(),LogMean
+ZeiselNervousData(),NGenes
+ZeiselNervousData(),Total
+ZeiselNervousData(),Valid
+ZeiselNervousData(),cDNAConcNanogramPerMicroliter
+ZeiselNervousData(),cDNALibOk
+ZeiselNervousData(),ClassProbability
+ZhaoImmuneLiverData(),Barcode
+ZhaoImmuneLiverData(),Cluster
+ZhaoImmuneLiverData(),retained
+ZhaoImmuneLiverData(),broad
+ZhaoImmuneLiverData(),fine
+ZhaoImmuneLiverData(),sample
+ZhongPrefrontalData(),developmental_stage
+ZhongPrefrontalData(),gender
+ZhongPrefrontalData(),sample
+ZhongPrefrontalData(),cell_types
+ZhongPrefrontalData(),week
+ZhongPrefrontalData(),Gene_num
+ZhongPrefrontalData(),Pre_Map_Reads
+ZhongPrefrontalData(),Aligned_Reads
+ZhongPrefrontalData(),MappingRate
+ZilionisLungData(),Library
+ZilionisLungData(),Barcode
+ZilionisLungData(),Patient
+ZilionisLungData(),Tissue
+ZilionisLungData(),Used
+ZilionisLungData(),Barcoding emulsion
+ZilionisLungData(),Total counts
+ZilionisLungData(),Percent counts from mitochondrial genes
+ZilionisLungData(),Most likely LM22 cell type
+ZilionisLungData(),Major cell type
+ZilionisLungData(),Minor subset
+ZilionisLungData(),used_in_NSCLC_all_cells
+ZilionisLungData(),used_in_NSCLC_and_blood_immune
+ZilionisLungData(),used_in_NSCLC_immune
+ZilionisLungData(),used_in_NSCLC_non_immune
+ZilionisLungData(),used_in_blood
+ZilionisLungData('mouse'),Library
+ZilionisLungData('mouse'),Barcode
+ZilionisLungData('mouse'),Animal
+ZilionisLungData('mouse'),Run
+ZilionisLungData('mouse'),Tissue
+ZilionisLungData('mouse'),Used
+ZilionisLungData('mouse'),Library prep batch
+ZilionisLungData('mouse'),Total counts
+ZilionisLungData('mouse'),Percent counts from mitochondrial genes
+ZilionisLungData('mouse'),Most likely Immgen cell type
+ZilionisLungData('mouse'),Major cell type
+ZilionisLungData('mouse'),Minor subset
