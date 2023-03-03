@@ -73,20 +73,12 @@ for (i in 1:n_batches) {
 
 ###
 
+CORES <- parallel::detectCores()
+
 tic("JIVE v2 runtime")
-JIVE_results <- jive_v2(jive_data, rankJ = 10, rankA = rep(15, length(jive_data)), method = "given", maxiter = 5000)
+JIVE_results <- jive_v2(jive_data, rankJ = 10, rankA = rep(15, length(jive_data)), method = "given", maxiter = 5000, CORES = CORES)
 # JIVE v2 runtime: 26587.25 sec elapsed
 toc()
 
 summary(JIVE_results)
 saveRDS(JIVE_results, file = "data/JIVE_v2_dataset1_j10_a15.rds")
-
-###
-
-tic("JIVE v2 runtime")
-JIVE_results <- jive_v2(jive_data, rankJ = 5, rankA = rep(20, length(jive_data)), method = "given", maxiter = 5000)
-# JIVE v2 runtime: 2918.72 sec elapsed
-toc()
-
-summary(JIVE_results)
-saveRDS(JIVE_results, file = "data/JIVE_v2_dataset1_j5_a20.rds")
