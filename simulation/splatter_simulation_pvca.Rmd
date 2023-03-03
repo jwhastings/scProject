@@ -1,0 +1,579 @@
+---
+title: "Splatter Simulation and PVCA"
+author: "Joey Hastings"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::html_clean:
+    highlight: kate
+    thumbnails: FALSE
+    toc_depth: 2
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  fig.dim = c(9, 6)
+  )
+```
+
+# Load Packages
+
+```{r load_packages, message = FALSE}
+library(tictoc)
+library(tidyverse)
+library(ggthemes)
+library(splatter)
+library(scater)
+library(scran)
+library(cowplot)
+
+source("PVCA.R")
+
+theme_set(theme_few())
+```
+
+# Default Splatter Parameters
+
+```{r params}
+newSplatParams()
+
+nGenes <- 5000
+method = "single"
+dropout.type = "experiment"
+dropout.shape = -1
+verbose = FALSE
+```
+
+# Simulation 1
+
+```{r sim1, message = FALSE}
+sim <- splatSimulate(
+  # Parameters to remain the same
+  verbose = verbose,
+  batchCells = c(500, 500),
+  dropout.mid = 0.05,
+  nGenes = nGenes,
+  method = "groups",
+  seed = 1,
+  dropout.type = dropout.type,
+  dropout.shape = dropout.shape,
+  group.prob = c(0.6, 0.3, 0.1),
+  # Parameters to tweak in each simulation
+  batch.facLoc = 0.2,
+  batch.facScale = 0.1,
+  de.prob = c(0.01, 0.1, 0.5),
+  de.downProb = c(0.01, 0.4, 0.9),
+  de.facLoc = c(0.6, 1, 0.2),
+  de.facScale = c(0.1, 0.4, 0.8)
+)
+
+sim_viz <- compareSCEs(list(sim = sim))
+
+plot_grid(plotlist = sim_viz$Plots[1:4])
+plot_grid(plotlist = sim_viz$Plots[5:8])
+
+#################
+# Visualization #
+#################
+
+set.seed(1)
+sim <- logNormCounts(sim)
+sim <- runPCA(sim, ncomponents = 30, ntop = 2000)
+sim <- runTSNE(sim)
+sim <- runUMAP(sim)
+
+orig_p1 <- plotPCA(sim, color_by = "Batch", shape_by = "Group")
+orig_p2 <- plotTSNE(sim, color_by = "Batch", shape_by = "Group")
+orig_p3 <- plotUMAP(sim, color_by = "Batch", shape_by = "Group")
+
+orig_p1
+orig_p2
+orig_p3
+
+###############################
+# Batches, Groups, and Counts #
+###############################
+
+batches <- sim$Batch
+groups <- sim$Group
+rawcounts <- as.matrix(counts(sim))
+
+########
+# PVCA #
+########
+
+# Perform PVCA for 10 random samples of size 1000 (more computationally efficient)
+pvca.res <- matrix(nrow = 10, ncol = 3)
+meta <- cbind(batch = batches, group = groups)
+
+for (i in 1:10) {
+  sample <- sample(1:ncol(rawcounts), 1000, replace = FALSE)
+  pvca.res[i, ] <- PVCA(rawcounts[, sample], meta[sample, ], threshold = 0.6, inter = FALSE)
+}
+
+# Average effect size across samples
+pvca.means <- colMeans(pvca.res)
+names(pvca.means) <- c(colnames(meta), "resid")
+
+# Plot PVCA
+pvca.plot <- PlotPVCA(pvca.means, "PVCA of Simulated Count Data")
+pvca.plot
+```
+
+# Simulation 2
+
+```{r sim2, message = FALSE}
+sim <- splatSimulate(
+  # Parameters to remain the same
+  verbose = verbose,
+  batchCells = c(500, 500),
+  dropout.mid = 0.05,
+  nGenes = nGenes,
+  method = "groups",
+  seed = 1,
+  dropout.type = dropout.type,
+  dropout.shape = dropout.shape,
+  group.prob = c(0.6, 0.3, 0.1)
+  # Parameters to tweak in each simulation
+  
+)
+
+sim_viz <- compareSCEs(list(sim = sim))
+
+plot_grid(plotlist = sim_viz$Plots[1:4])
+plot_grid(plotlist = sim_viz$Plots[5:8])
+
+#################
+# Visualization #
+#################
+
+set.seed(1)
+sim <- logNormCounts(sim)
+sim <- runPCA(sim, ncomponents = 30, ntop = 2000)
+sim <- runTSNE(sim)
+sim <- runUMAP(sim)
+
+orig_p1 <- plotPCA(sim, color_by = "Batch", shape_by = "Group")
+orig_p2 <- plotTSNE(sim, color_by = "Batch", shape_by = "Group")
+orig_p3 <- plotUMAP(sim, color_by = "Batch", shape_by = "Group")
+
+orig_p1
+orig_p2
+orig_p3
+
+###############################
+# Batches, Groups, and Counts #
+###############################
+
+batches <- sim$Batch
+groups <- sim$Group
+rawcounts <- as.matrix(counts(sim))
+
+########
+# PVCA #
+########
+
+# Perform PVCA for 10 random samples of size 1000 (more computationally efficient)
+pvca.res <- matrix(nrow = 10, ncol = 3)
+meta <- cbind(batch = batches, group = groups)
+
+for (i in 1:10) {
+  sample <- sample(1:ncol(rawcounts), 1000, replace = FALSE)
+  pvca.res[i, ] <- PVCA(rawcounts[, sample], meta[sample, ], threshold = 0.6, inter = FALSE)
+}
+
+# Average effect size across samples
+pvca.means <- colMeans(pvca.res)
+names(pvca.means) <- c(colnames(meta), "resid")
+
+# Plot PVCA
+pvca.plot <- PlotPVCA(pvca.means, "PVCA of Simulated Count Data")
+pvca.plot
+```
+
+# Simulation 3
+
+```{r sim3, message = FALSE}
+sim <- splatSimulate(
+  # Parameters to remain the same
+  verbose = verbose,
+  batchCells = c(500, 500),
+  dropout.mid = 0.05,
+  nGenes = nGenes,
+  method = "groups",
+  seed = 1,
+  dropout.type = dropout.type,
+  dropout.shape = dropout.shape,
+  group.prob = c(0.6, 0.3, 0.1),
+  # Parameters to tweak in each simulation
+  bcv.common = 1
+)
+
+sim_viz <- compareSCEs(list(sim = sim))
+
+plot_grid(plotlist = sim_viz$Plots[1:4])
+plot_grid(plotlist = sim_viz$Plots[5:8])
+
+#################
+# Visualization #
+#################
+
+set.seed(1)
+sim <- logNormCounts(sim)
+sim <- runPCA(sim, ncomponents = 30, ntop = 2000)
+sim <- runTSNE(sim)
+sim <- runUMAP(sim)
+
+orig_p1 <- plotPCA(sim, color_by = "Batch", shape_by = "Group")
+orig_p2 <- plotTSNE(sim, color_by = "Batch", shape_by = "Group")
+orig_p3 <- plotUMAP(sim, color_by = "Batch", shape_by = "Group")
+
+orig_p1
+orig_p2
+orig_p3
+
+###############################
+# Batches, Groups, and Counts #
+###############################
+
+batches <- sim$Batch
+groups <- sim$Group
+rawcounts <- as.matrix(counts(sim))
+
+########
+# PVCA #
+########
+
+# Perform PVCA for 10 random samples of size 1000 (more computationally efficient)
+pvca.res <- matrix(nrow = 10, ncol = 3)
+meta <- cbind(batch = batches, group = groups)
+
+for (i in 1:10) {
+  sample <- sample(1:ncol(rawcounts), 1000, replace = FALSE)
+  pvca.res[i, ] <- PVCA(rawcounts[, sample], meta[sample, ], threshold = 0.6, inter = FALSE)
+}
+
+# Average effect size across samples
+pvca.means <- colMeans(pvca.res)
+names(pvca.means) <- c(colnames(meta), "resid")
+
+# Plot PVCA
+pvca.plot <- PlotPVCA(pvca.means, "PVCA of Simulated Count Data")
+pvca.plot
+```
+
+# Simulation 4
+
+```{r sim4, message = FALSE}
+sim <- splatSimulate(
+  # Parameters to remain the same
+  verbose = verbose,
+  batchCells = c(500, 500),
+  dropout.mid = 0.05,
+  nGenes = nGenes,
+  method = "groups",
+  seed = 1,
+  dropout.type = dropout.type,
+  dropout.shape = dropout.shape,
+  group.prob = c(0.6, 0.3, 0.1),
+  # Parameters to tweak in each simulation
+  batch.facLoc = 0.2,
+  batch.facScale = 0.1,
+  de.prob = c(0.01, 0.1, 0.5),
+  de.downProb = c(0.01, 0.4, 0.9),
+  de.facLoc = c(0.6, 1, 0.2),
+  de.facScale = c(0.1, 0.4, 0.8),
+  bcv.common = 1
+)
+
+sim_viz <- compareSCEs(list(sim = sim))
+
+plot_grid(plotlist = sim_viz$Plots[1:4])
+plot_grid(plotlist = sim_viz$Plots[5:8])
+
+#################
+# Visualization #
+#################
+
+set.seed(1)
+sim <- logNormCounts(sim)
+sim <- runPCA(sim, ncomponents = 30, ntop = 2000)
+sim <- runTSNE(sim)
+sim <- runUMAP(sim)
+
+orig_p1 <- plotPCA(sim, color_by = "Batch", shape_by = "Group")
+orig_p2 <- plotTSNE(sim, color_by = "Batch", shape_by = "Group")
+orig_p3 <- plotUMAP(sim, color_by = "Batch", shape_by = "Group")
+
+orig_p1
+orig_p2
+orig_p3
+
+###############################
+# Batches, Groups, and Counts #
+###############################
+
+batches <- sim$Batch
+groups <- sim$Group
+rawcounts <- as.matrix(counts(sim))
+
+########
+# PVCA #
+########
+
+# Perform PVCA for 10 random samples of size 1000 (more computationally efficient)
+pvca.res <- matrix(nrow = 10, ncol = 3)
+meta <- cbind(batch = batches, group = groups)
+
+for (i in 1:10) {
+  sample <- sample(1:ncol(rawcounts), 1000, replace = FALSE)
+  pvca.res[i, ] <- PVCA(rawcounts[, sample], meta[sample, ], threshold = 0.6, inter = FALSE)
+}
+
+# Average effect size across samples
+pvca.means <- colMeans(pvca.res)
+names(pvca.means) <- c(colnames(meta), "resid")
+
+# Plot PVCA
+pvca.plot <- PlotPVCA(pvca.means, "PVCA of Simulated Count Data")
+pvca.plot
+```
+
+# Simulation 5
+
+```{r sim5, message = FALSE}
+sim <- splatSimulate(
+  # Parameters to remain the same
+  verbose = verbose,
+  batchCells = c(250, 750),
+  dropout.mid = 0.05,
+  nGenes = nGenes,
+  method = "groups",
+  seed = 1,
+  dropout.type = dropout.type,
+  dropout.shape = dropout.shape,
+  group.prob = c(0.3, 0.7),
+  # Parameters to tweak in each simulation
+  batch.facLoc = 0.2,
+  batch.facScale = 0.1,
+  de.prob = c(0.01, 0.5),
+  de.downProb = c(0.01, 0.9),
+  de.facLoc = c(0.6, 0.2),
+  de.facScale = c(0.1, 0.8),
+  bcv.common = 1
+)
+
+sim_viz <- compareSCEs(list(sim = sim))
+
+plot_grid(plotlist = sim_viz$Plots[1:4])
+plot_grid(plotlist = sim_viz$Plots[5:8])
+
+#################
+# Visualization #
+#################
+
+set.seed(1)
+sim <- logNormCounts(sim)
+sim <- runPCA(sim, ncomponents = 30, ntop = 2000)
+sim <- runTSNE(sim)
+sim <- runUMAP(sim)
+
+orig_p1 <- plotPCA(sim, color_by = "Batch", shape_by = "Group")
+orig_p2 <- plotTSNE(sim, color_by = "Batch", shape_by = "Group")
+orig_p3 <- plotUMAP(sim, color_by = "Batch", shape_by = "Group")
+
+orig_p1
+orig_p2
+orig_p3
+
+###############################
+# Batches, Groups, and Counts #
+###############################
+
+batches <- sim$Batch
+groups <- sim$Group
+rawcounts <- as.matrix(counts(sim))
+
+########
+# PVCA #
+########
+
+# Perform PVCA for 10 random samples of size 1000 (more computationally efficient)
+pvca.res <- matrix(nrow = 10, ncol = 3)
+meta <- cbind(batch = batches, group = groups)
+
+for (i in 1:10) {
+  sample <- sample(1:ncol(rawcounts), 1000, replace = FALSE)
+  pvca.res[i, ] <- PVCA(rawcounts[, sample], meta[sample, ], threshold = 0.6, inter = FALSE)
+}
+
+# Average effect size across samples
+pvca.means <- colMeans(pvca.res)
+names(pvca.means) <- c(colnames(meta), "resid")
+
+# Plot PVCA
+pvca.plot <- PlotPVCA(pvca.means, "PVCA of Simulated Count Data")
+pvca.plot
+```
+
+# Simulation 6
+
+```{r sim6, message = FALSE}
+sim <- splatSimulate(
+  # Parameters to remain the same
+  verbose = verbose,
+  batchCells = c(250, 750),
+  dropout.mid = 3,
+  nGenes = nGenes,
+  method = "groups",
+  seed = 1,
+  dropout.type = dropout.type,
+  dropout.shape = dropout.shape,
+  group.prob = c(0.3, 0.7),
+  # Parameters to tweak in each simulation
+  batch.facLoc = 0.2,
+  batch.facScale = 0.1,
+  de.prob = c(0.01, 0.5),
+  de.downProb = c(0.01, 0.9),
+  de.facLoc = c(0.6, 0.2),
+  de.facScale = c(0.1, 0.8),
+  bcv.common = 1
+)
+
+sim_viz <- compareSCEs(list(sim = sim))
+
+plot_grid(plotlist = sim_viz$Plots[1:4])
+plot_grid(plotlist = sim_viz$Plots[5:8])
+
+#################
+# Visualization #
+#################
+
+set.seed(1)
+sim <- logNormCounts(sim)
+sim <- runPCA(sim, ncomponents = 30, ntop = 2000)
+sim <- runTSNE(sim)
+sim <- runUMAP(sim)
+
+orig_p1 <- plotPCA(sim, color_by = "Batch", shape_by = "Group")
+orig_p2 <- plotTSNE(sim, color_by = "Batch", shape_by = "Group")
+orig_p3 <- plotUMAP(sim, color_by = "Batch", shape_by = "Group")
+
+orig_p1
+orig_p2
+orig_p3
+
+###############################
+# Batches, Groups, and Counts #
+###############################
+
+batches <- sim$Batch
+groups <- sim$Group
+rawcounts <- as.matrix(counts(sim))
+
+########
+# PVCA #
+########
+
+# Perform PVCA for 10 random samples of size 1000 (more computationally efficient)
+pvca.res <- matrix(nrow = 10, ncol = 3)
+meta <- cbind(batch = batches, group = groups)
+
+for (i in 1:10) {
+  sample <- sample(1:ncol(rawcounts), 1000, replace = FALSE)
+  pvca.res[i, ] <- PVCA(rawcounts[, sample], meta[sample, ], threshold = 0.6, inter = FALSE)
+}
+
+# Average effect size across samples
+pvca.means <- colMeans(pvca.res)
+names(pvca.means) <- c(colnames(meta), "resid")
+
+# Plot PVCA
+pvca.plot <- PlotPVCA(pvca.means, "PVCA of Simulated Count Data")
+pvca.plot
+```
+
+# Simulation 7
+
+```{r sim7, message = FALSE}
+sim <- splatSimulate(
+  # Parameters to remain the same
+  verbose = verbose,
+  batchCells = c(500, 500),
+  dropout.mid = 0.05,
+  nGenes = nGenes,
+  method = "groups",
+  seed = 1,
+  dropout.type = dropout.type,
+  dropout.shape = dropout.shape,
+  group.prob = c(0.6, 0.3, 0.1),
+  # Parameters to tweak in each simulation
+  out.prob = 0.2,
+  batch.facLoc = 0.2,
+  batch.facScale = 0.1,
+  de.prob = c(0.01, 0.1, 0.5),
+  de.downProb = c(0.01, 0.4, 0.9),
+  de.facLoc = c(0.6, 1, 0.2),
+  de.facScale = c(0.1, 0.4, 0.8),
+  bcv.common = 1
+)
+
+sim_viz <- compareSCEs(list(sim = sim))
+
+plot_grid(plotlist = sim_viz$Plots[1:4])
+plot_grid(plotlist = sim_viz$Plots[5:8])
+
+#################
+# Visualization #
+#################
+
+set.seed(1)
+sim <- logNormCounts(sim)
+sim <- runPCA(sim, ncomponents = 30, ntop = 2000)
+sim <- runTSNE(sim)
+sim <- runUMAP(sim)
+
+orig_p1 <- plotPCA(sim, color_by = "Batch", shape_by = "Group")
+orig_p2 <- plotTSNE(sim, color_by = "Batch", shape_by = "Group")
+orig_p3 <- plotUMAP(sim, color_by = "Batch", shape_by = "Group")
+
+orig_p1
+orig_p2
+orig_p3
+
+###############################
+# Batches, Groups, and Counts #
+###############################
+
+batches <- sim$Batch
+groups <- sim$Group
+rawcounts <- as.matrix(counts(sim))
+
+########
+# PVCA #
+########
+
+# Perform PVCA for 10 random samples of size 1000 (more computationally efficient)
+pvca.res <- matrix(nrow = 10, ncol = 3)
+meta <- cbind(batch = batches, group = groups)
+
+for (i in 1:10) {
+  sample <- sample(1:ncol(rawcounts), 1000, replace = FALSE)
+  pvca.res[i, ] <- PVCA(rawcounts[, sample], meta[sample, ], threshold = 0.6, inter = FALSE)
+}
+
+# Average effect size across samples
+pvca.means <- colMeans(pvca.res)
+names(pvca.means) <- c(colnames(meta), "resid")
+
+# Plot PVCA
+pvca.plot <- PlotPVCA(pvca.means, "PVCA of Simulated Count Data")
+pvca.plot
+```
+
+# Session Information
+
+```{r session_info}
+sessionInfo()
+```
