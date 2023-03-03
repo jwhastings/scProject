@@ -69,8 +69,10 @@ jive_data$Batch3 <- t(b3)
 
 ###
 
+CORES <- parallel::detectCores()
+
 tic("JIVE v2 runtime")
-JIVE_results <- jive_v2(jive_data, rankJ = 6, rankA = rep(8, length(jive_data)), method = "given", maxiter = 5000)
+JIVE_results <- jive_v2(jive_data, rankJ = 6, rankA = rep(8, length(jive_data)), method = "given", maxiter = 5000, CORES = CORES)
 # JIVE v2 runtime: 26587.25 sec elapsed
 toc()
 
