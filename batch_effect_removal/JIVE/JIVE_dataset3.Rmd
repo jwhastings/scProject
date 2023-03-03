@@ -1,5 +1,5 @@
 ---
-title: "JIVE Integration (Dataset 2)"
+title: "JIVE Integration (Dataset 3)"
 author: "Joey Hastings"
 date: "`r Sys.Date()`"
 output:
