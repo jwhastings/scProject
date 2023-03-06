@@ -10,15 +10,23 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
     n[i] <- nrow(data[[i]]) * ncol(data[[i]])
     d[i] <- nrow(data[[i]])
   }
+  cat("Performing Initial SVD for", l, "datasets\n")
+  tic("Initial SVD")
   for (i in 1:l) {
+    tic(paste0("  SVD ", i))
     temp <- SVDmiss(data[[i]], ncomp = min(ncol(data[[i]]), 
                                            nrow(data[[i]])))[[1]]
-    data[[i]] <- temp$u %*% diag(x = temp$d) %*% t(temp$v)
+    # data[[i]] <- temp$u %*% diag(x = temp$d) %*% t(temp$v)
+    data[[i]] <- eigenMapMatMult2(eigenMapMatMult2(temp$u, diag(x = temp$d), n_cores = CORES), t(temp$v), n_cores = CORES)
+    toc(quiet = !showProgress)
   }
+  toc(quiet = !showProgress)
+  cat("----------------------------------------------\n")
   centerValues <- list()
   scaleValues <- c()
   for (i in 1:l) {
     if (center) {
+      cat("Centering dataset", i, "\n")
       centerValues[[i]] <- apply(data[[i]], 1, mean, na.rm = T)
       data[[i]] <- data[[i]] - matrix(rep(centerValues[[i]], 
                                           ncol(data[[i]])), nrow = nrow(data[[i]]))
@@ -27,6 +35,7 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
       centerValues[[i]] <- rep(0, d[i])
     }
     if (scale) {
+      cat("Scaling dataset", i, "\n")
       scaleValues[i] <- norm(data[[i]], type = "f") * 
         sqrt(sum(n))
       data[[i]] <- data[[i]]/scaleValues[i]
@@ -42,19 +51,26 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
 
   if (method == "given") {
     if (est) {
+      cat("Performing compression via SVD\n")
+      tic("Compressing data")
       u <- list()
       for (i in 1:l) {
+        tic(paste0("  Compression ", i))
         if (nrow(data[[i]]) > ncol(data[[i]])) {
-          temp <- svdwrapper(data[[i]], nu = ncol(data[[i]]), 
-                             nv = ncol(data[[i]]))
-          data[[i]] <- diag(x = temp$d[1:ncol(data[[1]])], 
-                            nrow = ncol(data[[1]])) %*% t(temp$v[, 1:ncol(data[[1]])])
+          temp <- svdwrapper(data[[i]], nu = ncol(data[[i]]), nv = ncol(data[[i]]))
+          
+          # data[[i]] <- diag(x = temp$d[1:ncol(data[[1]])], nrow = ncol(data[[1]])) %*% t(temp$v[, 1:ncol(data[[1]])])
+          data[[i]] <- eigenMapMatMult2(diag(x = temp$d[1:ncol(data[[1]])], nrow = ncol(data[[1]])), t(temp$v[, 1:ncol(data[[1]])]), n_cores = CORES)
+          
           u[[i]] <- temp$u
         }
         else {
           u[[i]] <- diag(1, nrow(data[[i]]))
         }
+        toc(quiet = !showProgress)
       }
+    toc(quiet = !showProgress)
+    cat("----------------------------------------------\n")
     }
     if (showProgress) {
       cat("Running JIVE algorithm for ranks:\njoint rank:", 
@@ -83,22 +99,31 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
   }
   else if (method == "bic") {
     if (est) {
+      cat("Performing compression via SVD\n")
+      tic("Compressing data")
       u <- list()
       for (i in 1:l) {
+        tic(paste0("  Compression ", i))
         if (nrow(data[[i]]) > ncol(data[[i]])) {
-          temp <- svdwrapper(data[[i]], nu = ncol(data[[i]]), 
-                             nv = ncol(data[[i]]))
-          data[[i]] <- diag(x = temp$d[1:ncol(data[[1]])], 
-                            nrow = ncol(data[[1]])) %*% t(temp$v[, 1:ncol(data[[1]])])
+          temp <- svds(data[[i]], k = ncol(data[[i]]))
+          # data[[i]] <- diag(x = temp$d[1:ncol(data[[1]])], nrow = ncol(data[[1]])) %*% t(temp$v[, 1:ncol(data[[1]])])
+          data[[i]] <- eigenMapMatMult2(
+            diag(x = temp$d[1:ncol(data[[1]])], nrow = ncol(data[[1]])),
+            t(temp$v[, 1:ncol(data[[1]])]),
+            n_cores = CORES
+          )
           u[[i]] <- temp$u
         }
         else {
           u[[i]] <- diag(1, nrow(data[[i]]))
         }
+      toc(quiet = !showProgress)
       }
+    toc(quiet = !showProgress)
     }
-    temp <- bic.jive(data, n, d, conv = conv, maxiter = maxiter, 
-                     orthIndiv = orthIndiv, showProgress = showProgress)
+    cat("----------------------------------------------\n")
+    temp <- jive_bic(data, n, d, conv = conv, maxiter = maxiter, 
+                     orthIndiv = orthIndiv, showProgress = showProgress, CORES = CORES)
     joint <- temp$joint
     individual <- temp$individual
     rankJ <- temp$rankJ

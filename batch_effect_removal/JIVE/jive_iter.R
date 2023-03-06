@@ -23,7 +23,7 @@ jive_iter <- function (data, rankJ = 1, rankA = rep(1, length(data)), conv = 1e-
     if (rankJ > 0) {
       temp <- Xtot - Atot
       s <- svds(temp, rankJ)
-      Jtot <- eigenMapMatMult2(eigenMapMatMult2(s$u, diag(s$d), n_cores = CORES), t(s$v), n_cores = CORES)
+      Jtot <- eigenMapMatMult2(eigenMapMatMult2(s$u, diag(s$d, nrow = rankJ), n_cores = CORES), t(s$v), n_cores = CORES)
       V <- s$v
     } else {
       Jtot <- matrix(0, nrow(Xtot), ncol(Xtot))
@@ -35,7 +35,7 @@ jive_iter <- function (data, rankJ = 1, rankA = rep(1, length(data)), conv = 1e-
       J[[i]] <- temp[1:nrow(data[[i]]), ]
       temp <- temp[-(1:nrow(data[[i]])), ]
     }
-    toc()
+    toc(quiet = !showProgress)
     tic("  Indiv")
     A <- list()
     for (i in 1:l) {
@@ -60,7 +60,7 @@ jive_iter <- function (data, rankJ = 1, rankA = rep(1, length(data)), conv = 1e-
         }
       }
     }
-    toc()
+    toc(quiet = !showProgress)
     if (orthIndiv & nrun == 0) {
       for (i in 1:l) {
         for (j in (1:l)[-i]) {
@@ -83,7 +83,7 @@ jive_iter <- function (data, rankJ = 1, rankA = rep(1, length(data)), conv = 1e-
     nrun = nrun + 1
     cat("    Convergence Target: ", conv, "\n")
     cat("    normJ: ", normJ, ", normA: ", normA, "\n")
-    toc()
+    toc(quiet = !showProgress)
     cat("----------------------------------------------\n")
   }
   if (showProgress) {
