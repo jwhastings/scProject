@@ -1,5 +1,4 @@
 suppressMessages({
-  library(iasvaExamples)
   library(SingleCellExperiment)
   library(splatter)
   library(scuttle)
@@ -54,8 +53,7 @@ table(groups)
 # Choose count matrix #
 #######################
 
-# counts <- counts(data_SCE)
-counts <- logcounts(data_SCE)
+counts <- counts(data_SCE)
 
 dim(counts)
 
