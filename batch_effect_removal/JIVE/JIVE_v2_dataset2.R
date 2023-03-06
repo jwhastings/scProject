@@ -1,79 +1,81 @@
 suppressMessages({
-  library(iasvaExamples)
-  library(SingleCellExperiment)
+  library(tictoc)
+  library(scRNAseq)
+  library(scater)
+  library(Seurat)
   source("jive_speedup.R")
 })
 
 ###
 
-data("Lawlor_Islet_scRNAseq_Read_Counts")
-data("Lawlor_Islet_scRNAseq_Annotations")
+BacherTCellData <- BacherTCellData()
+bacher_metadata <- as.data.frame(colData(BacherTCellData))
+bacher_seurat <- CreateSeuratObject(counts(BacherTCellData), meta.data = bacher_metadata)
 
-anns <- Lawlor_Islet_scRNAseq_Annotations
-anns_subset <- anns[which(anns$Cell_Type != "none"), ]
+#################
+# Identify HVGs #
+#################
 
-counts <- Lawlor_Islet_scRNAseq_Read_Counts
-counts_subset <- counts[, which(anns$Cell_Type != "none")]
+# split the dataset into a list of seurat objects (one for each batch)
+bacher_seurat_batch <- SplitObject(bacher_seurat, split.by = "batch")
 
-# row_variance <- rowVars(counts_subset)
-# top_5k_genevar <- tail(sort(rowVars(counts_subset), index.return = T)$ix, 15000)
-# counts_subset <- counts_subset[top_5k_genevar, ]
+# normalize and identify variable features for each dataset independently
+bacher_seurat_batch <- lapply(X = bacher_seurat_batch, FUN = function(x) {
+  x <- NormalizeData(x)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+})
 
-data_SCE <- SingleCellExperiment(list(counts = counts_subset))
-colData(data_SCE)$Batch <- anns_subset$Batch
-colData(data_SCE)$Cell_Type <- anns_subset$Cell_Type
+# select features that are repeatedly variable across datasets for integration
+features <- SelectIntegrationFeatures(object.list = bacher_seurat_batch)
+
+########################################################
+
+# Select only HVGs
+BacherTCellData <- BacherTCellData[features, ]
+
+# Subset to three batches
+# BacherTCellData <- BacherTCellData[, colData(BacherTCellData)$batch %in% c(10, 16, 17)]
+
+# Final SCE object
+data_SCE <- BacherTCellData
 
 ###
-
-batches <- data_SCE$Batch
+batches <- ifelse(data_SCE$batch < 10, paste0("Batch0", data_SCE$batch), paste0("Batch", data_SCE$batch))
 # Frequency of batches in simulation
 table(batches)
 
-groups <- data_SCE$Cell_Type
+clusters <- data_SCE$new_cluster_names
 # Frequency of cell types in simulation
-table(groups)
+table(clusters)
 
-rawcounts <- counts(data_SCE)
-dim(rawcounts)
+counts <- counts(data_SCE)
 
-# Batch 1
-b1 <- rawcounts[, batches == "B1"]
-grp_b1 <- groups[batches == "B1"]
-# Dimension of batch 1
-dim(b1)
-# Frequency of cell types in batch 1
-table(grp_b1)
+dim(counts)
 
-# Batch 2
-b2 <- rawcounts[, batches == "B2"]
-grp_b2 <- groups[batches == "B2"]
-# Dimension of batch 2
-dim(b2)
-# Frequency of cell types in batch 2
-table(grp_b2)
-
-# Batch 3
-b3 <- rawcounts[, batches == "B3"]
-grp_b3 <- groups[batches == "B3"]
-# Dimension of batch 3
-dim(b3)
-# Frequency of cell types in batch 3
-table(grp_b3)
-
-###
+### Batches
+n_batches <- length(unique(batches))
+unq_batches <- unique(batches)
 
 jive_data <- NULL
-jive_data$Batch1 <- t(b1)
-jive_data$Batch2 <- t(b2)
-jive_data$Batch3 <- t(b3)
+all_clusters <- NULL
 
-###
+for (i in 1:n_batches) {
+  jive_data[[paste0("Batch", i)]] <- t(counts[, batches == unq_batches[i]])
+  all_clusters[[paste0("Batch", i)]] <- clusters[batches == unq_batches[i]]
+}
 
 CORES <- parallel::detectCores()
 
 tic("JIVE v2 runtime")
 JIVE_results <- jive_v2(jive_data, rankJ = 6, rankA = rep(8, length(jive_data)), method = "given", maxiter = 5000, CORES = CORES)
-# JIVE v2 runtime: 26587.25 sec elapsed
+# JIVE v2 runtime: 6577.61 sec elapsed
 toc()
 
-saveRDS(JIVE_results, file = "data/JIVE_v2_dataset2.rds")
+saveRDS(JIVE_results, file = "data/JIVE_v2_dataset2_j6_a8.rds")
+
+###
+
+tic("JIVE v2 runtime (BIC)")
+JIVE_results_bic <- jive_v2(jive_data, method = "bic", maxiter = 5000, CORES = CORES)
+# JIVE v2 runtime: 6577.61 sec elapsed
+toc()
