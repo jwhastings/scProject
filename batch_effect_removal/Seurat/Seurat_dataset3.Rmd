@@ -9,7 +9,7 @@ output:
     toc_depth: 2
 ---
 
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
   fig.align = "center",
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 # Load Packages
 
-```{r load_packages, message = FALSE}
+```{r, message = FALSE}
 library(tictoc)
 library(tidyverse)
 library(cowplot)
@@ -41,6 +41,9 @@ library(lisi) # LISI
 library(mclust) # ARI
 
 theme_set(theme_few())
+
+method_name <- "Seurat"
+dataset_name <- "dataset3"
 ```
 
 # Simulation 1
@@ -51,7 +54,7 @@ theme_set(theme_few())
 * Two batches (balanced)
 * Small dropout
 
-```{r sim1_param_spec}
+```{r}
 # Parameters that remain the same for all cell types
 nGenes <- 5000
 method = "single"
@@ -60,7 +63,7 @@ dropout.shape = -1
 verbose = FALSE
 ```
 
-```{r sim1_simultaneous}
+```{r}
 tic("Data Simulation")
 sim1 <- splatSimulate(
   # Parameters to remain the same
@@ -85,7 +88,7 @@ sim1 <- splatSimulate(
 toc()
 ```
 
-```{r sim1_viz}
+```{r}
 sim1 <- logNormCounts(sim1)
 sim1 <- addPerCellQC(sim1)
 n.features <- colData(sim1)$detected
@@ -107,7 +110,7 @@ orig_p3
 
 ## Separate Batches
 
-```{r sim1_batches}
+```{r}
 batches <- sim1$Batch
 # Frequency of batches in simulation
 table(batches)
@@ -134,11 +137,11 @@ dim(b2)
 table(grp_b2)
 ```
 
-## Seurat
+# Seurat
 
 Perform cell batch integration as in their tutorial.
 
-### Setup
+## Setup
 
 * Create Seurat objects for each batch
   * Assign metadata to each object (batch number, cell type)
@@ -146,7 +149,7 @@ Perform cell batch integration as in their tutorial.
 * Identify most variable features (genes) 
 * Choose most variable features from both batches for use in integration
 
-```{r seurat_setup}
+```{r}
 b1_seurat <- CreateSeuratObject(counts = b1, project = "simulation")
 b1_seurat <- AddMetaData(b1_seurat, "Batch1", col.name = "BatchNum")
 b1_seurat <- AddMetaData(b1_seurat, grp_b1, col.name = "Group")
@@ -160,25 +163,25 @@ seurat_list <- list(Batch1 = b1_seurat, Batch2 = b2_seurat)
 # normalize and identify variable features for each dataset independently
 seurat_list <- lapply(X = seurat_list, FUN = function(x) {
     x <- NormalizeData(x)
-    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 5000)
 })
 
 # select features that are repeatedly variable across datasets for integration
-features <- SelectIntegrationFeatures(object.list = seurat_list)
+features <- SelectIntegrationFeatures(object.list = seurat_list, nfeatures = 5000)
 ```
 
-### Integration
+## Integration
 
 * Perform integration by finding a set of anchors from the two batches (via CCA)
 * Use the anchor list to integrate the two batches
 
-```{r seurat_integration}
+```{r}
 anchors <- FindIntegrationAnchors(object.list = seurat_list, anchor.features = features)
 combined <- IntegrateData(anchorset = anchors)
 GetAssay(combined, "integrated")
 ```
 
-### Integrated Analysis
+## Integrated Analysis
 
 * Integrated/combined data is centered/scaled
 * First 30 PCs are computed/stored
@@ -188,7 +191,7 @@ GetAssay(combined, "integrated")
   * "First calculate k-nearest neighbors and construct the SNN graph"
   * "Then optimize the modularity function to determine clusters"
 
-```{r seurat_integrated_analysis}
+```{r}
 # specify that we will perform downstream analysis on the corrected data note that the
 # original unmodified data still resides in the 'RNA' assay
 DefaultAssay(combined) <- "integrated"
@@ -205,11 +208,19 @@ combined <- FindClusters(combined, resolution = 0.5)
 
 Visualize integrated batches and clusters using UMAP:
 
-```{r seurat_integrated_viz}
+```{r}
 # Visualization
-seurat_p1 <- DimPlot(combined, reduction = "pca", group.by = "BatchNum", shape.by = "Group")
-seurat_p2 <- DimPlot(combined, reduction = "umap", group.by = "seurat_clusters", shape.by = "Group", pt.size = 1.5)
-plot_grid(seurat_p1, seurat_p2, nrow = 2)
+dr1 <- DimPlot(combined, reduction = "pca", group.by = "BatchNum", shape.by = "Group")
+dr2 <- DimPlot(combined, reduction = "tsne", group.by = "BatchNum", shape.by = "Group", pt.size = 1.5)
+dr3 <- DimPlot(combined, reduction = "umap", group.by = "BatchNum", shape.by = "Group", pt.size = 1.5)
+
+plots <- align_plots(dr1, dr2, align = 'v', axis = 'l')
+# then build the bottom row
+bottom_row <- plot_grid(plots[[2]], dr3, labels = c('B', 'C'), label_size = 12)
+
+# then combine with the top row for final plot
+dr_all <- plot_grid(plots[[1]], bottom_row, labels = c('A', ''), label_size = 12, ncol = 1)
+dr_all
 
 # Frequency of true cell types/groups vs. identified clusters
 table(combined@meta.data[, c("Group", "seurat_clusters")])
@@ -219,7 +230,7 @@ table(combined@meta.data[, c("Group", "seurat_clusters")])
 seurat_final <- t(as.matrix(GetAssay(combined, "integrated")@data))
 ```
 
-### Calculate kBET
+# Calculate kBET
 
 * Sub-sample data at varying percentages
   * 5%, 10%, 15%, 20%, 25%
@@ -229,52 +240,39 @@ seurat_final <- t(as.matrix(GetAssay(combined, "integrated")@data))
   * **Lower** RR indicate well-mixed batches
   * **Higher** RR indicate poorly-mixed batches
   
-```{r kbet1}
+```{r}
 # data: a matrix (rows: samples, columns: features (genes))
 data <- combined@reductions$pca@cell.embeddings
 
 # batch: vector or factor with batch label of each cell 
-batch <- combined@meta.data$BatchNum
+batch <- combined$BatchNum
 
-sample_size <- seq(0.05, 0.25, 0.05)
+sample_size <- seq(0.05, 0.25, by = 0.05)
 rejection_rate <- list()
 
 set.seed(1)
-for (i in sample_size) {
-  k <- floor(nrow(data) * i)
+for (i in 1:length(sample_size)) {
+  k <- floor(nrow(data) * sample_size[i])
   
-  batch.estimate <- kBET(data, batch, k0 = k, plot = F, do.pca = F)
+  batch.estimate <- kBET(data, batch, k0 = k, plot = F, do.pca = F, verbose = T)
   
   if (class(batch.estimate) == "list") {
-    rejection_rate[[which(sample_size == i)]] <- batch.estimate$summary %>%
+    rejection_rate[[i]] <- batch.estimate$summary %>%
       rownames_to_column(var = "statistic") %>%
-      mutate(sample_size = i) %>%
+      mutate(sample_size = sample_size[i]) %>%
       select(sample_size, statistic, kBET_rr = kBET.observed)
   }
 }
 
 all_rr <- bind_rows(rejection_rate) %>%
-  mutate(group = "All") %>%
-  pivot_wider(id_cols = c(group, sample_size), names_from = statistic, values_from = kBET_rr)
+  mutate(method = method_name) %>%
+  pivot_wider(id_cols = c(method, sample_size), names_from = statistic, values_from = kBET_rr) %>%
+  select(method, sample_size, median_rr = `50%`)
 
-p_kBET_all <- all_rr %>%
-  ggplot(aes(x = sample_size, y = `50%`)) +
-  # geom_line(aes(y = `97.5%`), color = "darkgray", linetype = "dashed") +
-  # geom_line(aes(y = `2.5%`), color = "darkgray", linetype = "dashed") +
-  geom_line() +
-  # geom_line(aes(y = `97.5%`), color = "darkgray") +
-  # geom_linerange(aes(ymin = `2.5%`, ymax = `97.5%`), color = "darkgray", linetype = "dashed") +
-  geom_point() +
-  scale_x_continuous(labels = scales::percent) +
-  labs(x = "% sample size", y = "kBET (rejection rate)")
+all_rr %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_kBET.csv"))
 
 all_rr %>%
-  select(group, sample_size, median_rr = `50%`) %>%
-  mutate(method = "JIVE") %>%
-  write_csv(file = "output/Seurat_dataset3_kBET_all.csv")
-
-all_rr %>%
-  ggplot(aes(x = sample_size, y = `50%`)) + 
+  ggplot(aes(x = sample_size, y = median_rr)) + 
   geom_line(linewidth = 1) +
   geom_point() +
   scale_x_continuous(labels = scales::percent) +
@@ -284,11 +282,11 @@ all_rr %>%
     y = "kBET (rejection rate)",
     color = "Cell Group",
     title = "kBET Rejection Rates",
-    subtitle = "JIVE"
+    subtitle = method_name
   )
 
 all_rr %>%
-  ggplot(aes(x = sample_size, y = I(1 - `50%`), color = group)) + 
+  ggplot(aes(x = sample_size, y = I(1 - median_rr))) + 
   geom_line(linewidth = 1) +
   geom_point() +
   scale_x_continuous(labels = scales::percent) +
@@ -298,11 +296,11 @@ all_rr %>%
     y = "kBET (acceptance rate)",
     color = "Cell Group",
     title = "kBET Acceptance Rates",
-    subtitle = "JIVE"
+    subtitle = method_name
   )
 ```
 
-### Calculate Average Silhouette Width
+# Calculate Average Silhouette Width
 
 Original batch label and cell types/groups will be considered the clusters to compute $ASW_{batch}$ and $ASW_{group}$
 
@@ -315,7 +313,7 @@ Original batch label and cell types/groups will be considered the clusters to co
 * Repeat `20` times
 * Calculate the median ASW from the `20` runs to ensure stability of the measurement
 
-```{r asw}
+```{r}
 asw_repeat <- 20
 npcs <- 30
 
@@ -345,35 +343,34 @@ for (i in 1:asw_repeat) {
 }
 
 all_asw_batch <- bind_rows(asw_batch) %>%
-  mutate(cluster = "Batch")
+  mutate(Cluster = "Batch")
 
 # ASW_batch summary
 summary(all_asw_batch$Mean)
 
 all_asw_group <- bind_rows(asw_group) %>%
-  mutate(cluster = "Group")
+  mutate(Cluster = "Group")
 
 #ASW_group summary
 summary(all_asw_group$Mean)
 
 all_asw <- bind_rows(all_asw_batch, all_asw_group)
 
-asw_plot <- ggplot(data = all_asw, aes(x = cluster, y = Mean, fill = cluster)) +
+asw_plot <- ggplot(data = all_asw, aes(x = Cluster, y = Mean, fill = Cluster)) +
   geom_violin() +
   geom_boxplot(width = 0.2)
 
 asw_plot
 
 all_asw %>%
-  group_by(cluster) %>%
-  summarize(median_asw = median(Mean)) %>%
-  mutate(Method = "Seurat") %>%
-  write_csv(file = "output/Seurat_dataset3_ASW.csv")
+  group_by(Cluster) %>%
+  mutate(Method = method_name) %>%
+  write_csv(file = paste0("output/", method_name, "_", dataset_name, "_ASW.csv"))
 ```
 
-### Calculate LISI Scores
+# Calculate LISI Scores
 
-```{r jive_lisi}
+```{r}
 # Performed for all cells
 
 lisi <- compute_lisi(seurat_final, data.frame(batch = batches, group = groups), c("batch", "group"), perplexity = 40) %>%
