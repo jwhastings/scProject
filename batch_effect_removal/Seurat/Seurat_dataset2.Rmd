@@ -1,0 +1,406 @@
+---
+title: "Seurat Integration (Dataset 2)"
+author: "Joey Hastings"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::html_clean:
+    highlight: kate
+    thumbnails: FALSE
+    toc_depth: 3
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  fig.dim = c(9, 6)
+  )
+```
+
+# Load Packages
+
+```{r, message = FALSE}
+library(tictoc)
+library(tidyverse)
+library(cowplot)
+library(ggExtra)
+library(ggthemes)
+
+library(splatter)
+library(scater)
+library(scran)
+library(r.jive)
+library(Seurat)
+library(factoextra)
+library(SLIDE)
+library(RSpectra)
+library(scRNAseq)
+library(lme4)
+
+library(kBET) # kBET
+library(cluster) # ASW
+library(lisi) # LISI
+library(mclust) # ARI
+
+theme_set(theme_few())
+
+method_name <- "Seurat"
+dataset_name <- "dataset2"
+```
+
+# Bacher T-Cell Data
+
+## Load Data from `scRNAseq` Package
+
+```{r}
+BacherTCellData <- BacherTCellData()
+table(BacherTCellData$batch)
+table(BacherTCellData$batch, BacherTCellData$new_cluster_names)
+```
+
+Perform cell batch integration as in their tutorial.
+
+# Seurat
+
+### Setup
+
+* Create Seurat objects for each batch
+  * Assign metadata to each object (batch number, cell type)
+* Normalize the cell counts
+* Identify most variable features (genes) 
+* Choose most variable features from both batches for use in integration
+
+```{r}
+bacher_metadata <- as.data.frame(colData(BacherTCellData))
+bacher_seurat <- CreateSeuratObject(counts(BacherTCellData), meta.data = bacher_metadata)
+
+#################
+# Identify HVGs #
+#################
+
+# split the dataset into a list of seurat objects (one for each batch)
+bacher_seurat_batch <- SplitObject(bacher_seurat, split.by = "batch")
+
+# normalize and identify variable features for each dataset independently
+bacher_seurat_batch <- lapply(X = bacher_seurat_batch, FUN = function(x) {
+  x <- NormalizeData(x)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+})
+
+# select features that are repeatedly variable across datasets for integration
+features <- SelectIntegrationFeatures(object.list = bacher_seurat_batch)
+
+########################################################
+
+batch_indices <- which(unique(bacher_seurat$batch) %in% c(14, 15)) # subset batches
+bacher_seurat_batch <- bacher_seurat_batch[batch_indices]
+```
+
+### Integration
+
+* Perform integration by finding a set of anchors from the two batches (via CCA)
+* Use the anchor list to integrate the two batches
+
+```{r}
+anchors <- FindIntegrationAnchors(object.list = bacher_seurat_batch, anchor.features = features)
+combined <- IntegrateData(anchorset = anchors)
+GetAssay(combined, "integrated")
+```
+
+### Integrated Analysis
+
+* Integrated/combined data is centered/scaled
+* First 30 PCs are computed/stored
+* PC1-PC30 are used to perform t-SNE and UMAP dimensionality reduction
+* Calculates k-nearest neighbors (`k = 20` by default) from PC1-PC30
+* Identify clusters by using Shared Nearest Neighbors (SNN):
+  * "First calculate k-nearest neighbors and construct the SNN graph"
+  * "Then optimize the modularity function to determine clusters"
+
+```{r}
+# specify that we will perform downstream analysis on the corrected data note that the
+# original unmodified data still resides in the 'RNA' assay
+DefaultAssay(combined) <- "integrated"
+
+# Run the standard workflow for visualization and clustering
+set.seed(1)
+combined <- ScaleData(combined, verbose = FALSE)
+combined <- RunPCA(combined, npcs = 30, verbose = FALSE)
+combined <- RunTSNE(combined, reduction = "pca", dims = 1:30)
+combined <- RunUMAP(combined, reduction = "pca", dims = 1:30)
+combined <- FindNeighbors(combined, reduction = "pca", dims = 1:30)
+combined <- FindClusters(combined, resolution = 0.5)
+
+#
+combined <- AddMetaData(combined, factor(combined$batch), col.name = "Batch")
+combined <- AddMetaData(combined, factor(combined$new_cluster_names), col.name = "Cluster")
+```
+
+Visualize integrated batches and clusters using UMAP:
+
+```{r}
+title_caption <-
+  labs(
+    title = "Integrated Data",
+    subtitle = method_name
+  )
+
+integrated_p1 <- plot_grid(
+  PCAPlot(combined, group.by = "Batch") +
+  scale_color_fivethirtyeight(name = "Batch") +
+    title_caption,
+  PCAPlot(combined, group.by = "Cluster") + scale_color_gdocs(name = "Cluster") + labs(title = ""),
+  nrow=2, align = "v"
+  )
+
+integrated_p2 <- plot_grid(
+  TSNEPlot(combined, group.by = "Batch") +
+  scale_color_fivethirtyeight(name = "Batch") +
+    title_caption,
+  TSNEPlot(combined, group.by = "Cluster") + scale_color_gdocs(name = "Cluster") + labs(title = ""),
+  nrow=2, align = "v"
+  )
+
+integrated_p3 <- plot_grid(
+  UMAPPlot(combined, group.by = "Batch") +
+    scale_color_fivethirtyeight(name = "Batch") +
+    title_caption,
+  UMAPPlot(combined, group.by = "Cluster") + scale_color_gdocs(name = "Cluster") + labs(title = ""),
+  nrow=2, align = "v"
+  )
+
+integrated_p1 # ggsave(paste0("dataset2_j", JIVE_results$rankJ, "_a_15_14_integrated_pca.png"), integrated_p1)
+integrated_p2 # ggsave(paste0("dataset2_j", JIVE_results$rankJ, "_a_15_14_integrated_tsne.png"), integrated_p2)
+integrated_p3 # ggsave(paste0("dataset2_j", JIVE_results$rankJ, "_a_15_14_integrated_umap.png"), integrated_p3)
+```
+
+```{r}
+integrated_final <- t(combined@assays$integrated@scale.data)
+batches <- combined$Batch
+clusters <- combined$Cluster
+```
+
+### Calculate kBET
+
+* Sub-sample data at varying percentages
+  * 5%, 10%, 15%, 20%, 25%
+  * Stratified sampling so that each batch has the same number of cells selected
+    * E.g., assume 2 batches, sampling 10% of 1000 cells = 100 cells: sample 50 cells from each batch
+* Calculate kBET rejection rates at each percentage
+  * **Lower** RR indicate well-mixed batches
+  * **Higher** RR indicate poorly-mixed batches
+  
+```{r}
+# data: a matrix (rows: samples, columns: features (genes))
+# data <- svds(integrated_final, k = 30)$u
+data <- combined@reductions$pca@cell.embeddings
+
+# batch: vector or factor with batch label of each cell 
+batch <- combined$Batch
+
+sample_size <- seq(0.05, 0.25, by = 0.05)
+rejection_rate <- list()
+
+set.seed(1)
+for (i in 1:length(sample_size)) {
+  k <- floor(nrow(data) * sample_size[i])
+  
+  cat("\nSample Size: ", sample_size[i], ", k = ", k, "\n", sep = "")
+  cat("------------------------------\n")
+ 
+  batch.estimate <- kBET(data, batch, k0 = k, plot = F, do.pca = F, verbose = T)
+  
+  cat("\n------------------------------\n")
+  
+  if (class(batch.estimate) == "list") {
+    rejection_rate[[i]] <- batch.estimate$summary %>%
+      rownames_to_column(var = "statistic") %>%
+      mutate(sample_size = sample_size[i]) %>%
+      select(sample_size, statistic, kBET_rr = kBET.observed)
+  }
+}
+
+all_rr <- bind_rows(rejection_rate) %>%
+  mutate(method = method_name) %>%
+  pivot_wider(id_cols = c(method, sample_size), names_from = statistic, values_from = kBET_rr) %>%
+  select(method, sample_size, median_rr = `50%`)
+
+all_rr %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_kBET.csv"))
+
+all_rr %>%
+  ggplot(aes(x = sample_size, y = median_rr)) + 
+  geom_line(linewidth = 1) +
+  geom_point() +
+  scale_x_continuous(labels = scales::percent) +
+  expand_limits(y = c(0, 1)) + 
+  labs(
+    x = "% sample size",
+    y = "kBET (rejection rate)",
+    color = "Cell Group",
+    title = "kBET Rejection Rates",
+    subtitle = method_name
+  )
+
+all_rr %>%
+  ggplot(aes(x = sample_size, y = I(1 - median_rr))) + 
+  geom_line(linewidth = 1) +
+  geom_point() +
+  scale_x_continuous(labels = scales::percent) +
+  expand_limits(y = c(0, 1)) + 
+  labs(
+    x = "% sample size",
+    y = "kBET (acceptance rate)",
+    color = "Cell Group",
+    title = "kBET Acceptance Rates",
+    subtitle = method_name
+  )
+```
+
+### Calculate Average Silhouette Width
+
+Original batch label and cell types/groups will be considered the clusters to compute $ASW_{batch}$ and $ASW_{group}$
+
+* Compute average silhouette width (ASW) for the first 30 PCs of 80% sub-sample of joint data
+  * ASW ranges between -1 and 1
+  * Values **close to 1** indicate the cell is well-matched to its cluster (i.e., batch label)
+  * Values **close to -1** indicate the cell is **not** well-matched to its cluster (i.e., batch label)
+    * We hope to see lower values for $ASW_{batch}$ since it is indicative of well-mixed batches
+    * We hope to see higher values for $ASW_{group}$ since it is indicative that distinct cell groups were preserved after batch-mixing
+* Repeat `20` times
+* Calculate the median ASW from the `20` runs to ensure stability of the measurement
+
+```{r}
+asw_repeat <- 20
+npcs <- 30
+
+asw_batch <- list()
+asw_cluster <- list()
+subset_prop <- 0.8 # subsample to 80% of the data
+subset_size_total <- floor(length(batch) * subset_prop)
+
+set.seed(1)
+for (i in 1:asw_repeat) {
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    slice_sample(n = subset_size_total, replace = F)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  data_pc <- svds(integrated_final[subset_id, ], k = npcs)$u
+  
+  dissimilarity_matrix <- daisy(data_pc)
+  
+  asw_batch_i <- silhouette(as.integer(factor(batches[subset_id])), dissimilarity_matrix)
+  asw_batch[[i]] <- as.data.frame(rbind(summary(asw_batch_i)[["si.summary"]]))
+  
+  asw_cluster_i <- silhouette(as.integer(factor(clusters[subset_id])), dissimilarity_matrix)
+  asw_cluster[[i]] <- as.data.frame(rbind(summary(asw_cluster_i)[["si.summary"]]))
+}
+
+all_asw_batch <- bind_rows(asw_batch) %>%
+  mutate(Cluster = "Batch")
+
+# ASW_batch summary
+summary(all_asw_batch$Mean)
+
+all_asw_cluster <- bind_rows(asw_cluster) %>%
+  mutate(Cluster = "Cluster")
+
+#ASW_group summary
+summary(all_asw_cluster$Mean)
+
+all_asw <- bind_rows(all_asw_batch, all_asw_cluster)
+
+asw_plot <- ggplot(data = all_asw, aes(x = Cluster, y = Mean, fill = Cluster)) +
+  geom_violin() +
+  geom_boxplot(width = 0.2) +
+  labs(x = "") +
+  theme(legend.position = "none") +
+  scale_fill_few()
+
+asw_plot
+
+all_asw %>%
+  group_by(Cluster) %>%
+  mutate(Method = method_name) %>%
+  write_csv(file = paste0("output/", method_name, "_", dataset_name, "_ASW.csv"))
+```
+
+### Calculate LISI Scores
+
+```{r}
+# Performed for all cells
+
+lisi <- compute_lisi(integrated_final, data.frame(batch = batches, cluster = clusters), c("batch", "cluster"), perplexity = 40) %>%
+  pivot_longer(cols = c("batch", "cluster"), names_to = "type", values_to = "lisi")
+
+# Looking for values close to the number of batches (2)
+# Looking for values close to 1
+
+ggplot(data = lisi, aes(x = type, y = lisi, fill = type)) +
+  geom_violin() +
+  geom_boxplot(width = 0.05)
+```
+
+<!-- ### Calculate Adjusted Rand Index -->
+
+<!-- * Compute adjusted rand index (ARI) for a 80% sub-sample of clusters -->
+<!--   * ARI is bounded above by 1 (i.e., perfect agreement between two partitions) -->
+<!--   * Values **close to 1** indicate the two partition labels are similar -->
+<!--   * Values **close to 0** indicate the two partition labels are not similar -->
+<!--     * We hope to see lower values for $ARI_{batch}$ since it is indicative of well-mixed batches -->
+<!--     * We hope to see higher values for $ARI_{group}$ since it is indicative that distinct cell groups were preserved after batch-mixing -->
+<!-- * Repeat `20` times -->
+<!-- * Calculate the median ARI from the `20` runs to ensure stability of the measurement -->
+
+<!-- ```{r jive_ari} -->
+<!-- ari_repeat <- 20 -->
+<!-- npcs <- 30 -->
+
+<!-- ari_batch <- list() -->
+<!-- ari_group <- list() -->
+<!-- subset_prop <- 0.8 # subsample to 80% of the data -->
+<!-- subset_size_total <- floor(length(batch) * subset_prop) -->
+
+<!-- set.seed(1) -->
+<!-- for (i in 1:ari_repeat) { -->
+<!--   subset_index <-  -->
+<!--     data.frame(index = 1:length(batch) , batch = batch) %>% -->
+<!--     slice_sample(n = subset_size_total, replace = F) -->
+
+<!--   subset_id <- subset_index %>% -->
+<!--     pull(index) -->
+
+<!--   clusters <- kmeans(svd(integrated_final[subset_id, ])$u, centers = length(unique(groups)))$cluster -->
+
+<!--   ari_batch[[i]] <- adjustedRandIndex(factor(batches[subset_id]), clusters[subset_id]) -->
+<!--   ari_group[[i]] <- adjustedRandIndex(factor(groups[subset_id]), clusters[subset_id]) -->
+<!-- } -->
+
+<!-- all_ari_batch <- data.frame(ari = unlist(ari_batch)) %>% -->
+<!--   mutate(cluster = "Batch") -->
+
+<!-- # Lower values indicate well-mixed batches -->
+<!-- summary(all_ari_batch$ari) -->
+
+<!-- all_ari_group <- data.frame(ari = unlist(ari_group)) %>% -->
+<!--   mutate(cluster = "Group")  -->
+
+<!-- # Higher values indicate cell types were well preserved -->
+<!-- summary(all_ari_group$ari) -->
+
+<!-- all_ari <- bind_rows(all_ari_batch, all_ari_group) -->
+
+<!-- ari_plot <- ggplot(data = all_ari, aes(x = cluster, y = ari, fill = cluster)) + -->
+<!--   geom_violin() + -->
+<!--   geom_boxplot(width = 0.2) -->
+
+<!-- ari_plot -->
+<!-- ``` -->
+
+# Session Information
+
+```{r session_info}
+sessionInfo()
+```
