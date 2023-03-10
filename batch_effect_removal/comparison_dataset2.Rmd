@@ -1,0 +1,1376 @@
+---
+title: "Dataset 2 Integration"
+author: "Joey Hastings"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::html_clean:
+    highlight: kate
+    gallery: TRUE
+    thumbnails: FALSE
+    toc_depth: 3
+    code_folding: hide
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  fig.dim = c(9, 6)
+  )
+```
+
+# Load Packages
+
+```{r, message = FALSE}
+library(tictoc)
+library(tidyverse)
+library(cowplot)
+library(ggExtra)
+library(ggthemes)
+library(ggrepel)
+library(splatter)
+library(scater)
+library(scran)
+library(kableExtra)
+library(grid)
+library(gridExtra)
+library(r.jive)
+library(Seurat)
+library(harmony)
+
+library(RSpectra)
+library(scRNAseq)
+library(lme4)
+
+library(kBET)    # kBET
+library(cluster) # ASW
+library(lisi)    # LISI
+
+source("PVCA.R")
+source("JIVE/jive_speedup.R", chdir = T)
+
+theme_set(theme_few())
+
+dataset_name <- "dataset2"
+```
+
+# Bacher T-Cell Data
+
+```{r, message = FALSE}
+# scRNAseq package
+BacherTCellData <- BacherTCellData()
+```
+
+## Cell Frequencies by Batch and Cell Cluster
+
+```{r}
+batch_freq <- as.data.frame(table(Batch = BacherTCellData$batch))
+batch_cluster_freq <-
+  as.data.frame(table(
+    Batch = BacherTCellData$batch,
+    Cluster = BacherTCellData$new_cluster_names
+  )) %>%
+  pivot_wider(id_cols = c("Batch"), names_from = "Cluster", values_from = "Freq")
+
+batch_cluster_df <- left_join(batch_freq, batch_cluster_freq, by = "Batch")
+batch_cluster_df %>%
+  kbl(
+    col.names = c(
+      "Batch Number",
+      "Total Batch Count",
+      "Central memory",
+      "Cycling",
+      "Cytotoxic / Th1",
+      "Tfh-like",
+      "Transitional memory",
+      "Type-1 IFN signature"
+    )
+  ) %>%
+  kable_styling() %>%
+  add_header_above(c("Batch" = 2, "Cluster" = 6)) %>%
+  column_spec(2, border_right = T)
+```
+
+We will test the integration methods on batches **14** and **15**.
+
+## Preprocess Data
+
+```{r, warning = FALSE}
+# Create Seurat object list so all data is preprocessed in the same manner
+bacher_metadata <- as.data.frame(colData(BacherTCellData))
+bacher_seurat <- CreateSeuratObject(counts(BacherTCellData), meta.data = bacher_metadata)
+
+#################
+# Identify HVGs #
+#################
+
+# Use Seurat feature selection method for selecting highly variable genes
+
+# split the dataset into a list of seurat objects (one for each batch)
+bacher_seurat_batch <- SplitObject(bacher_seurat, split.by = "batch")
+
+# normalize and identify variable features for each dataset independently
+bacher_seurat_batch <- lapply(X = bacher_seurat_batch, FUN = function(x) {
+  x <- NormalizeData(x)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+})
+
+# select features that are repeatedly variable across datasets for integration
+features <- SelectIntegrationFeatures(object.list = bacher_seurat_batch)
+
+#######################################
+# Create SCE object for visualization #
+#######################################
+
+# Select only HVGs
+BacherTCellData <- BacherTCellData[features, ]
+# Subset to batches of interest
+BacherTCellData <- BacherTCellData[, colData(BacherTCellData)$batch %in% c(14, 15)]
+
+# Final SCE object
+data_SCE <- BacherTCellData
+colData(data_SCE)$Batch <- factor(colData(data_SCE)$batch)
+colData(data_SCE)$Cluster <- factor(colData(data_SCE)$new_cluster_names)
+```
+
+## Visualize Raw Counts
+
+```{r, message = FALSE}
+data_SCE <- logNormCounts(data_SCE)
+
+# Dimension reduction visualization
+set.seed(1)
+data_SCE <- runPCA(data_SCE, ncomponents = 30, ntop = 2000)
+data_SCE <- runTSNE(data_SCE)
+data_SCE <- runUMAP(data_SCE)
+
+orig_title <- labs(title = "Original Data")
+
+orig_p1 <- plot_grid(
+  plotPCA(data_SCE, color_by = "Batch")   + scale_color_fivethirtyeight(name = "Batch") +
+    orig_title,
+  plotPCA(data_SCE, color_by = "Cluster") + scale_color_gdocs(name = "Cluster"),
+  nrow=2, align = "v"
+  ) + labs(title = "Test")
+
+orig_p2 <- plot_grid(
+  plotTSNE(data_SCE, color_by = "Batch")   + scale_color_fivethirtyeight(name = "Batch") +
+    orig_title,
+  plotTSNE(data_SCE, color_by = "Cluster") + scale_color_gdocs(name = "Cluster"),
+  nrow=2, align = "v"
+  )
+
+orig_p3 <- plot_grid(
+  plotUMAP(data_SCE, color_by = "Batch")   + scale_color_fivethirtyeight(name = "Batch") +
+    orig_title,
+  plotUMAP(data_SCE, color_by = "Cluster") + scale_color_gdocs(name = "Cluster"),
+  nrow=2, align = "v"
+  )
+
+orig_p1 # ggsave("orig_pca.png", orig_p1)
+orig_p2 # ggsave("orig_tsne.png", orig_p2)
+orig_p3 # ggsave("orig_umap.png", orig_p3)
+```
+
+### PVCA
+
+```{r, message = FALSE, warning = FALSE}
+batches <- data_SCE$Batch
+clusters <- data_SCE$Cluster
+rawcounts <- as.matrix(logcounts(data_SCE))
+
+# Perform PVCA for 10 random samples of size 1000 (more computationally efficient)
+pvca_res <- matrix(nrow = 10, ncol = 3)
+meta <- cbind(Batch = batches, Cluster = clusters)
+
+set.seed(1)
+for (i in 1:10){
+  sample <- sample(1:ncol(rawcounts), 1000, replace = FALSE)
+  pvca_res[i, ] <- PVCA(rawcounts[, sample], meta[sample, ], threshold = 0.6, inter = FALSE)
+}
+
+# Average effect size across samples
+pvca_means <- colMeans(pvca_res)
+names(pvca_means) <- c(colnames(meta), "Residual")
+
+# Plot PVCA
+pvca_plot <- PlotPVCA(pvca_means, "PVCA of Raw Count Data")
+pvca_plot
+```
+
+
+```{r, include = FALSE}
+method_name <- "Raw"
+raw_final <- t(as.matrix(logcounts(data_SCE)))
+
+# kBET
+# data: a matrix (rows: samples, columns: features (genes))
+data <- svds(raw_final, k = 30)$u
+
+# batch: vector or factor with batch label of each cell 
+batch <- batches
+
+sample_size <- seq(0.05, 0.25, by = 0.05)
+rejection_rate <- list()
+
+set.seed(1)
+for (i in 1:length(sample_size)) {
+  k <- floor(nrow(data) * sample_size[i])
+  
+  batch.estimate <- kBET(data, batch, k0 = k, plot = F, do.pca = F)
+  
+  if (class(batch.estimate) == "list") {
+    rejection_rate[[i]] <- batch.estimate$summary %>%
+      rownames_to_column(var = "statistic") %>%
+      mutate(sample_size = sample_size[i]) %>%
+      select(sample_size, statistic, kBET_rr = kBET.observed)
+  }
+}
+
+raw_kbet <- bind_rows(rejection_rate) %>%
+  mutate(Method = method_name) %>%
+  pivot_wider(
+    id_cols = c("Method", "sample_size"),
+    names_from = "statistic",
+    values_from = "kBET_rr"
+  ) %>%
+  select(Method, sample_size, median_rr = `50%`)
+
+raw_kbet %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_kBET.csv"))
+```
+
+```{r, include = FALSE}
+# ASW
+asw_repeat <- 20
+npcs <- 30
+
+asw_batch <- list()
+asw_cluster <- list()
+subset_prop <- 0.8 # subsample to 80% of the data
+subset_size_total <- floor(length(batch) * subset_prop)
+
+for (i in 1:asw_repeat) {
+  set.seed(i)
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    slice_sample(n = subset_size_total, replace = F)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  data_pc <- svds(raw_final[subset_id, ], k = npcs)$u
+  
+  dissimilarity_matrix <- daisy(data_pc)
+  
+  asw_batch_i <- silhouette(as.integer(factor(batches[subset_id])), dissimilarity_matrix)
+  asw_batch[[i]] <- as.data.frame(rbind(summary(asw_batch_i)[["si.summary"]]))
+  
+  asw_cluster_i <- silhouette(as.integer(factor(clusters[subset_id])), dissimilarity_matrix)
+  asw_cluster[[i]] <- as.data.frame(rbind(summary(asw_cluster_i)[["si.summary"]]))
+}
+
+raw_asw <- bind_rows(
+  bind_rows(asw_batch) %>% mutate(Label = "Batch"),
+  bind_rows(asw_cluster) %>% mutate(Label = "Cluster")
+  ) %>%
+  mutate(Method = method_name) %>%
+  select(Method, Label, Mean)
+
+raw_asw %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_ASW.csv"))
+```
+
+```{r, include = FALSE}
+# LISI
+raw_lisi <-
+  compute_lisi(
+    raw_final,
+    data.frame(Batch = batches, Cluster = clusters),
+    c("Batch", "Cluster"),
+    perplexity = 40
+  ) %>%
+  pivot_longer(
+    cols = c("Batch", "Cluster"),
+    names_to = "Label",
+    values_to = "LISI"
+  ) %>%
+  mutate(Method = method_name)
+
+raw_lisi %>%
+  write_csv(file = paste0("output/", method_name, "_", dataset_name, "_LISI.csv"))
+```
+
+# Perform Integration Methods
+
+## JIVE
+
+```{r}
+method_name <- "JIVE"
+```
+
+### Run Integration Method
+
+```{r, eval = FALSE}
+n_batches <- length(unique(batches))
+unq_batches <- sort(unique(batches))
+
+jive_data <- NULL
+all_clusters <- NULL
+
+for (i in 1:n_batches) {
+  jive_data[[as.character(unq_batches[i])]] <- t(rawcounts[, batches == unq_batches[i]])
+  all_clusters[[as.character(unq_batches[i])]] <- clusters[batches == unq_batches[i]]
+}
+
+CORES <- parallel::detectCores()
+
+tic("JIVE v2 runtime (given)")
+JIVE_results <-
+  jive_v2(
+    jive_data,
+    rankJ = 5,
+    rankA = rep(10, length(jive_data)),
+    method = "given",
+    maxiter = 10000,
+    CORES = CORES
+  )
+# JIVE v2 runtime (given): 277.38 sec elapsed
+# JIVE algorithm converged after  245  iterations
+toc()
+
+saveRDS(JIVE_results, file = "JIVE/data/JIVE_v2_dataset2_b14_b15.rds")
+```
+
+Summary of estimated ranks and variance explained by joint/individual/residual for each approach:
+
+```{r}
+JIVE_results <- readRDS(file = "JIVE/data/JIVE_v2_dataset2_b14_b15.rds")
+summary(JIVE_results)
+plot(JIVE_results)
+
+joint <- do.call(rbind, JIVE_results$joint)
+jive_final <- joint
+```
+
+### Visualization of Integration
+
+```{r}
+joint_svd <- svds(joint, k = JIVE_results$rankJ)
+
+var_explained <- data.frame(
+  sv = joint_svd$d,
+  cum_sv = cumsum(joint_svd$d),
+  tot_sv = sum(joint_svd$d)
+  ) %>%
+  mutate(
+    pct_sv = sv / tot_sv,
+    cumpct_sv = cum_sv / tot_sv,
+    PC = paste0("PC", row_number()),
+    PC = factor(PC, levels = paste0("PC", row_number()))
+  )
+
+var_explained %>%
+  ggplot(aes(x = PC)) +
+  geom_col(aes(y = cumpct_sv, fill = PC), color = "black") +
+  geom_col(aes(y = cumpct_sv - pct_sv), fill = "gray", color = "black") +
+  geom_label(aes(y = cumpct_sv - (pct_sv / 2), label = paste0(round(pct_sv * 100, 2), "%"))) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    x = "", y = "",
+    title = "Cumulative Percentage of Total Variance Explained",
+    subtitle = "Integrated (Joint) Data"
+  )
+```
+
+```{r, message = FALSE}
+jive_integrated <- SingleCellExperiment(list(logcounts = t(jive_final)))
+colData(jive_integrated)$Batch <- batches
+colData(jive_integrated)$Cluster <- clusters
+
+set.seed(1)
+# Original PCA based on joint matrices for each batch
+jive_integrated <- runPCA(jive_integrated, ncomponents = 30, ntop = 2000)
+
+# t-SNE based on original PC
+jive_integrated <- runTSNE(jive_integrated)
+
+# UMAP based on original PC
+jive_integrated <- runUMAP(jive_integrated)
+
+plot_title <- labs(
+    title = "Integrated Data",
+    subtitle = paste0(
+      "Joint Rank: ",
+      JIVE_results$rankJ,
+      ", Individual Ranks: ",
+      paste(JIVE_results$rankA, collapse = ", ")
+    )
+  )
+
+p1_options <- scale_color_fivethirtyeight(name = "Batch")
+p2_options <- scale_color_gdocs(name = "Cluster")
+
+# PCA
+jive_pca <- plot_grid(
+  plotPCA(jive_integrated, color_by = "Batch")   + plot_title + p1_options,
+  plotPCA(jive_integrated, color_by = "Cluster") + p2_options,
+  nrow = 2, align = "v"
+  )
+
+# jive_pca_2_3 <- plot_grid(
+#   plotPCA(jive_integrated, color_by = "Batch",   ncomponents = 2:3) + plot_title + p1_options,
+#   plotPCA(jive_integrated, color_by = "Cluster", ncomponents = 2:3) + p2_options,
+#   nrow = 2, align = "v"
+#   )
+# 
+# jive_pca_3_4 <- plot_grid(
+#   plotPCA(jive_integrated, color_by = "Batch",   ncomponents = 3:4) + plot_title + p1_options,
+#   plotPCA(jive_integrated, color_by = "Cluster", ncomponents = 3:4) + p2_options,
+#   nrow = 2, align = "v"
+#   )
+# 
+# jive_pca_4_5 <- plot_grid(
+#   plotPCA(jive_integrated, color_by = "Batch",   ncomponents = 4:5) + plot_title + p1_options,
+#   plotPCA(jive_integrated, color_by = "Cluster", ncomponents = 4:5) + p2_options,
+#   nrow = 2, align = "v"
+#   )
+
+# t-SNE
+jive_tsne <- plot_grid(
+  plotTSNE(jive_integrated, color_by = "Batch")   + p1_options,
+  plotTSNE(jive_integrated, color_by = "Cluster") + p2_options,
+  nrow = 2, align = "v"
+  )
+
+# UMAP
+jive_umap <- plot_grid(
+  plotUMAP(jive_integrated, color_by = "Batch")   + p1_options,
+  plotUMAP(jive_integrated, color_by = "Cluster") + p2_options,
+  nrow = 2, align = "v"
+  )
+
+jive_pca
+jive_tsne
+jive_umap
+```
+
+```{r, eval = FALSE, echo = FALSE}
+##############
+# Clustering #
+##############
+
+clusters_PCA <- clusterCells(
+  jive_integrated,
+  use.dimred = "PCA",
+  BLUSPARAM = bluster::SNNGraphParam(
+    cluster.fun = "louvain",
+    cluster.args = list(resolution = 0.5)
+    )
+  )
+summary(clusters_PCA)
+
+###
+
+clusters_TSNE <- clusterCells(
+  jive_integrated,
+  use.dimred = "TSNE",
+  BLUSPARAM = bluster::SNNGraphParam(
+    cluster.fun = "louvain", 
+    cluster.args = list(resolution = 0.5)
+    )
+  )
+summary(clusters_TSNE)
+
+###
+
+clusters_UMAP <- clusterCells(
+  jive_integrated,
+  use.dimred = "UMAP",
+  BLUSPARAM = bluster::SNNGraphParam(
+    cluster.fun = "louvain", 
+    cluster.args = list(resolution = 0.5)
+    )
+  )
+summary(clusters_UMAP)
+
+###
+
+colData(jive_integrated)$Cluster_PCA <- clusters_PCA
+colData(jive_integrated)$Cluster_TSNE <- clusters_TSNE
+colData(jive_integrated)$Cluster_UMAP <- clusters_UMAP
+
+# Choose clusters
+clusters <- colData(jive_integrated)$Cluster_PCA
+
+plotReducedDim(jive_integrated, dimred = "PCA", color_by = "Cluster_PCA", shape_by = "Cluster")
+plotReducedDim(jive_integrated, dimred = "TSNE", color_by = "Cluster_TSNE", shape_by = "Cluster")
+plotReducedDim(jive_integrated, dimred = "UMAP", color_by = "Cluster_UMAP", shape_by = "Cluster")
+```
+
+### kBET
+
+* Sub-sample data at varying percentages
+  * 5%, 10%, 15%, 20%, 25%
+  * Stratified sampling so that each batch has the same number of cells selected
+    * E.g., assume 2 batches, sampling 10% of 1000 cells = 100 cells: sample 50 cells from each batch
+* Calculate kBET rejection rates at each percentage
+  * **Lower** RR indicate well-mixed batches
+  * **Higher** RR indicate poorly-mixed batches
+  
+```{r}
+# data: a matrix (rows: samples, columns: features (genes))
+data <- svds(jive_final, k = 30)$u
+
+# batch: vector or factor with batch label of each cell 
+batch <- batches
+
+sample_size <- seq(0.05, 0.25, by = 0.05)
+rejection_rate <- list()
+
+set.seed(1)
+for (i in 1:length(sample_size)) {
+  k <- floor(nrow(data) * sample_size[i])
+  
+  cat("\nSample Size: ", sample_size[i], ", k = ", k, "\n", sep = "")
+  cat("------------------------------\n")
+ 
+  batch.estimate <- kBET(data, batch, k0 = k, plot = F, do.pca = F, verbose = T)
+  
+  cat("\n------------------------------\n")
+  
+  if (class(batch.estimate) == "list") {
+    rejection_rate[[i]] <- batch.estimate$summary %>%
+      rownames_to_column(var = "statistic") %>%
+      mutate(sample_size = sample_size[i]) %>%
+      select(sample_size, statistic, kBET_rr = kBET.observed)
+  }
+}
+
+jive_kbet <- bind_rows(rejection_rate) %>%
+  mutate(Method = method_name) %>%
+  pivot_wider(
+    id_cols = c("Method", "sample_size"),
+    names_from = "statistic",
+    values_from = "kBET_rr"
+  ) %>%
+  select(Method, sample_size, median_rr = `50%`)
+
+jive_kbet %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_kBET.csv"))
+```
+
+### Average Silhouette Width
+
+Original batch label and cell types/groups will be considered the clusters to compute $ASW_{batch}$ and $ASW_{group}$
+
+* Compute average silhouette width (ASW) for the first 30 PCs of 80% sub-sample of joint data
+  * ASW ranges between -1 and 1
+  * Values **close to 1** indicate the cell is well-matched to its cluster (i.e., batch label)
+  * Values **close to -1** indicate the cell is **not** well-matched to its cluster (i.e., batch label)
+    * We hope to see lower values for $ASW_{batch}$ since it is indicative of well-mixed batches
+    * We hope to see higher values for $ASW_{group}$ since it is indicative that distinct cell groups were preserved after batch-mixing
+* Repeat `20` times
+* Calculate the median ASW from the `20` runs to ensure stability of the measurement
+
+```{r}
+asw_repeat <- 20
+npcs <- 30
+
+asw_batch <- list()
+asw_cluster <- list()
+subset_prop <- 0.8 # subsample to 80% of the data
+subset_size_total <- floor(length(batch) * subset_prop)
+
+for (i in 1:asw_repeat) {
+  set.seed(i)
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    slice_sample(n = subset_size_total, replace = F)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  data_pc <- svds(jive_final[subset_id, ], k = npcs)$u
+  
+  dissimilarity_matrix <- daisy(data_pc)
+  
+  asw_batch_i <- silhouette(as.integer(factor(batches[subset_id])), dissimilarity_matrix)
+  asw_batch[[i]] <- as.data.frame(rbind(summary(asw_batch_i)[["si.summary"]]))
+  
+  asw_cluster_i <- silhouette(as.integer(factor(clusters[subset_id])), dissimilarity_matrix)
+  asw_cluster[[i]] <- as.data.frame(rbind(summary(asw_cluster_i)[["si.summary"]]))
+}
+
+jive_asw <- bind_rows(
+  bind_rows(asw_batch) %>% mutate(Label = "Batch"),
+  bind_rows(asw_cluster) %>% mutate(Label = "Cluster")
+  ) %>%
+  mutate(Method = method_name) %>%
+  select(Method, Label, Mean)
+
+jive_asw %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_ASW.csv"))
+```
+
+### LISI Scores
+
+```{r}
+# Performed for all cells
+jive_lisi <-
+  compute_lisi(
+    jive_final,
+    data.frame(Batch = batches, Cluster = clusters),
+    c("Batch", "Cluster"),
+    perplexity = 40
+  ) %>%
+  pivot_longer(
+    cols = c("Batch", "Cluster"),
+    names_to = "Label",
+    values_to = "LISI"
+  ) %>%
+  mutate(Method = method_name)
+
+jive_lisi %>%
+  write_csv(file = paste0("output/", method_name, "_", dataset_name, "_LISI.csv"))
+```
+
+## Seurat v3
+
+```{r}
+method_name <- "Seurat"
+
+batch_indices <- which(unique(bacher_seurat$batch) %in% c(14, 15)) # subset batches
+bacher_seurat_batch <- bacher_seurat_batch[batch_indices]
+```
+
+### Run Integration Method
+
+* Perform integration by finding a set of anchors from the two batches (via CCA)
+* Use the anchor list to integrate the two batches
+
+```{r}
+anchors <- FindIntegrationAnchors(object.list = bacher_seurat_batch, anchor.features = features)
+seurat_integrated <- IntegrateData(anchorset = anchors)
+GetAssay(seurat_integrated, "integrated")
+```
+
+* Integrated/combined data is centered/scaled
+* First 30 PCs are computed/stored
+* PC1-PC30 are used to perform t-SNE and UMAP dimensionality reduction
+* Calculates k-nearest neighbors (`k = 20` by default) from PC1-PC30
+* Identify clusters by using Shared Nearest Neighbors (SNN):
+  * "First calculate k-nearest neighbors and construct the SNN graph"
+  * "Then optimize the modularity function to determine clusters"
+
+```{r}
+# specify that we will perform downstream analysis on the corrected data note that the
+# original unmodified data still resides in the 'RNA' assay
+DefaultAssay(seurat_integrated) <- "integrated"
+
+# Run the standard workflow for visualization and clustering
+set.seed(1)
+seurat_integrated <- ScaleData(seurat_integrated, verbose = FALSE)
+seurat_integrated <- RunPCA(seurat_integrated, verbose = FALSE, approx = FALSE)
+seurat_integrated <- RunTSNE(seurat_integrated, reduction = "pca", dims = 1:30)
+seurat_integrated <- RunUMAP(seurat_integrated, reduction = "pca", dims = 1:30)
+seurat_integrated <- FindNeighbors(seurat_integrated, reduction = "pca", dims = 1:30)
+seurat_integrated <- FindClusters(seurat_integrated, resolution = 0.5)
+
+seurat_integrated <- AddMetaData(seurat_integrated, factor(seurat_integrated$batch), col.name = "Batch")
+seurat_integrated <- AddMetaData(seurat_integrated, factor(seurat_integrated$new_cluster_names), col.name = "Cluster")
+
+seurat_final <- t(seurat_integrated@assays$integrated@scale.data)
+```
+
+### Visualization of Integration
+
+```{r}
+plot_title <- labs(
+    title = "Integrated Data",
+    subtitle = method_name
+  )
+
+# PCA
+seurat_pca <- plot_grid(
+  PCAPlot(seurat_integrated, group.by = "Batch")   + plot_title  + p1_options,
+  PCAPlot(seurat_integrated, group.by = "Cluster") + ggtitle("") + p2_options,
+  nrow = 2, align = "vh"
+  )
+
+# t-SNE
+seurat_tsne <- plot_grid(
+  TSNEPlot(seurat_integrated, group.by = "Batch")   + plot_title  + p1_options,
+  TSNEPlot(seurat_integrated, group.by = "Cluster") + ggtitle("") + p2_options,
+  nrow = 2, align = "vh"
+  )
+
+# UMAP
+seurat_umap <- plot_grid(
+  UMAPPlot(seurat_integrated, group.by = "Batch")   + plot_title  + p1_options,
+  UMAPPlot(seurat_integrated, group.by = "Cluster") + ggtitle("") + p2_options,
+  nrow = 2, align = "vh"
+  )
+
+seurat_pca
+seurat_tsne
+seurat_umap
+```
+
+### kBET
+
+```{r}
+# data: a matrix (rows: samples, columns: features (genes))
+data <- svds(t(seurat_integrated@assays$integrated@scale.data), k = 30)$u
+
+# batch: vector or factor with batch label of each cell 
+batch <- batches
+
+sample_size <- seq(0.05, 0.25, by = 0.05)
+rejection_rate <- list()
+
+set.seed(1)
+for (i in 1:length(sample_size)) {
+  k <- floor(nrow(data) * sample_size[i])
+  
+  cat("\nSample Size: ", sample_size[i], ", k = ", k, "\n", sep = "")
+  cat("------------------------------\n")
+ 
+  batch.estimate <- kBET(data, batch, k0 = k, plot = F, do.pca = F, verbose = T)
+  
+  cat("\n------------------------------\n")
+  
+  if (class(batch.estimate) == "list") {
+    rejection_rate[[i]] <- batch.estimate$summary %>%
+      rownames_to_column(var = "statistic") %>%
+      mutate(sample_size = sample_size[i]) %>%
+      select(sample_size, statistic, kBET_rr = kBET.observed)
+  }
+}
+
+seurat_kbet <- bind_rows(rejection_rate) %>%
+  mutate(Method = method_name) %>%
+  pivot_wider(
+    id_cols = c("Method", "sample_size"),
+    names_from = "statistic",
+    values_from = "kBET_rr"
+  ) %>%
+  select(Method, sample_size, median_rr = `50%`)
+
+seurat_kbet %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_kBET.csv"))
+```
+
+### Average Silhouette Width
+
+```{r}
+asw_repeat <- 20
+npcs <- 30
+
+asw_batch <- list()
+asw_cluster <- list()
+subset_prop <- 0.8 # subsample to 80% of the data
+subset_size_total <- floor(length(batch) * subset_prop)
+
+for (i in 1:asw_repeat) {
+  set.seed(i)
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    slice_sample(n = subset_size_total, replace = F)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  seurat_tmp <- NULL
+  seurat_tmp <-
+    RunPCA(
+      seurat_integrated[, subset_id],
+      npcs = npcs,
+      verbose = FALSE,
+      reduction.name = "subset_pca",
+      reduction.key = "sPC_",
+      seed.use = NULL
+    )
+  data_pc <- seurat_tmp@reductions$subset_pca@cell.embeddings
+  
+  dissimilarity_matrix <- daisy(data_pc)
+  
+  asw_batch_i <- silhouette(as.integer(factor(batches[subset_id])), dissimilarity_matrix)
+  asw_batch[[i]] <- as.data.frame(rbind(summary(asw_batch_i)[["si.summary"]]))
+  
+  asw_cluster_i <- silhouette(as.integer(factor(clusters[subset_id])), dissimilarity_matrix)
+  asw_cluster[[i]] <- as.data.frame(rbind(summary(asw_cluster_i)[["si.summary"]]))
+}
+
+seurat_asw <- bind_rows(
+  bind_rows(asw_batch) %>% mutate(Label = "Batch"),
+  bind_rows(asw_cluster) %>% mutate(Label = "Cluster")
+  ) %>%
+  mutate(Method = method_name) %>%
+  select(Method, Label, Mean)
+
+seurat_asw %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_ASW.csv"))
+```
+
+### LISI Scores
+
+```{r}
+# Performed for all cells
+seurat_lisi <-
+  compute_lisi(
+    seurat_final,
+    data.frame(Batch = batches, Cluster = clusters),
+    c("Batch", "Cluster"),
+    perplexity = 40
+  ) %>%
+  pivot_longer(
+    cols = c("Batch", "Cluster"),
+    names_to = "Label",
+    values_to = "LISI"
+  ) %>%
+  mutate(Method = method_name)
+
+seurat_lisi %>%
+  write_csv(file = paste0("output/", method_name, "_", dataset_name, "_LISI.csv"))
+```
+
+## Harmony
+
+```{r}
+method_name <- "Harmony"
+```
+
+### Run Integration Method
+
+```{r, warning = FALSE}
+harmony_integrated <-
+  runPCA(
+    data_SCE,
+    ncomponents = ncol(data_SCE),
+    ntop = nrow(data_SCE),
+    BSPARAM = BiocSingular::ExactParam()
+  )
+harmony_integrated <-
+  RunHarmony(
+    harmony_integrated,
+    "Batch",
+    lambda = 0.1
+  )
+harmony_integrated <- runTSNE(harmony_integrated, dimred = "HARMONY")
+harmony_integrated <- runUMAP(harmony_integrated, dimred = "HARMONY")
+
+harmony_final <- reducedDim(harmony_integrated, "HARMONY")
+```
+
+### Visualization of Integration
+
+```{r}
+plot_title <- labs(title = "Integrated Data", subtitle = method_name)
+
+# Harmony PCA
+harmony_pca <- plot_grid(
+  plotReducedDim(harmony_integrated, dimred = "HARMONY",
+    color_by = "Batch",   ncomponents = 1:2 ) + plot_title + p1_options,
+  plotReducedDim(harmony_integrated, dimred = "HARMONY",
+    color_by = "Cluster", ncomponents = 1:2 ) + p2_options,
+  nrow = 2, align = "vh"
+  )
+
+# t-SNE
+harmony_tsne <- plot_grid(
+  plotTSNE(harmony_integrated, color_by = "Batch")   + plot_title + p1_options,
+  plotTSNE(harmony_integrated, color_by = "Cluster") + p2_options,
+  nrow = 2, align = "vh"
+  )
+
+# UMAP
+harmony_umap <- plot_grid(
+  plotUMAP(harmony_integrated, color_by = "Batch")   + plot_title + p1_options,
+  plotUMAP(harmony_integrated, color_by = "Cluster") + p2_options,
+  nrow = 2, align = "vh"
+  )
+
+harmony_pca
+harmony_tsne
+harmony_umap
+```
+
+### kBET
+
+```{r}
+# data: a matrix (rows: samples, columns: features (genes))
+data <- harmony_final[, 1:30]
+
+# batch: vector or factor with batch label of each cell 
+batch <- batches
+
+sample_size <- seq(0.05, 0.25, by = 0.05)
+rejection_rate <- list()
+
+set.seed(1)
+for (i in 1:length(sample_size)) {
+  k <- floor(nrow(data) * sample_size[i])
+  
+  cat("\nSample Size: ", sample_size[i], ", k = ", k, "\n", sep = "")
+  cat("------------------------------\n")
+ 
+  batch.estimate <- kBET(data, batch, k0 = k, plot = F, do.pca = F, verbose = T)
+  
+  cat("\n------------------------------\n")
+  
+  if (class(batch.estimate) == "list") {
+    rejection_rate[[i]] <- batch.estimate$summary %>%
+      rownames_to_column(var = "statistic") %>%
+      mutate(sample_size = sample_size[i]) %>%
+      select(sample_size, statistic, kBET_rr = kBET.observed)
+  }
+}
+
+harmony_kbet <- bind_rows(rejection_rate) %>%
+  mutate(Method = method_name) %>%
+  pivot_wider(
+    id_cols = c("Method", "sample_size"),
+    names_from = "statistic",
+    values_from = "kBET_rr"
+  ) %>%
+  select(Method, sample_size, median_rr = `50%`)
+
+harmony_kbet %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_kBET.csv"))
+```
+
+### Average Silhouette Width
+
+```{r}
+asw_repeat <- 20
+npcs <- 30
+
+asw_batch <- list()
+asw_cluster <- list()
+subset_prop <- 0.8 # subsample to 80% of the data
+subset_size_total <- floor(length(batch) * subset_prop)
+
+for (i in 1:asw_repeat) {
+  set.seed(i)
+  subset_index <- 
+    data.frame(index = 1:length(batch) , batch = batch) %>%
+    slice_sample(n = subset_size_total, replace = F)
+  
+  subset_id <- subset_index %>%
+    pull(index)
+  
+  data_pc <- svds(harmony_final[subset_id, ], k = npcs)$u
+  
+  dissimilarity_matrix <- daisy(data_pc)
+  
+  asw_batch_i <- silhouette(as.integer(factor(batches[subset_id])), dissimilarity_matrix)
+  asw_batch[[i]] <- as.data.frame(rbind(summary(asw_batch_i)[["si.summary"]]))
+  
+  asw_cluster_i <- silhouette(as.integer(factor(clusters[subset_id])), dissimilarity_matrix)
+  asw_cluster[[i]] <- as.data.frame(rbind(summary(asw_cluster_i)[["si.summary"]]))
+}
+
+harmony_asw <- bind_rows(
+  bind_rows(asw_batch) %>% mutate(Label = "Batch"),
+  bind_rows(asw_cluster) %>% mutate(Label = "Cluster")
+  ) %>%
+  mutate(Method = method_name) %>%
+  select(Method, Label, Mean)
+
+harmony_asw %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "_ASW.csv"))
+```
+
+### LISI Scores
+
+```{r}
+# Performed for all cells
+harmony_lisi <-
+  compute_lisi(
+    harmony_final,
+    data.frame(Batch = batches, Cluster = clusters),
+    c("Batch", "Cluster"),
+    perplexity = 40
+  ) %>%
+  pivot_longer(
+    cols = c("Batch", "Cluster"),
+    names_to = "Label",
+    values_to = "LISI"
+  ) %>%
+  mutate(Method = method_name)
+
+harmony_lisi %>%
+  write_csv(file = paste0("output/", method_name, "_", dataset_name, "_LISI.csv"))
+```
+
+# Integration Method Comparison
+
+```{r}
+method_lvl <- c("JIVE", "Seurat", "Harmony", "Raw")
+```
+
+## t-SNE Plots
+
+```{r}
+# JIVE
+jive_tsne_df <- reducedDim(jive_integrated, "TSNE") %>%
+  as.data.frame() %>%
+  mutate(Method = "JIVE") %>%
+  mutate(Batch = batches, Cluster = clusters)
+
+jive_tsne_batch <- jive_tsne_df %>%
+  ggplot(aes(x = V1, y = V2, color = Batch)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"), legend.position = "right") +
+  labs(title = "JIVE") + p1_options
+
+jive_tsne_cluster <- jive_tsne_df %>%
+  ggplot(aes(x = V1, y = V2, color = Cluster)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(legend.position = "right") + p2_options
+
+jive_tsne_plot <- plot_grid(
+  jive_tsne_batch + theme(legend.position = "none"),
+  jive_tsne_cluster + theme(legend.position = "none"),
+  nrow = 2, align = "hv"
+)
+
+# Seurat
+seurat_tsne_df <- Embeddings(seurat_integrated, "tsne") %>%
+  as.data.frame() %>%
+  mutate(Method = "Seurat") %>%
+  mutate(Batch = batches, Cluster = clusters)
+
+seurat_tsne_batch <- seurat_tsne_df %>%
+  ggplot(aes(x = tSNE_1, y = tSNE_2, color = Batch)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  labs(title = "Seurat") + p1_options
+
+seurat_tsne_cluster <- seurat_tsne_df %>%
+  ggplot(aes(x = tSNE_1, y = tSNE_2, color = Cluster)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  p2_options
+
+seurat_tsne_plot <- plot_grid(
+  seurat_tsne_batch,
+  seurat_tsne_cluster,
+  nrow = 2, align = "hv"
+)
+
+# Harmony
+harmony_tsne_df <- reducedDim(harmony_integrated, "TSNE") %>%
+  as.data.frame() %>%
+  mutate(Method = "Harmony") %>%
+  mutate(Batch = batches, Cluster = clusters)
+
+harmony_tsne_batch <- harmony_tsne_df %>%
+  ggplot(aes(x = V1, y = V2, color = Batch)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  labs(title = "Harmony") + p1_options
+
+harmony_tsne_cluster <- harmony_tsne_df %>%
+  ggplot(aes(x = V1, y = V2, color = Cluster)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  p2_options
+
+harmony_tsne_plot <- plot_grid(
+  harmony_tsne_batch,
+  harmony_tsne_cluster,
+  nrow = 2, align = "hv"
+)
+
+# Raw
+raw_tsne_df <- reducedDim(data_SCE, "TSNE") %>%
+  as.data.frame() %>%
+  mutate(Method = "Raw") %>%
+  mutate(Batch = batches, Cluster = clusters)
+
+raw_tsne_batch <- raw_tsne_df %>%
+  ggplot(aes(x = V1, y = V2, color = Batch)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  labs(title = "Raw") + p1_options
+
+raw_tsne_cluster <- raw_tsne_df %>%
+  ggplot(aes(x = V1, y = V2, color = Cluster)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  p2_options
+
+raw_tsne_plot <- plot_grid(
+  raw_tsne_batch,
+  raw_tsne_cluster,
+  nrow = 2, align = "hv"
+)
+
+# All
+legend_batch <- get_legend(
+  # create some space to the left of the legend
+  jive_tsne_batch + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+
+legend_cluster <- get_legend(
+  # create some space to the left of the legend
+  jive_tsne_cluster + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+
+tsne_prow <- plot_grid(
+  jive_tsne_plot,
+  seurat_tsne_plot,
+  harmony_tsne_plot,
+  raw_tsne_plot,
+  nrow = 1,
+  hjust = -1
+  )
+
+tsne_legend_both <- plot_grid(legend_batch, legend_cluster, nrow = 2, align = "v")
+
+all_tsne_plot <- plot_grid(tsne_prow, tsne_legend_both, rel_widths = c(3, 1))
+
+grid.arrange(arrangeGrob(
+  all_tsne_plot,
+  left = textGrob("t-SNE 2", rot = 90),
+  bottom = textGrob("t-SNE 1")
+))
+```
+
+## UMAP Plots
+
+```{r}
+# JIVE
+jive_umap_df <- reducedDim(jive_integrated, "UMAP") %>%
+  as.data.frame() %>%
+  mutate(Method = "JIVE") %>%
+  mutate(Batch = batches, Cluster = clusters)
+
+jive_umap_batch <- jive_umap_df %>%
+  ggplot(aes(x = V1, y = V2, color = Batch)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"), legend.position = "right") +
+  labs(title = "JIVE") + p1_options
+
+jive_umap_cluster <- jive_umap_df %>%
+  ggplot(aes(x = V1, y = V2, color = Cluster)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(legend.position = "right") + p2_options
+
+jive_umap_plot <- plot_grid(
+  jive_umap_batch + theme(legend.position = "none"),
+  jive_umap_cluster + theme(legend.position = "none"),
+  nrow = 2, align = "hv"
+)
+
+# Seurat
+seurat_umap_df <- Embeddings(seurat_integrated, "umap") %>%
+  as.data.frame() %>%
+  mutate(Method = "Seurat") %>%
+  mutate(Batch = batches, Cluster = clusters)
+
+seurat_umap_batch <- seurat_umap_df %>%
+  ggplot(aes(x = UMAP_1, y = UMAP_2, color = Batch)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  labs(title = "Seurat") + p1_options
+
+seurat_umap_cluster <- seurat_umap_df %>%
+  ggplot(aes(x = UMAP_1, y = UMAP_2, color = Cluster)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  p2_options
+
+seurat_umap_plot <- plot_grid(
+  seurat_umap_batch,
+  seurat_umap_cluster,
+  nrow = 2, align = "hv"
+)
+
+# Harmony
+harmony_umap_df <- reducedDim(harmony_integrated, "UMAP") %>%
+  as.data.frame() %>%
+  mutate(Method = "Harmony") %>%
+  mutate(Batch = batches, Cluster = clusters)
+
+harmony_umap_batch <- harmony_umap_df %>%
+  ggplot(aes(x = V1, y = V2, color = Batch)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  labs(title = "Harmony") + p1_options
+
+harmony_umap_cluster <- harmony_umap_df %>%
+  ggplot(aes(x = V1, y = V2, color = Cluster)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  p2_options
+
+harmony_umap_plot <- plot_grid(
+  harmony_umap_batch,
+  harmony_umap_cluster,
+  nrow = 2, align = "hv"
+)
+
+# Raw
+raw_umap_df <- reducedDim(data_SCE, "UMAP") %>%
+  as.data.frame() %>%
+  mutate(Method = "Raw") %>%
+  mutate(Batch = batches, Cluster = clusters)
+
+raw_umap_batch <- raw_umap_df %>%
+  ggplot(aes(x = V1, y = V2, color = Batch)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  labs(title = "Raw") + p1_options
+
+raw_umap_cluster <- raw_umap_df %>%
+  ggplot(aes(x = V1, y = V2, color = Cluster)) +
+  geom_point(alpha = 0.5) +
+  theme_nothing() +
+  p2_options
+
+raw_umap_plot <- plot_grid(
+  raw_umap_batch,
+  raw_umap_cluster,
+  nrow = 2, align = "hv"
+)
+
+# All
+legend_batch <- get_legend(
+  # create some space to the left of the legend
+  jive_umap_batch + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+
+legend_cluster <- get_legend(
+  # create some space to the left of the legend
+  jive_umap_cluster + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+
+umap_prow <- plot_grid(
+  jive_umap_plot,
+  seurat_umap_plot,
+  harmony_umap_plot,
+  raw_umap_plot,
+  nrow = 1,
+  hjust = -1
+  )
+
+umap_legend_both <- plot_grid(legend_batch, legend_cluster, nrow = 2, align = "v")
+
+all_umap_plot <- plot_grid(umap_prow, umap_legend_both, rel_widths = c(3, 1))
+
+grid.arrange(arrangeGrob(
+  all_umap_plot,
+  left = textGrob("UMAP 2", rot = 90),
+  bottom = textGrob("UMAP 1")
+))
+```
+
+## kBET
+
+```{r}
+all_kbet <- bind_rows(jive_kbet, seurat_kbet, harmony_kbet, raw_kbet) %>%
+  mutate(Method = factor(Method, levels = method_lvl))
+
+kbet_plot <- all_kbet %>%
+  ggplot(aes(
+    x = sample_size,
+    y = I(1 - median_rr),
+    group = Method,
+    color = Method
+  )) +  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  scale_x_continuous(labels = scales::percent) +
+  expand_limits(y = c(0, 1)) +
+  labs(
+    x = "% sample size",
+    y = "kBET (acceptance rate)",
+    color = "Integration Method"
+    )
+
+kbet_plot + labs(title = "kBET Acceptance Rates")
+```
+
+## Average Silhouette Width (ASW)
+
+```{r}
+all_asw <- bind_rows(jive_asw, seurat_asw, harmony_asw, raw_asw) %>%
+  mutate(Method = factor(Method, levels = method_lvl))
+
+asw_plot <- all_asw %>%
+  group_by(Label) %>%
+  mutate(Mean = scales::rescale(Mean)) %>%
+  group_by(Method, Label) %>%
+  summarize(median_ASW = median(Mean), .groups = "keep") %>%
+  pivot_wider(
+    id_cols = "Method",
+    names_from = "Label",
+    values_from = "median_ASW"
+  ) %>% 
+  ggplot(aes(x = Cluster, y = I(1 - Batch), color = Method)) +
+  geom_point(size = 2) +
+  geom_text_repel(aes(label = Method), show.legend = FALSE) +
+  labs(x = "ASW cell type", y = "1 - ASW batch")
+
+asw_plot + labs(title = "Average Silhouette Width Scores")
+```
+
+## LISI Scores
+
+```{r}
+all_lisi <- bind_rows(jive_lisi, seurat_lisi, harmony_lisi, raw_lisi) %>%
+  mutate(Method = factor(Method, levels = method_lvl))
+
+lisi_plot <- all_lisi %>%
+  group_by(Label) %>%
+  mutate(LISI = scales::rescale(LISI)) %>%
+  group_by(Method, Label) %>%
+  summarize(median_LISI = median(LISI), .groups = "keep") %>%
+  pivot_wider(
+    id_cols = "Method",
+    names_from = "Label",
+    values_from = "median_LISI"
+  ) %>%
+  ggplot(aes(x = I(1 - Cluster), y = Batch, color = Method)) +
+  geom_point(size = 2) +
+  geom_text_repel(aes(label = Method), show.legend = FALSE) +
+  labs(x = "1 - cLISI cell type", y = "iLISI batch", )
+
+lisi_plot + labs(title = "LISI Scores")
+```
+
+## All Metrics
+
+```{r}
+# arrange the three plots in a single row
+prow <- plot_grid(
+  kbet_plot + theme(legend.position = "none"),
+  asw_plot + theme(legend.position = "none"),
+  lisi_plot + theme(legend.position = "none"),
+  align = "hv",
+  labels = c("A", "B", "C"),
+  hjust = -1,
+  nrow = 1
+)
+
+# extract the legend from one of the plots
+legend <- get_legend(
+  # create some space to the left of the legend
+  kbet_plot + guides(color = guide_legend(nrow = 1)) + theme(legend.position = "bottom")
+    
+)
+
+# add the legend to the row we made earlier. Give it one-third of 
+# the width of one plot (via rel_widths).
+plot_grid(prow, legend, ncol = 1, rel_heights = c(1, .1))
+```
+
+# Session Information
+
+```{r session_info}
+sessionInfo()
+```
