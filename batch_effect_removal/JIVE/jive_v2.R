@@ -10,12 +10,16 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
     n[i] <- nrow(data[[i]]) * ncol(data[[i]])
     d[i] <- nrow(data[[i]])
   }
-  cat("Performing Initial SVD for", l, "datasets\n")
+  cat("Preprocessing: Performing Initial SVD for", l, "datasets\n")
   tic("Initial SVD")
   for (i in 1:l) {
     tic(paste0("  SVD ", i))
-    temp <- SVDmiss(data[[i]], ncomp = min(ncol(data[[i]]), 
-                                           nrow(data[[i]])))[[1]]
+    
+    if (anyNA(data[[i]])) {
+      temp <- SVDmiss(data[[i]], ncomp = min(ncol(data[[i]]), nrow(data[[i]])))[[1]]
+    } else {
+      temp <- eigenBDCSVD(data[[i]], n_cores = 8)
+    }
     # data[[i]] <- temp$u %*% diag(x = temp$d) %*% t(temp$v)
     data[[i]] <- eigenMapMatMult2(eigenMapMatMult2(temp$u, diag(x = temp$d), n_cores = CORES), t(temp$v), n_cores = CORES)
     toc(quiet = !showProgress)
@@ -24,18 +28,21 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
   cat("----------------------------------------------\n")
   centerValues <- list()
   scaleValues <- c()
+  
+  if (center | scale) {
+    cat("Preprocessing: Centering, Scaling\n")
+  }
   for (i in 1:l) {
     if (center) {
-      cat("Centering dataset", i, "\n")
+      cat("  Centering dataset", i, "\n")
       centerValues[[i]] <- apply(data[[i]], 1, mean, na.rm = T)
-      data[[i]] <- data[[i]] - matrix(rep(centerValues[[i]], 
-                                          ncol(data[[i]])), nrow = nrow(data[[i]]))
+      data[[i]] <- data[[i]] - matrix(rep(centerValues[[i]], ncol(data[[i]])), nrow = nrow(data[[i]]))
     }
     if (!center) {
       centerValues[[i]] <- rep(0, d[i])
     }
     if (scale) {
-      cat("Scaling dataset", i, "\n")
+      cat("  Scaling dataset", i, "\n")
       scaleValues[i] <- norm(data[[i]], type = "f") * 
         sqrt(sum(n))
       data[[i]] <- data[[i]]/scaleValues[i]
@@ -44,6 +51,8 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
       scaleValues[i] <- 1
     }
   }
+  cat("----------------------------------------------\n")
+  
   if (conv == "default") {
     conv = 10^(-6) * norm(do.call(rbind, data), type = "f")
   }
@@ -73,7 +82,7 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
     cat("----------------------------------------------\n")
     }
     if (showProgress) {
-      cat("Running JIVE algorithm for ranks:\njoint rank:", 
+      cat("Running JIVE algorithm for given ranks:\njoint rank:", 
           rankJ, ", individual ranks:", rankA, "\n")
       cat("----------------------------------------------\n")
     }
@@ -83,8 +92,8 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
     individual <- temp$individual
     if (est) {
       for (i in 1:l) {
-        joint[[i]] <- u[[i]] %*% joint[[i]]
-        individual[[i]] <- u[[i]] %*% individual[[i]]
+        joint[[i]] <- eigenMapMatMult2(u[[i]], joint[[i]], n_cores = CORES)
+        individual[[i]] <- eigenMapMatMult2(u[[i]], individual[[i]], n_cores = CORES)
       }
     }
   }
