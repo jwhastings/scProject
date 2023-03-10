@@ -9,6 +9,108 @@ sourceCpp("matrix_multiplication.cpp")
 
 set.seed(1)
 
+############
+# Full SVD #
+############
+
+# Benchmark 1: N = k = 100
+N <- 100
+k <- 100
+
+X <- matrix(rnorm(N*k), N, k)
+
+test <- eigenBDCSVD(X, n_cores = 4)
+
+full_svd_bench1 <- microbenchmark(
+  svd(X),
+  eigenBDCSVD(X, n_cores = 1),
+  eigenBDCSVD(X, n_cores = 4),
+  eigenBDCSVD(X, n_cores = 8),
+  eigenBDCSVD(X, n_cores = 16),
+  times = 100
+  ) %>%
+  as.data.frame() %>%
+  mutate(time_ms = time * 1e-6)
+
+ggplot(data = full_svd_bench1, aes(x = expr, y = time_ms)) +
+  geom_boxplot() +
+  labs(x = "Method", y = "Time (milliseconds)",
+       title = "Full SVD", subtitle = "(100x100 Matrix)") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+# Benchmark 2: N = k = 1000 (square matrix)
+N <- 1000
+k <- 1000
+
+X <- matrix(rnorm(N*k), N, k)
+
+full_svd_bench2 <- microbenchmark(
+  svd(X),
+  eigenBDCSVD(X, n_cores = 1),
+  eigenBDCSVD(X, n_cores = 4),
+  eigenBDCSVD(X, n_cores = 8),
+  eigenBDCSVD(X, n_cores = 16),
+  times = 100
+) %>%
+  as.data.frame() %>%
+  mutate(time_ms = time * 1e-6)
+
+ggplot(data = full_svd_bench2, aes(x = expr, y = time_ms)) +
+  geom_boxplot() +
+  labs(x = "Method", y = "Time (milliseconds)",
+       title = "Full SVD", subtitle = paste0("(", N, "x", k, " Matrix)")) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+# Benchmark 3: N = 400, k = 1000 (fat matrix)
+N <- 400
+k <- 2500
+
+X <- matrix(rnorm(N*k), N, k)
+
+full_svd_bench3 <- microbenchmark(
+  svd(X),
+  eigenBDCSVD(X, n_cores = 1),
+  eigenBDCSVD(X, n_cores = 4),
+  eigenBDCSVD(X, n_cores = 8),
+  eigenBDCSVD(X, n_cores = 16),
+  times = 100
+) %>%
+  as.data.frame() %>%
+  mutate(time_ms = time * 1e-6)
+
+ggplot(data = full_svd_bench3, aes(x = expr, y = time_ms)) +
+  geom_boxplot() +
+  labs(x = "Method", y = "Time (milliseconds)",
+       title = "Full SVD", subtitle = paste0("(", N, "x", k, " Matrix)")) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+# Benchmark 4: N = 2500, k = 400 (thin matrix)
+N <- 2500
+k <- 400
+
+X <- matrix(rnorm(N*k), N, k)
+
+full_svd_bench4 <- microbenchmark(
+  svd(X),
+  eigenBDCSVD(X, n_cores = 1),
+  eigenBDCSVD(X, n_cores = 4),
+  eigenBDCSVD(X, n_cores = 8),
+  eigenBDCSVD(X, n_cores = 16),
+  eigenBDCSVD_sv(X, n_cores = 1),
+  eigenBDCSVD_sv(X, n_cores = 4),
+  eigenBDCSVD_sv(X, n_cores = 8),
+  eigenBDCSVD_sv(X, n_cores = 16),
+  times = 100
+) %>%
+  as.data.frame() %>%
+  mutate(time_ms = time * 1e-6)
+
+ggplot(data = full_svd_bench4, aes(x = expr, y = time_ms)) +
+  geom_boxplot() +
+  labs(x = "Method", y = "Time (milliseconds)",
+       title = "Full SVD", subtitle = paste0("(", N, "x", k, " Matrix)")) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
 ##################################################
 # Truncated/Partial Singular Value Decomposition #
 ##################################################
@@ -19,7 +121,7 @@ k <- 100
 
 X <- matrix(rnorm(N*k), N, k)
 
-svd_bench1 <- microbenchmark(
+partial_svd_bench1 <- microbenchmark(
   svd(X, nu =  1, nv =  1),
   svd(X, nu =  5, nv =  5),
   svd(X, nu = 10, nv = 10),
@@ -31,7 +133,7 @@ svd_bench1 <- microbenchmark(
   as.data.frame() %>%
   mutate(time_ms = time * 1e-6)
 
-ggplot(data = svd_bench1, aes(x = expr, y = time_ms)) +
+ggplot(data = partial_svd_bench1, aes(x = expr, y = time_ms)) +
   geom_boxplot() +
   labs(x = "Method", y = "Time (milliseconds)",
        title = "Partial SVD", subtitle = "(100x100 Matrix)") +
@@ -43,7 +145,7 @@ k <- 1000
 
 X <- matrix(rnorm(N*k), N, k)
 
-svd_bench2 <- microbenchmark(
+partial_svd_bench2 <- microbenchmark(
   svd(X, nu =  1, nv =  1),
   svd(X, nu =  5, nv =  5),
   svd(X, nu = 10, nv = 10),
@@ -55,7 +157,7 @@ svd_bench2 <- microbenchmark(
   as.data.frame() %>%
   mutate(time_ms = time * 1e-6)
 
-ggplot(data = svd_bench2, aes(x = expr, y = time_ms)) +
+ggplot(data = partial_svd_bench2, aes(x = expr, y = time_ms)) +
   geom_boxplot() +
   labs(x = "Method", y = "Time (milliseconds)",
        title = "Partial SVD", subtitle = "(1000x1000 Matrix)") +
@@ -127,12 +229,25 @@ ggplot(data = mm_bench2, aes(x = expr, y = time_ms)) +
 # Save Results #
 ################
 
-svd_dat <- bind_rows(
-  bind_cols(benchmark = "SVD100", svd_bench1),
-  bind_cols(benchmark = "SVD1000", svd_bench2)
+full_svd_dat <- bind_rows(
+  bind_cols(benchmark = "FullSVD100", partial_svd_bench1),
+  bind_cols(benchmark = "FullSVD1000", partial_svd_bench2),
+  bind_cols(benchmark = "FullSVDfat", partial_svd_bench3),
+  bind_cols(benchmark = "FullSVDthin", partial_svd_bench4),
 )
 
-write_csv(svd_dat, file = "output/svd_benchmark.csv")
+write_csv(svd_dat, file = "output/partial_svd_benchmark.csv")
+
+###
+
+partial_svd_dat <- bind_rows(
+  bind_cols(benchmark = "PartialSVD100", partial_svd_bench1),
+  bind_cols(benchmark = "PartialSVD1000", partial_svd_bench2)
+)
+
+write_csv(svd_dat, file = "output/partial_svd_benchmark.csv")
+
+###
 
 mm_dat <- bind_rows(
   bind_cols(benchmark = "MM100", mm_bench1),
