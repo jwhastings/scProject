@@ -7,14 +7,19 @@ title: "scProject"
 ---
 
 * Batch Effect Removal
-  * JIVE
-    * [Dataset 1](batch_effect_removal\JIVE\JIVE_dataset1.html)
-    * Dataset 2
-    * [Dataset 3](batch_effect_removal/JIVE/JIVE_dataset3.html)
-  * Seurat
-    * [Dataset 1](batch_effect_removal\Seurat\Seurat_dataset1.html)
-    * Dataset 2
-    * [Dataset 3](batch_effect_removal\Seurat\Seurat_dataset3.html)
+  * Method Comparison
+    * Dataset 1
+    * [Dataset 2](batch_effect_removal/comparison_dataset2.html)
+    * [Dataset 3](batch_effect_removal/comparison_dataset3.html)
+  * Other
+    * JIVE
+      * [Dataset 1](batch_effect_removal/JIVE/JIVE_dataset1.html)
+      * Dataset 2
+      * [Dataset 3](batch_effect_removal/JIVE/JIVE_dataset3.html)
+    * Seurat
+      * [Dataset 1](batch_effect_removal/Seurat/Seurat_dataset1.html)
+      * Dataset 2
+      * [Dataset 3](batch_effect_removal/Seurat/Seurat_dataset3.html)
 
 * Real Data
   * [`scRNAseq` Package Data](real_data/scRNAseq_data.html)
