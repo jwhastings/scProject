@@ -20,21 +20,37 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
         cat("Re-estimating  joint and individual ranks via permutation...\n")
       }
     }
+    tic("Estimating joint ranks")
     full <- list()
     for (i in 1:length(data)) {
       full[[i]] <- data[[i]] - Aperp[[i]]
     }
     n <- ncol(full[[1]])
-    actual <- svdwrapper(do.call(rbind, full), nu = 0, nv = 0)$d
-    perms <- matrix(NA, nperms, min(n, sum(unlist(lapply(data, 
-                                                         nrow)))))
+    
+    # actual <- svdwrapper(do.call(rbind, full), nu = 0, nv = 0)$d
+    tic("  SV for joint (actual)")
+    rbind_full <- do.call(rbind, full)
+    ev_len <- min(dim(rbind_full))
+    actual_temp <- eigen(eigenMapMatMult2(t(rbind_full), rbind_full, n_cores = CORES), only.values = TRUE)$values
+    actual_temp[actual_temp < 0] <- 0
+    actual <- sqrt(actual_temp[1:ev_len])
+    toc(quiet = !showProgress)
+    
+    perms <- matrix(NA, nperms, min(n, sum(unlist(lapply(data, nrow)))))
     for (i in 1:nperms) {
       temp <- list()
       for (j in 1:length(data)) {
         temp[[j]] <- full[[j]][, sample(1:n, n, replace = F)]
       }
-      perms[i, ] <- svdwrapper(do.call(rbind, temp), nu = 0, 
-                               nv = 0)$d
+
+      # perms[i, ] <- svdwrapper(do.call(rbind, temp), nu = 0, nv = 0)$d
+      tic(paste0("  SV for joint permutation ", i, " of ", nperms))
+      rbind_temp <- do.call(rbind, temp)
+      ev_len <- min(dim(rbind_temp))
+      perms_temp <- eigen(eigenMapMatMult2(t(rbind_temp), rbind_temp, n_cores = CORES), only.values = TRUE)$values
+      perms_temp[perms_temp < 0] <- 0
+      perms[i, ] <- sqrt(perms_temp[1:ev_len])
+      toc(quiet = !showProgress)
     }
     rankJ <- 0
     for (i in 1:n) {
@@ -46,17 +62,34 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
       }
     }
     rankJ <- max(rankJ, last[1])
+    toc(quiet = !showProgress)
+    
+    tic("Estimating Individual Ranks")
     rankA <- c()
     for (i in 1:length(data)) {
       ind <- data[[i]] - Jperp[[i]]
-      actual <- svdwrapper(ind, nu = 0, nv = 0)$d
+      ev_len <- min(dim(ind))
+      
+      tic(paste0("  SV for individual ", i, " (actual)"))
+      # actual <- svdwrapper(ind, nu = 0, nv = 0)$d
+      actual_temp <- eigen(eigenMapMatMult2(t(ind), ind, n_cores = CORES), only.values = TRUE)$values
+      actual_temp[actual_temp < 0] <- 0
+      actual <- sqrt(actual_temp[1:ev_len])
+      toc(quiet = !showProgress)
+      
       perms <- matrix(NA, nperms, min(n, nrow(data[[i]])))
       for (k in 1:nperms) {
         perm <- t(ind)
         pind <- order(c(col(perm)), runif(length(perm)))
-        perm <- matrix(perm[pind], nrow = nrow(ind), 
-                       ncol = n, byrow = TRUE)
-        perms[k, ] <- svdwrapper(perm, nu = 0, nv = 0)$d
+        perm <- matrix(perm[pind], nrow = nrow(ind), ncol = n, byrow = TRUE)
+        ev_len <- min(dim(perm))
+        
+        tic(paste0("  SV for individual ", i, " permutation ", k, " of ", nperms))
+        # perms[k, ] <- svdwrapper(perm, nu = 0, nv = 0)$d
+        perms_temp <- eigen(eigenMapMatMult2(t(perm), perm, n_cores = CORES), only.values = TRUE)$values
+        perms_temp[perms_temp < 0] <- 0
+        perms[k, ] <- sqrt(perms_temp[1:ev_len])
+        toc(quiet = !showProgress)
       }
       rankA[i] <- 0
       for (j in 1:n) {
@@ -68,6 +101,7 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
         }
       }
     }
+    toc()
     current <- c(rankJ, rankA)
     if (!isTRUE(all.equal(last, current))) {
       dataR <- list()
