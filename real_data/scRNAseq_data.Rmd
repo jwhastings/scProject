@@ -37,50 +37,50 @@ theme_set(theme_few())
 all_metadata <- read_csv("scRNA_coldata.csv")
 ```
 
-<!-- ```{r} -->
-<!-- batch <- all_metadata[!is.na(str_extract(all_metadata$vars, regex("batch", ignore_case = T))), ] -->
-<!-- tech <- all_metadata[!is.na(str_extract(all_metadata$vars, regex("tech", ignore_case = T))), ] -->
+```{r}
+batch <- all_metadata[!is.na(str_extract(all_metadata$vars, regex("batch", ignore_case = T))), ]
+tech <- all_metadata[!is.na(str_extract(all_metadata$vars, regex("tech", ignore_case = T))), ]
 
-<!-- bind_rows(batch, tech) %>% distinct(data) -->
-<!-- ``` -->
+bind_rows(batch, tech) %>% distinct(data)
+```
 
-<!-- # Aztekin Tail Data -->
+# Aztekin Tail Data
 
-<!-- ```{r, message = FALSE} -->
-<!-- AztekinTailData <- AztekinTailData() -->
-<!-- AztekinTailData -->
-<!-- table(Batch = colData(AztekinTailData)$batch) -->
-<!-- table(Cluster = colData(AztekinTailData)$cluster) -->
-<!-- ``` -->
+```{r, message = FALSE}
+AztekinTailData <- AztekinTailData()
+AztekinTailData
+table(Batch = colData(AztekinTailData)$batch)
+table(Batch = colData(AztekinTailData)$batch, Cluster = colData(AztekinTailData)$cluster)
+```
 
-<!-- ```{r} -->
-<!-- AztekinTailData <- logNormCounts(AztekinTailData) -->
+```{r}
+AztekinTailData <- logNormCounts(AztekinTailData)
 
-<!-- # Subset to top 10% HVG -->
-<!-- chosen_features <- -->
-<!--   getTopHVGs(modelGeneVar(AztekinTailData, AztekinTailData$batch), -->
-<!--              n = ceiling(nrow(AztekinTailData) / 10)) -->
-<!-- AztekinTailData <- AztekinTailData[chosen_features, ] -->
+# Subset to top 10% HVG
+chosen_features <-
+  getTopHVGs(modelGeneVar(AztekinTailData, AztekinTailData$batch),
+             n = ceiling(nrow(AztekinTailData) / 10))
+AztekinTailData <- AztekinTailData[chosen_features, ]
 
-<!-- # Subset to two smallest batches -->
-<!-- AztekinTailData <- AztekinTailData[, colData(AztekinTailData)$batch %in% c(1, 3)] -->
+# Subset to two smallest batches
+AztekinTailData <- AztekinTailData[, colData(AztekinTailData)$batch %in% c(1, 3)]
 
-<!-- # Create default named factors for batches and cell clusters -->
-<!-- colData(AztekinTailData)$Batch <- factor(colData(AztekinTailData)$batch) -->
-<!-- colData(AztekinTailData)$Cluster <- factor(colData(AztekinTailData)$cluster) -->
+# Create default named factors for batches and cell clusters
+colData(AztekinTailData)$Batch <- factor(colData(AztekinTailData)$batch)
+colData(AztekinTailData)$Cluster <- factor(colData(AztekinTailData)$cluster)
 
-<!-- AztekinTailData <- runPCA(AztekinTailData) -->
-<!-- plotPCA(AztekinTailData, color_by = "Batch") -->
-<!-- plotPCA(AztekinTailData, color_by = "Cluster", add_legend = F) -->
+AztekinTailData <- runPCA(AztekinTailData)
+plotPCA(AztekinTailData, color_by = "Batch")
+plotPCA(AztekinTailData, color_by = "Cluster", add_legend = F)
 
-<!-- AztekinTailData <- runTSNE(AztekinTailData) -->
-<!-- plotTSNE(AztekinTailData, color_by = "Batch") -->
-<!-- plotTSNE(AztekinTailData, color_by = "Cluster", add_legend = F) -->
+AztekinTailData <- runTSNE(AztekinTailData)
+plotTSNE(AztekinTailData, color_by = "Batch")
+plotTSNE(AztekinTailData, color_by = "Cluster", add_legend = F)
 
-<!-- AztekinTailData <- runUMAP(AztekinTailData) -->
-<!-- plotUMAP(AztekinTailData, color_by = "Batch") -->
-<!-- plotUMAP(AztekinTailData, color_by = "Cluster", add_legend = F) -->
-<!-- ``` -->
+AztekinTailData <- runUMAP(AztekinTailData)
+plotUMAP(AztekinTailData, color_by = "Batch")
+plotUMAP(AztekinTailData, color_by = "Cluster", add_legend = F)
+```
 
 # Bacher T-Cell Data
 
