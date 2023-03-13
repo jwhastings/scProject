@@ -1,0 +1,115 @@
+---
+title: "`scRNAseq` Datasets"
+author: "Joey Hastings"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::html_clean:
+    highlight: kate
+    thumbnails: FALSE
+    toc_depth: 2
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  fig.dim = c(9, 6)
+  )
+```
+
+# Load Packages
+
+```{r load_packages, message = FALSE}
+library(tidyverse)
+library(cowplot)
+library(ggthemes)
+
+library(splatter)
+library(scater)
+library(scran)
+library(scRNAseq)
+library(Seurat)
+
+theme_set(theme_few())
+```
+
+# Aztekin Tail Data
+
+```{r, message = FALSE}
+SCE <- AztekinTailData()
+rownames(SCE) <- paste0("Gene", 1:nrow(SCE)) # for simplicity
+SCE
+table(Batch = SCE$batch)
+table(Cluster = SCE$cluster, Batch = SCE$batch)
+
+SCE <- SCE[, colData(SCE)$cluster %in% c("Epidermis", "Goblet cell", "Spinal cord progenitor")]
+```
+
+```{r}
+metadata <- as.data.frame(colData(SCE))
+seurat <- CreateSeuratObject(counts(SCE), meta.data = metadata)
+
+#################
+# Identify HVGs #
+#################
+
+# split the dataset into a list of seurat objects (one for each batch)
+seurat_batch <- SplitObject(seurat, split.by = "batch")
+
+# normalize and identify variable features for each dataset independently
+seurat_batch <- lapply(X = seurat_batch, FUN = function(x) {
+  x <- NormalizeData(x)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+})
+
+# select features that are repeatedly variable across datasets for integration
+features <- SelectIntegrationFeatures(object.list = seurat_batch)
+
+########################################################
+
+# Select only HVGs
+SCE <- SCE[features, ]
+
+# Subset to two batches
+SCE <- SCE[, colData(SCE)$batch %in% c(1, 2, 3)]
+
+# Create default named factors for batches and cell clusters
+colData(SCE)$Batch <- factor(colData(SCE)$batch)
+colData(SCE)$Cluster <- factor(colData(SCE)$cluster)
+
+# Final batch/cell type counts
+table(Batch = SCE$Batch)
+table(Cluster = SCE$Cluster, Batch = SCE$Batch)
+```
+
+```{r}
+# Plots
+SCE <- logNormCounts(SCE)
+
+SCE <- runPCA(SCE)
+plot_grid(
+  plotPCA(SCE, color_by = "Batch")   + scale_color_fivethirtyeight(name = "Batch"),
+  plotPCA(SCE, color_by = "Cluster") + scale_color_gdocs(name = "Cluster"),
+  nrow = 2, align = "v"
+  )
+
+SCE <- runTSNE(SCE)
+plot_grid(
+  plotTSNE(SCE, color_by = "Batch")   + scale_color_fivethirtyeight(name = "Batch"),
+  plotTSNE(SCE, color_by = "Cluster") + scale_color_gdocs(name = "Cluster"),
+  nrow = 2, align = "v"
+  )
+
+SCE <- runUMAP(SCE)
+plot_grid(
+  plotUMAP(SCE, color_by = "Batch")   + scale_color_fivethirtyeight(name = "Batch"),
+  plotUMAP(SCE, color_by = "Cluster") + scale_color_gdocs(name = "Cluster"),
+  nrow = 2, align = "v"
+  )
+```
+
+# Session Information
+
+```{r session_info}
+sessionInfo()
+```
