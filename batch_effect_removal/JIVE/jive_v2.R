@@ -66,7 +66,8 @@ jive_v2 <- function (data, rankJ = 1, rankA = rep(1, length(data)), method = "pe
       for (i in 1:l) {
         tic(paste0("  Compression ", i))
         if (nrow(data[[i]]) > ncol(data[[i]])) {
-          temp <- svdwrapper(data[[i]], nu = ncol(data[[i]]), nv = ncol(data[[i]]))
+          # temp <- svdwrapper(data[[i]], nu = ncol(data[[i]]), nv = ncol(data[[i]]))
+          temp <- eigenBDCSVD(data[[i]], n_cores = CORES)
           
           # data[[i]] <- diag(x = temp$d[1:ncol(data[[1]])], nrow = ncol(data[[1]])) %*% t(temp$v[, 1:ncol(data[[1]])])
           data[[i]] <- eigenMapMatMult2(diag(x = temp$d[1:ncol(data[[1]])], nrow = ncol(data[[1]])), t(temp$v[, 1:ncol(data[[1]])]), n_cores = CORES)
