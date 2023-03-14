@@ -29,11 +29,7 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
     
     # actual <- svdwrapper(do.call(rbind, full), nu = 0, nv = 0)$d
     tic("  SV for joint (actual)")
-    rbind_full <- do.call(rbind, full)
-    ev_len <- min(dim(rbind_full))
-    actual_temp <- eigen(eigenMapMatMult2(t(rbind_full), rbind_full, n_cores = CORES), only.values = TRUE)$values
-    actual_temp[actual_temp < 0] <- 0
-    actual <- sqrt(actual_temp[1:ev_len])
+    actual <- eigenBDCSVD(do.call(rbind, full), n_cores = 8)$d
     toc(quiet = !showProgress)
     
     perms <- matrix(NA, nperms, min(n, sum(unlist(lapply(data, nrow)))))
@@ -45,11 +41,7 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
 
       # perms[i, ] <- svdwrapper(do.call(rbind, temp), nu = 0, nv = 0)$d
       tic(paste0("  SV for joint permutation ", i, " of ", nperms))
-      rbind_temp <- do.call(rbind, temp)
-      ev_len <- min(dim(rbind_temp))
-      perms_temp <- eigen(eigenMapMatMult2(t(rbind_temp), rbind_temp, n_cores = CORES), only.values = TRUE)$values
-      perms_temp[perms_temp < 0] <- 0
-      perms[i, ] <- sqrt(perms_temp[1:ev_len])
+      perms[i, ] <- eigenBDCSVD(do.call(rbind, temp), n_cores = CORES)
       toc(quiet = !showProgress)
     }
     rankJ <- 0
@@ -72,9 +64,7 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
       
       tic(paste0("  SV for individual ", i, " (actual)"))
       # actual <- svdwrapper(ind, nu = 0, nv = 0)$d
-      actual_temp <- eigen(eigenMapMatMult2(t(ind), ind, n_cores = CORES), only.values = TRUE)$values
-      actual_temp[actual_temp < 0] <- 0
-      actual <- sqrt(actual_temp[1:ev_len])
+      actual <- eigenBDCSVD(ind, n_cores = CORES)
       toc(quiet = !showProgress)
       
       perms <- matrix(NA, nperms, min(n, nrow(data[[i]])))
@@ -86,9 +76,7 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
         
         tic(paste0("  SV for individual ", i, " permutation ", k, " of ", nperms))
         # perms[k, ] <- svdwrapper(perm, nu = 0, nv = 0)$d
-        perms_temp <- eigen(eigenMapMatMult2(t(perm), perm, n_cores = CORES), only.values = TRUE)$values
-        perms_temp[perms_temp < 0] <- 0
-        perms[k, ] <- sqrt(perms_temp[1:ev_len])
+        perms[k, ] <- eigenBDCSVD(perm, n_cores = CORES)
         toc(quiet = !showProgress)
       }
       rankA[i] <- 0
@@ -110,9 +98,7 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
         for (i in 1:length(data)) {
           if (nrow(data[[i]]) > ncol(data[[i]])) {
             temp <- svds(data[[i]], k = ncol(data[[i]]))
-            dataR[[i]] <- diag(x = temp$d[1:ncol(data[[1]])], 
-                               nrow = ncol(data[[1]])) %*% t(temp$v[, 
-                                                                    1:ncol(data[[1]])])
+            dataR[[i]] <- diag(x = temp$d[1:ncol(data[[1]])], nrow = ncol(data[[1]])) %*% t(temp$v[, 1:ncol(data[[1]])])
             u[[i]] <- temp$u
           }
           else {
