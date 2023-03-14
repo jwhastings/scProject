@@ -145,7 +145,7 @@ data_SCE <- runTSNE(data_SCE)
 data_SCE <- runUMAP(data_SCE)
 
 orig_title <- labs(title = "Original Data")
-brew_colors <- RColorBrewer::brewer.pal(4, "Set1")
+brew_colors <- RColorBrewer::brewer.pal(9, "Set1")
 p1_options <- scale_color_manual(name = "Batch", values = brew_colors[1:2])
 p2_options <- scale_color_manual(name = "Cluster", values = brew_colors[c(3, 4)])
 
@@ -153,7 +153,7 @@ orig_p1 <- plot_grid(
   plotPCA(data_SCE, color_by = "Batch")   + orig_title + p1_options,
   plotPCA(data_SCE, color_by = "Cluster") + p2_options,
   nrow=2, align = "v"
-  ) + labs(title = "Test")
+  )
 
 orig_p2 <- plot_grid(
   plotTSNE(data_SCE, color_by = "Batch")   + orig_title + p1_options,
@@ -329,7 +329,6 @@ JIVE_results <-
     jive_data,
     rankJ = 10,
     rankA = c(130, 145),
-    # rankA = rep(25, length(jive_data)),
     method = "given",
     maxiter = 10000,
     CORES = CORES
@@ -715,7 +714,7 @@ seurat_umap
 
 ```{r}
 # data: a matrix (rows: samples, columns: features (genes))
-data <- svds(t(seurat_integrated@assays$integrated@scale.data), k = 30)$u
+data <- Embeddings(seurat_integrated)
 
 # batch: vector or factor with batch label of each cell 
 batch <- batches
@@ -842,12 +841,14 @@ harmony_integrated <-
     ncomponents = 30,
     ntop = nrow(data_SCE)
   )
+
 harmony_integrated <-
   RunHarmony(
     harmony_integrated,
     "Batch",
     max.iter.harmony = 20
   )
+
 harmony_integrated <- runTSNE(harmony_integrated, dimred = "HARMONY")
 harmony_integrated <- runUMAP(harmony_integrated, dimred = "HARMONY")
 
@@ -1260,8 +1261,8 @@ umap_prow <- plot_grid(
 
 umap_prow_grob <- arrangeGrob(
   umap_prow,
-  left = textGrob("t-SNE 2", rot = 90),
-  bottom = textGrob("t-SNE 1")
+  left = textGrob("UMAP 2", rot = 90),
+  bottom = textGrob("UMAP 1")
 )
 
 umap_legend_both <- plot_grid(legend_batch, legend_cluster, nrow = 2, align = "v")
