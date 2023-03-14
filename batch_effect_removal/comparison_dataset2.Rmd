@@ -56,6 +56,8 @@ dataset_name <- "dataset2"
 
 # Bacher T-Cell Data
 
+We will test the integration methods on batches **14** and **15**.
+
 ```{r, message = FALSE}
 # scRNAseq package
 BacherTCellData <- BacherTCellData()
@@ -74,24 +76,12 @@ batch_cluster_freq <-
 
 batch_cluster_df <- left_join(batch_freq, batch_cluster_freq, by = "Batch")
 batch_cluster_df %>%
-  kbl(
-    col.names = c(
-      "Batch Number",
-      "Total Batch Count",
-      "Central memory",
-      "Cycling",
-      "Cytotoxic / Th1",
-      "Tfh-like",
-      "Transitional memory",
-      "Type-1 IFN signature"
-    )
-  ) %>%
+  filter(Batch %in% c("14", "15")) %>%
+  kbl() %>%
   kable_styling() %>%
   add_header_above(c("Batch" = 2, "Cluster" = 6)) %>%
   column_spec(2, border_right = T)
 ```
-
-We will test the integration methods on batches **14** and **15**.
 
 ## Preprocess Data
 
@@ -145,25 +135,25 @@ data_SCE <- runTSNE(data_SCE)
 data_SCE <- runUMAP(data_SCE)
 
 orig_title <- labs(title = "Original Data")
+brew_colors <- RColorBrewer::brewer.pal(9, "Set1")
+p1_options <- scale_color_manual(name = "Batch", values = brew_colors[1:2])
+p2_options <- scale_color_manual(name = "Cluster", values = RColorBrewer::brewer.pal(6, "Dark2")[1:6])
 
 orig_p1 <- plot_grid(
-  plotPCA(data_SCE, color_by = "Batch")   + scale_color_fivethirtyeight(name = "Batch") +
-    orig_title,
-  plotPCA(data_SCE, color_by = "Cluster") + scale_color_gdocs(name = "Cluster"),
+  plotPCA(data_SCE, color_by = "Batch")   + orig_title + p1_options,
+  plotPCA(data_SCE, color_by = "Cluster") + p2_options,
   nrow=2, align = "v"
-  ) + labs(title = "Test")
+  )
 
 orig_p2 <- plot_grid(
-  plotTSNE(data_SCE, color_by = "Batch")   + scale_color_fivethirtyeight(name = "Batch") +
-    orig_title,
-  plotTSNE(data_SCE, color_by = "Cluster") + scale_color_gdocs(name = "Cluster"),
+  plotTSNE(data_SCE, color_by = "Batch")   + orig_title + p1_options,
+  plotTSNE(data_SCE, color_by = "Cluster") + p2_options,
   nrow=2, align = "v"
   )
 
 orig_p3 <- plot_grid(
-  plotUMAP(data_SCE, color_by = "Batch")   + scale_color_fivethirtyeight(name = "Batch") +
-    orig_title,
-  plotUMAP(data_SCE, color_by = "Cluster") + scale_color_gdocs(name = "Cluster"),
+  plotUMAP(data_SCE, color_by = "Batch")   + orig_title + p1_options,
+  plotUMAP(data_SCE, color_by = "Cluster") + p2_options,
   nrow=2, align = "v"
   )
 
@@ -405,9 +395,6 @@ plot_title <- labs(
       paste(JIVE_results$rankA, collapse = ", ")
     )
   )
-
-p1_options <- scale_color_fivethirtyeight(name = "Batch")
-p2_options <- scale_color_gdocs(name = "Cluster")
 
 # PCA
 jive_pca <- plot_grid(
@@ -667,7 +654,7 @@ DefaultAssay(seurat_integrated) <- "integrated"
 # Run the standard workflow for visualization and clustering
 set.seed(1)
 seurat_integrated <- ScaleData(seurat_integrated, verbose = FALSE)
-seurat_integrated <- RunPCA(seurat_integrated, verbose = FALSE, approx = FALSE)
+seurat_integrated <- RunPCA(seurat_integrated, verbose = FALSE)
 seurat_integrated <- RunTSNE(seurat_integrated, reduction = "pca", dims = 1:30)
 seurat_integrated <- RunUMAP(seurat_integrated, reduction = "pca", dims = 1:30)
 seurat_integrated <- FindNeighbors(seurat_integrated, reduction = "pca", dims = 1:30)
@@ -717,7 +704,7 @@ seurat_umap
 
 ```{r}
 # data: a matrix (rows: samples, columns: features (genes))
-data <- svds(t(seurat_integrated@assays$integrated@scale.data), k = 30)$u
+data <- Embeddings(seurat_integrated)
 
 # batch: vector or factor with batch label of each cell 
 batch <- batches
@@ -841,16 +828,17 @@ method_name <- "Harmony"
 harmony_integrated <-
   runPCA(
     data_SCE,
-    ncomponents = ncol(data_SCE),
-    ntop = nrow(data_SCE),
-    BSPARAM = BiocSingular::ExactParam()
+    ncomponents = 30,
+    ntop = nrow(data_SCE)
   )
+
 harmony_integrated <-
   RunHarmony(
     harmony_integrated,
     "Batch",
-    lambda = 0.1
+    max.iter.harmony = 20
   )
+
 harmony_integrated <- runTSNE(harmony_integrated, dimred = "HARMONY")
 harmony_integrated <- runUMAP(harmony_integrated, dimred = "HARMONY")
 
@@ -1028,7 +1016,7 @@ jive_tsne_plot <- plot_grid(
   jive_tsne_batch + theme(legend.position = "none"),
   jive_tsne_cluster + theme(legend.position = "none"),
   nrow = 2, align = "hv"
-)
+) + theme(plot.background = element_rect(color = "black"))
 
 # Seurat
 seurat_tsne_df <- Embeddings(seurat_integrated, "tsne") %>%
@@ -1053,7 +1041,7 @@ seurat_tsne_plot <- plot_grid(
   seurat_tsne_batch,
   seurat_tsne_cluster,
   nrow = 2, align = "hv"
-)
+) + theme(plot.background = element_rect(color = "black"))
 
 # Harmony
 harmony_tsne_df <- reducedDim(harmony_integrated, "TSNE") %>%
@@ -1078,7 +1066,7 @@ harmony_tsne_plot <- plot_grid(
   harmony_tsne_batch,
   harmony_tsne_cluster,
   nrow = 2, align = "hv"
-)
+) + theme(plot.background = element_rect(color = "black"))
 
 # Raw
 raw_tsne_df <- reducedDim(data_SCE, "TSNE") %>%
@@ -1103,7 +1091,7 @@ raw_tsne_plot <- plot_grid(
   raw_tsne_batch,
   raw_tsne_cluster,
   nrow = 2, align = "hv"
-)
+) + theme(plot.background = element_rect(color = "black"))
 
 # All
 legend_batch <- get_legend(
@@ -1125,15 +1113,17 @@ tsne_prow <- plot_grid(
   hjust = -1
   )
 
-tsne_legend_both <- plot_grid(legend_batch, legend_cluster, nrow = 2, align = "v")
-
-all_tsne_plot <- plot_grid(tsne_prow, tsne_legend_both, rel_widths = c(3, 1))
-
-grid.arrange(arrangeGrob(
-  all_tsne_plot,
+tsne_prow_grob <- arrangeGrob(
+  tsne_prow,
   left = textGrob("t-SNE 2", rot = 90),
   bottom = textGrob("t-SNE 1")
-))
+)
+
+tsne_legend_both <- plot_grid(legend_batch, legend_cluster, nrow = 2, align = "v")
+
+all_tsne_plot <- plot_grid(tsne_prow_grob, tsne_legend_both, rel_widths = c(3, 1))
+
+all_tsne_plot
 ```
 
 ## UMAP Plots
@@ -1162,7 +1152,7 @@ jive_umap_plot <- plot_grid(
   jive_umap_batch + theme(legend.position = "none"),
   jive_umap_cluster + theme(legend.position = "none"),
   nrow = 2, align = "hv"
-)
+) + theme(plot.background = element_rect(color = "black"))
 
 # Seurat
 seurat_umap_df <- Embeddings(seurat_integrated, "umap") %>%
@@ -1187,7 +1177,7 @@ seurat_umap_plot <- plot_grid(
   seurat_umap_batch,
   seurat_umap_cluster,
   nrow = 2, align = "hv"
-)
+) + theme(plot.background = element_rect(color = "black"))
 
 # Harmony
 harmony_umap_df <- reducedDim(harmony_integrated, "UMAP") %>%
@@ -1212,7 +1202,7 @@ harmony_umap_plot <- plot_grid(
   harmony_umap_batch,
   harmony_umap_cluster,
   nrow = 2, align = "hv"
-)
+) + theme(plot.background = element_rect(color = "black"))
 
 # Raw
 raw_umap_df <- reducedDim(data_SCE, "UMAP") %>%
@@ -1237,7 +1227,7 @@ raw_umap_plot <- plot_grid(
   raw_umap_batch,
   raw_umap_cluster,
   nrow = 2, align = "hv"
-)
+) + theme(plot.background = element_rect(color = "black"))
 
 # All
 legend_batch <- get_legend(
@@ -1259,15 +1249,17 @@ umap_prow <- plot_grid(
   hjust = -1
   )
 
-umap_legend_both <- plot_grid(legend_batch, legend_cluster, nrow = 2, align = "v")
-
-all_umap_plot <- plot_grid(umap_prow, umap_legend_both, rel_widths = c(3, 1))
-
-grid.arrange(arrangeGrob(
-  all_umap_plot,
+umap_prow_grob <- arrangeGrob(
+  umap_prow,
   left = textGrob("UMAP 2", rot = 90),
   bottom = textGrob("UMAP 1")
-))
+)
+
+umap_legend_both <- plot_grid(legend_batch, legend_cluster, nrow = 2, align = "v")
+
+all_umap_plot <- plot_grid(umap_prow_grob, umap_legend_both, rel_widths = c(3, 1))
+
+all_umap_plot
 ```
 
 ## kBET
