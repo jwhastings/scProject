@@ -41,7 +41,7 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
 
       # perms[i, ] <- svdwrapper(do.call(rbind, temp), nu = 0, nv = 0)$d
       tic(paste0("  SV for joint permutation ", i, " of ", nperms))
-      perms[i, ] <- eigenBDCSVD(do.call(rbind, temp), n_cores = CORES)
+      perms[i, ] <- eigenBDCSVD(do.call(rbind, temp), n_cores = CORES)$d
       toc(quiet = !showProgress)
     }
     rankJ <- 0
@@ -64,7 +64,7 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
       
       tic(paste0("  SV for individual ", i, " (actual)"))
       # actual <- svdwrapper(ind, nu = 0, nv = 0)$d
-      actual <- eigenBDCSVD(ind, n_cores = CORES)
+      actual <- eigenBDCSVD(ind, n_cores = CORES)$d
       toc(quiet = !showProgress)
       
       perms <- matrix(NA, nperms, min(n, nrow(data[[i]])))
@@ -76,7 +76,7 @@ jive_perm <- function (data, nperms = 100, alpha = 0.05, est = TRUE, conv = 1e-0
         
         tic(paste0("  SV for individual ", i, " permutation ", k, " of ", nperms))
         # perms[k, ] <- svdwrapper(perm, nu = 0, nv = 0)$d
-        perms[k, ] <- eigenBDCSVD(perm, n_cores = CORES)
+        perms[k, ] <- eigenBDCSVD(perm, n_cores = CORES)$d
         toc(quiet = !showProgress)
       }
       rankA[i] <- 0
