@@ -317,8 +317,8 @@ tic("JIVE v2 runtime (given)")
 JIVE_results <-
   jive_v2(
     jive_data,
-    rankJ = 5,
-    rankA = rep(10, length(jive_data)),
+    rankJ = 10,
+    rankA = c(95, 140),
     method = "given",
     maxiter = 10000,
     CORES = CORES
