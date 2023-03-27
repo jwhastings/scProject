@@ -324,13 +324,13 @@ JIVE_results <-
   jive_v2(
     jive_data,
     rankJ = 10,
-    rankA = rep(15, length(jive_data)),
+    rankA = c(160, 110),
     method = "given",
     maxiter = 10000,
     CORES = CORES
   )
-# JIVE v2 runtime (given): 11953.43 sec elapsed
-# JIVE algorithm converged after  2880  iterations.
+# JIVE v2 runtime (given): 4478.06 sec elapsed
+# JIVE algorithm converged after  708  iterations.
 toc()
 
 saveRDS(JIVE_results, file = "JIVE/data/JIVE_v2_dataset3.rds")
