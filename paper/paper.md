@@ -2,7 +2,7 @@
 
 **Title**: Batch-effect correction in single-cell RNA sequencing data using the JIVE decomposition
 
-**Abstract**: We assessed a novel application of the JIVE decomposition to remove technical artifacts from single-cell RNA sequencing data and compare its performance to existing tools. We improved the runtime of the `r.jive` R package 
+**Abstract**: We assessed a novel application of the JIVE decomposition to remove technical artifacts from single-cell RNA sequencing data and compare its performance to existing tools. 
 
 ---
 
