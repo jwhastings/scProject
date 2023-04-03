@@ -1,0 +1,1201 @@
+benchmark,expr,time,time_ms
+PartialSVD100,"svds(X, k = 1)",863100,0.8631
+PartialSVD100,"svds(X, k = 1)",603200,0.6032
+PartialSVD100,"svds(X, k = 5)",782600,0.7826
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2815300,2.8152999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2689200,2.6892
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2711400,2.7114
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2694400,2.6944
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2695300,2.6953
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2856500,2.8565
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2845400,2.8453999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2735800,2.7358
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2844500,2.8445
+PartialSVD100,"svds(X, k = 5)",815900,0.8159
+PartialSVD100,"svds(X, k = 1)",535500,0.5355
+PartialSVD100,"svds(X, k = 10)",1015400,1.0153999999999999
+PartialSVD100,"svds(X, k = 5)",747800,0.7478
+PartialSVD100,"svds(X, k = 10)",981700,0.9816999999999999
+PartialSVD100,"svds(X, k = 10)",993400,0.9934
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2842900,2.8428999999999998
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2774000,2.774
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2841500,2.8415
+PartialSVD100,"svds(X, k = 1)",551900,0.5519
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2716800,2.7167999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2738000,2.738
+PartialSVD100,"svds(X, k = 5)",770700,0.7706999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2812200,2.8122
+PartialSVD100,"svds(X, k = 5)",761800,0.7617999999999999
+PartialSVD100,"svds(X, k = 5)",749300,0.7493
+PartialSVD100,"svds(X, k = 5)",747000,0.747
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2714600,2.7146
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2765500,2.7655
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2729800,2.7298
+PartialSVD100,"svd(X, nu = 1, nv = 1)",3223800,3.2237999999999998
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2769600,2.7696
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2688900,2.6889
+PartialSVD100,"svds(X, k = 10)",1039200,1.0392
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2832600,2.8326
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2759800,2.7598
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2809200,2.8091999999999997
+PartialSVD100,"svds(X, k = 5)",768700,0.7686999999999999
+PartialSVD100,"svds(X, k = 10)",999300,0.9993
+PartialSVD100,"svds(X, k = 5)",741500,0.7414999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2761400,2.7614
+PartialSVD100,"svds(X, k = 10)",1006400,1.0064
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2765100,2.7651
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2780800,2.7807999999999997
+PartialSVD100,"svds(X, k = 1)",550700,0.5507
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2838400,2.8384
+PartialSVD100,"svds(X, k = 10)",1006400,1.0064
+PartialSVD100,"svds(X, k = 5)",756000,0.756
+PartialSVD100,"svds(X, k = 1)",520100,0.5201
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2771200,2.7712
+PartialSVD100,"svds(X, k = 10)",1007200,1.0071999999999999
+PartialSVD100,"svds(X, k = 10)",1003100,1.0030999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2878700,2.8787
+PartialSVD100,"svds(X, k = 1)",541400,0.5414
+PartialSVD100,"svds(X, k = 1)",522600,0.5226
+PartialSVD100,"svds(X, k = 5)",749100,0.7491
+PartialSVD100,"svds(X, k = 10)",982300,0.9823
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2821200,2.8211999999999997
+PartialSVD100,"svds(X, k = 5)",756900,0.7569
+PartialSVD100,"svds(X, k = 10)",987700,0.9876999999999999
+PartialSVD100,"svds(X, k = 1)",517100,0.5171
+PartialSVD100,"svds(X, k = 5)",741800,0.7418
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2820900,2.8209
+PartialSVD100,"svds(X, k = 10)",1006200,1.0062
+PartialSVD100,"svds(X, k = 10)",1092400,1.0924
+PartialSVD100,"svds(X, k = 5)",782100,0.7821
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2827400,2.8274
+PartialSVD100,"svds(X, k = 5)",771100,0.7711
+PartialSVD100,"svds(X, k = 1)",524400,0.5244
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2818200,2.8182
+PartialSVD100,"svds(X, k = 10)",1011800,1.0118
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2908400,2.9084
+PartialSVD100,"svds(X, k = 1)",542800,0.5428
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2918000,2.9179999999999997
+PartialSVD100,"svds(X, k = 5)",770900,0.7708999999999999
+PartialSVD100,"svds(X, k = 1)",528100,0.5281
+PartialSVD100,"svds(X, k = 5)",746900,0.7469
+PartialSVD100,"svds(X, k = 1)",523100,0.5231
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2858100,2.8581
+PartialSVD100,"svds(X, k = 10)",1024900,1.0249
+PartialSVD100,"svds(X, k = 10)",1010700,1.0107
+PartialSVD100,"svds(X, k = 10)",994200,0.9942
+PartialSVD100,"svds(X, k = 5)",756000,0.756
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2920900,2.9209
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2841100,2.8411
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2933100,2.9331
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2778900,2.7788999999999997
+PartialSVD100,"svds(X, k = 10)",1093900,1.0938999999999999
+PartialSVD100,"svds(X, k = 5)",783100,0.7831
+PartialSVD100,"svds(X, k = 5)",763900,0.7638999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2675800,2.6757999999999997
+PartialSVD100,"svds(X, k = 10)",1033900,1.0339
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2699900,2.6999
+PartialSVD100,"svds(X, k = 1)",540500,0.5405
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2633400,2.6334
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2771700,2.7717
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2787700,2.7877
+PartialSVD100,"svds(X, k = 1)",581300,0.5812999999999999
+PartialSVD100,"svds(X, k = 10)",1023700,1.0237
+PartialSVD100,"svds(X, k = 1)",520600,0.5206
+PartialSVD100,"svds(X, k = 5)",740100,0.7401
+PartialSVD100,"svds(X, k = 1)",520300,0.5203
+PartialSVD100,"svds(X, k = 10)",983400,0.9833999999999999
+PartialSVD100,"svds(X, k = 5)",738600,0.7385999999999999
+PartialSVD100,"svds(X, k = 10)",978000,0.978
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2693000,2.693
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2786100,2.7861
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2634100,2.6340999999999997
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2577900,2.5779
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2686000,2.686
+PartialSVD100,"svds(X, k = 1)",559600,0.5596
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2901500,2.9015
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2808100,2.8081
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2699100,2.6991
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2640400,2.6404
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2698500,2.6984999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2592900,2.5928999999999998
+PartialSVD100,"svds(X, k = 5)",811200,0.8111999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2869000,2.8689999999999998
+PartialSVD100,"svds(X, k = 5)",783400,0.7834
+PartialSVD100,"svds(X, k = 5)",762100,0.7621
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2801500,2.8015
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2615700,2.6157
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2787600,2.7876
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2722100,2.7220999999999997
+PartialSVD100,"svds(X, k = 5)",773300,0.7733
+PartialSVD100,"svds(X, k = 10)",1003400,1.0033999999999998
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2715900,2.7159
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2670200,2.6702
+PartialSVD100,"svds(X, k = 1)",547000,0.5469999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2669100,2.6691
+PartialSVD100,"svds(X, k = 5)",761400,0.7614
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2677700,2.6776999999999997
+PartialSVD100,"svds(X, k = 1)",535000,0.535
+PartialSVD100,"svds(X, k = 1)",525900,0.5258999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2851400,2.8514
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2822900,2.8228999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2589500,2.5894999999999997
+PartialSVD100,"svds(X, k = 1)",540400,0.5404
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2659900,2.6599
+PartialSVD100,"svds(X, k = 10)",1024800,1.0248
+PartialSVD100,"svds(X, k = 10)",1008300,1.0083
+PartialSVD100,"svds(X, k = 1)",527300,0.5273
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2712500,2.7125
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2723300,2.7233
+PartialSVD100,"svds(X, k = 5)",771800,0.7717999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2833400,2.8333999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2732300,2.7323
+PartialSVD100,"svds(X, k = 5)",767200,0.7672
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2805600,2.8056
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2900200,2.9002
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2852500,2.8525
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2784800,2.7847999999999997
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2874800,2.8748
+PartialSVD100,"svds(X, k = 10)",1018900,1.0189
+PartialSVD100,"svds(X, k = 5)",774700,0.7746999999999999
+PartialSVD100,"svds(X, k = 10)",1000300,1.0003
+PartialSVD100,"svds(X, k = 10)",995100,0.9951
+PartialSVD100,"svds(X, k = 10)",997600,0.9975999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2872900,2.8729
+PartialSVD100,"svds(X, k = 1)",536600,0.5366
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2845600,2.8455999999999997
+PartialSVD100,"svds(X, k = 1)",555300,0.5553
+PartialSVD100,"svds(X, k = 1)",566600,0.5666
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2872800,2.8728
+PartialSVD100,"svds(X, k = 1)",542000,0.5419999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2826100,2.8261
+PartialSVD100,"svds(X, k = 10)",1008200,1.0082
+PartialSVD100,"svds(X, k = 10)",991800,0.9917999999999999
+PartialSVD100,"svds(X, k = 5)",743600,0.7435999999999999
+PartialSVD100,"svds(X, k = 5)",766700,0.7666999999999999
+PartialSVD100,"svds(X, k = 1)",523900,0.5238999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2917400,2.9173999999999998
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2816200,2.8162
+PartialSVD100,"svds(X, k = 5)",768500,0.7685
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2832300,2.8323
+PartialSVD100,"svds(X, k = 5)",794300,0.7943
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2822800,2.8228
+PartialSVD100,"svds(X, k = 5)",758800,0.7587999999999999
+PartialSVD100,"svds(X, k = 1)",523400,0.5234
+PartialSVD100,"svds(X, k = 5)",743100,0.7431
+PartialSVD100,"svds(X, k = 10)",981100,0.9811
+PartialSVD100,"svds(X, k = 5)",752200,0.7522
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2890100,2.8901
+PartialSVD100,"svds(X, k = 5)",770000,0.77
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2885800,2.8857999999999997
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2865000,2.8649999999999998
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2869200,2.8691999999999998
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2887000,2.887
+PartialSVD100,"svds(X, k = 5)",774600,0.7746
+PartialSVD100,"svds(X, k = 5)",781100,0.7811
+PartialSVD100,"svds(X, k = 10)",987100,0.9871
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2710800,2.7108
+PartialSVD100,"svds(X, k = 1)",538300,0.5383
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2911000,2.911
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2722400,2.7224
+PartialSVD100,"svds(X, k = 1)",539300,0.5393
+PartialSVD100,"svds(X, k = 5)",748900,0.7489
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2704400,2.7043999999999997
+PartialSVD100,"svds(X, k = 10)",1003100,1.0030999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2847200,2.8472
+PartialSVD100,"svds(X, k = 5)",768400,0.7684
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2879800,2.8798
+PartialSVD100,"svds(X, k = 1)",537800,0.5378
+PartialSVD100,"svds(X, k = 5)",745600,0.7455999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2915400,2.9154
+PartialSVD100,"svd(X, nu = 5, nv = 5)",3033500,3.0334999999999996
+PartialSVD100,"svds(X, k = 5)",792700,0.7927
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2960200,2.9602
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2935700,2.9356999999999998
+PartialSVD100,"svds(X, k = 10)",1030200,1.0302
+PartialSVD100,"svds(X, k = 10)",1053100,1.0531
+PartialSVD100,"svds(X, k = 1)",529400,0.5294
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2928200,2.9282
+PartialSVD100,"svds(X, k = 10)",1001100,1.0010999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2822100,2.8221
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2894500,2.8945
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2890100,2.8901
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2893800,2.8937999999999997
+PartialSVD100,"svds(X, k = 10)",1048500,1.0485
+PartialSVD100,"svds(X, k = 1)",537700,0.5377
+PartialSVD100,"svds(X, k = 10)",993800,0.9937999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2886500,2.8865
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2896300,2.8962999999999997
+PartialSVD100,"svds(X, k = 5)",765900,0.7658999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2787400,2.7874
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2871500,2.8714999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2839000,2.839
+PartialSVD100,"svds(X, k = 5)",766500,0.7665
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2677600,2.6776
+PartialSVD100,"svds(X, k = 10)",991000,0.991
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2767100,2.7670999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2752300,2.7523
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2897500,2.8975
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2739100,2.7391
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2740100,2.7401
+PartialSVD100,"svds(X, k = 10)",1087300,1.0873
+PartialSVD100,"svds(X, k = 10)",1044100,1.0441
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2754000,2.754
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2736600,2.7365999999999997
+PartialSVD100,"svds(X, k = 10)",1051400,1.0514
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2786700,2.7866999999999997
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2782900,2.7828999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2721900,2.7218999999999998
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2768700,2.7687
+PartialSVD100,"svds(X, k = 1)",558800,0.5588
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2730800,2.7308
+PartialSVD100,"svds(X, k = 5)",766300,0.7663
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2655700,2.6557
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2909000,2.909
+PartialSVD100,"svds(X, k = 10)",1029500,1.0294999999999999
+PartialSVD100,"svds(X, k = 10)",1008600,1.0086
+PartialSVD100,"svds(X, k = 1)",533200,0.5332
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2749300,2.7493
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2775700,2.7757
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2811700,2.8117
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2765200,2.7651999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2785600,2.7856
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2899000,2.899
+PartialSVD100,"svds(X, k = 10)",1047300,1.0473
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2792100,2.7921
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2745400,2.7454
+PartialSVD100,"svds(X, k = 10)",1030200,1.0302
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2815400,2.8154
+PartialSVD100,"svds(X, k = 5)",863700,0.8636999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2855700,2.8556999999999997
+PartialSVD100,"svds(X, k = 1)",541000,0.5409999999999999
+PartialSVD100,"svds(X, k = 10)",988600,0.9885999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2708100,2.7081
+PartialSVD100,"svds(X, k = 1)",537200,0.5372
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2809300,2.8093
+PartialSVD100,"svds(X, k = 1)",545700,0.5457
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2784100,2.7841
+PartialSVD100,"svds(X, k = 5)",760300,0.7603
+PartialSVD100,"svds(X, k = 1)",521900,0.5219
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2809900,2.8099
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2787600,2.7876
+PartialSVD100,"svds(X, k = 1)",548300,0.5483
+PartialSVD100,"svds(X, k = 10)",1011900,1.0119
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2755800,2.7558
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2874200,2.8742
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2907000,2.907
+PartialSVD100,"svds(X, k = 5)",787100,0.7870999999999999
+PartialSVD100,"svds(X, k = 10)",1038000,1.038
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2733400,2.7334
+PartialSVD100,"svds(X, k = 1)",535600,0.5356
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2687400,2.6874
+PartialSVD100,"svds(X, k = 5)",759100,0.7591
+PartialSVD100,"svds(X, k = 10)",1011200,1.0111999999999999
+PartialSVD100,"svds(X, k = 10)",1007800,1.0078
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2811100,2.8110999999999997
+PartialSVD100,"svds(X, k = 10)",1000900,1.0009
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2838600,2.8386
+PartialSVD100,"svds(X, k = 1)",533100,0.5331
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2914800,2.9148
+PartialSVD100,"svds(X, k = 1)",534400,0.5344
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2990100,2.9901
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2851000,2.851
+PartialSVD100,"svds(X, k = 1)",540100,0.5401
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2921000,2.921
+PartialSVD100,"svds(X, k = 5)",767100,0.7671
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2884600,2.8846
+PartialSVD100,"svds(X, k = 1)",536500,0.5365
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2849500,2.8495
+PartialSVD100,"svds(X, k = 1)",536700,0.5367
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2948900,2.9489
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2873600,2.8735999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2864500,2.8645
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2792500,2.7925
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2732400,2.7323999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2921200,2.9212
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2917200,2.9172
+PartialSVD100,"svds(X, k = 5)",790400,0.7904
+PartialSVD100,"svds(X, k = 1)",549200,0.5492
+PartialSVD100,"svds(X, k = 10)",1001500,1.0015
+PartialSVD100,"svds(X, k = 10)",1012700,1.0127
+PartialSVD100,"svds(X, k = 5)",752500,0.7525
+PartialSVD100,"svds(X, k = 5)",744800,0.7448
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2959100,2.9591
+PartialSVD100,"svds(X, k = 10)",1042600,1.0426
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2773000,2.7729999999999997
+PartialSVD100,"svds(X, k = 1)",533300,0.5333
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2854200,2.8542
+PartialSVD100,"svds(X, k = 10)",1014900,1.0149
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2932200,2.9322
+PartialSVD100,"svds(X, k = 5)",762000,0.762
+PartialSVD100,"svds(X, k = 1)",532500,0.5325
+PartialSVD100,"svds(X, k = 10)",986700,0.9866999999999999
+PartialSVD100,"svds(X, k = 5)",735600,0.7355999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2870000,2.8699999999999997
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2745800,2.7458
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2892800,2.8928
+PartialSVD100,"svds(X, k = 10)",1029600,1.0295999999999998
+PartialSVD100,"svds(X, k = 1)",527700,0.5277
+PartialSVD100,"svds(X, k = 10)",1012000,1.012
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2846900,2.8468999999999998
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2876300,2.8763
+PartialSVD100,"svds(X, k = 1)",538300,0.5383
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2834100,2.8341
+PartialSVD100,"svds(X, k = 1)",532000,0.532
+PartialSVD100,"svds(X, k = 5)",777000,0.7769999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2909400,2.9093999999999998
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2778300,2.7782999999999998
+PartialSVD100,"svds(X, k = 1)",541800,0.5418
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2827300,2.8272999999999997
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2841800,2.8417999999999997
+PartialSVD100,"svds(X, k = 1)",541200,0.5412
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2795400,2.7954
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2838700,2.8387
+PartialSVD100,"svds(X, k = 10)",1009200,1.0091999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2957500,2.9575
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2829800,2.8298
+PartialSVD100,"svds(X, k = 5)",767200,0.7672
+PartialSVD100,"svds(X, k = 5)",752600,0.7525999999999999
+PartialSVD100,"svds(X, k = 1)",517100,0.5171
+PartialSVD100,"svds(X, k = 1)",514600,0.5146
+PartialSVD100,"svds(X, k = 5)",734300,0.7343
+PartialSVD100,"svds(X, k = 10)",986700,0.9866999999999999
+PartialSVD100,"svds(X, k = 1)",515400,0.5154
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2751300,2.7513
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2833500,2.8335
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2808700,2.8087
+PartialSVD100,"svds(X, k = 5)",769800,0.7697999999999999
+PartialSVD100,"svds(X, k = 10)",993500,0.9934999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2971900,2.9718999999999998
+PartialSVD100,"svds(X, k = 5)",774200,0.7742
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2774600,2.7746
+PartialSVD100,"svds(X, k = 1)",533700,0.5337
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2859100,2.8590999999999998
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2930400,2.9303999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2879900,2.8798999999999997
+PartialSVD100,"svds(X, k = 10)",1011800,1.0118
+PartialSVD100,"svds(X, k = 10)",991400,0.9914
+PartialSVD100,"svds(X, k = 10)",979200,0.9792
+PartialSVD100,"svds(X, k = 1)",529800,0.5297999999999999
+PartialSVD100,"svds(X, k = 1)",518500,0.5185
+PartialSVD100,"svds(X, k = 5)",753400,0.7534
+PartialSVD100,"svds(X, k = 1)",530500,0.5305
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2866800,2.8668
+PartialSVD100,"svds(X, k = 5)",766100,0.7661
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2839100,2.8390999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2738300,2.7382999999999997
+PartialSVD100,"svds(X, k = 10)",1007000,1.007
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2879700,2.8796999999999997
+PartialSVD100,"svds(X, k = 1)",544700,0.5447
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2938900,2.9389
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2926700,2.9267
+PartialSVD100,"svds(X, k = 10)",1018700,1.0187
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2893900,2.8939
+PartialSVD100,"svds(X, k = 5)",759800,0.7597999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2827800,2.8278
+PartialSVD100,"svds(X, k = 5)",784500,0.7845
+PartialSVD100,"svds(X, k = 5)",749600,0.7495999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2882000,2.8819999999999997
+PartialSVD100,"svds(X, k = 10)",1025100,1.0251
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2857100,2.8571
+PartialSVD100,"svds(X, k = 1)",536700,0.5367
+PartialSVD100,"svds(X, k = 10)",989100,0.9891
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2839400,2.8394
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2694700,2.6947
+PartialSVD100,"svds(X, k = 10)",1054200,1.0542
+PartialSVD100,"svds(X, k = 1)",554400,0.5544
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2777200,2.7771999999999997
+PartialSVD100,"svds(X, k = 5)",764000,0.764
+PartialSVD100,"svds(X, k = 5)",748100,0.7481
+PartialSVD100,"svds(X, k = 5)",737700,0.7376999999999999
+PartialSVD100,"svds(X, k = 5)",737500,0.7374999999999999
+PartialSVD100,"svds(X, k = 5)",737000,0.737
+PartialSVD100,"svds(X, k = 5)",755500,0.7555
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2924100,2.9240999999999997
+PartialSVD100,"svds(X, k = 10)",1032800,1.0328
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2737300,2.7373
+PartialSVD100,"svds(X, k = 5)",764200,0.7642
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2888700,2.8887
+PartialSVD100,"svds(X, k = 10)",1031700,1.0317
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2911200,2.9112
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2815400,2.8154
+PartialSVD100,"svds(X, k = 1)",543900,0.5438999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2870200,2.8702
+PartialSVD100,"svds(X, k = 10)",1011900,1.0119
+PartialSVD100,"svd(X, nu = 5, nv = 5)",3031400,3.0313999999999997
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2882500,2.8825
+PartialSVD100,"svds(X, k = 5)",767400,0.7674
+PartialSVD100,"svds(X, k = 5)",749100,0.7491
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2770700,2.7706999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2743300,2.7433
+PartialSVD100,"svds(X, k = 10)",1009500,1.0095
+PartialSVD100,"svds(X, k = 1)",527500,0.5275
+PartialSVD100,"svds(X, k = 1)",517900,0.5179
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2856200,2.8562
+PartialSVD100,"svds(X, k = 1)",565300,0.5653
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2956400,2.9564
+PartialSVD100,"svds(X, k = 1)",537800,0.5378
+PartialSVD100,"svds(X, k = 5)",746100,0.7461
+PartialSVD100,"svds(X, k = 1)",520300,0.5203
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2838700,2.8387
+PartialSVD100,"svds(X, k = 10)",1000700,1.0007
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2934400,2.9343999999999997
+PartialSVD100,"svds(X, k = 5)",770500,0.7705
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2934400,2.9343999999999997
+PartialSVD100,"svds(X, k = 1)",533800,0.5337999999999999
+PartialSVD100,"svds(X, k = 10)",990700,0.9906999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2902300,2.9023
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2947200,2.9472
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2869900,2.8699
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2726500,2.7264999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2832400,2.8324
+PartialSVD100,"svds(X, k = 5)",783500,0.7835
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2828300,2.8283
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2700700,2.7007
+PartialSVD100,"svds(X, k = 10)",1008600,1.0086
+PartialSVD100,"svds(X, k = 10)",990100,0.9901
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2768700,2.7687
+PartialSVD100,"svds(X, k = 5)",767700,0.7676999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2908700,2.9087
+PartialSVD100,"svds(X, k = 1)",537200,0.5372
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2821600,2.8215999999999997
+PartialSVD100,"svds(X, k = 1)",534200,0.5342
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2903400,2.9034
+PartialSVD100,"svds(X, k = 10)",1005700,1.0057
+PartialSVD100,"svds(X, k = 1)",588300,0.5882999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2915800,2.9158
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2753700,2.7537
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2720800,2.7207999999999997
+PartialSVD100,"svds(X, k = 10)",1009800,1.0098
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2893100,2.8931
+PartialSVD100,"svds(X, k = 1)",541700,0.5417
+PartialSVD100,"svds(X, k = 1)",520600,0.5206
+PartialSVD100,"svds(X, k = 5)",745200,0.7452
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2875200,2.8752
+PartialSVD100,"svds(X, k = 1)",553600,0.5536
+PartialSVD100,"svds(X, k = 10)",1012500,1.0125
+PartialSVD100,"svds(X, k = 10)",999100,0.9991
+PartialSVD100,"svds(X, k = 1)",521900,0.5219
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2737400,2.7374
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2841000,2.8409999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2846400,2.8464
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2902300,2.9023
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2895900,2.8958999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2844200,2.8442
+PartialSVD100,"svds(X, k = 5)",784500,0.7845
+PartialSVD100,"svds(X, k = 10)",1008900,1.0089
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2880500,2.8805
+PartialSVD100,"svds(X, k = 5)",763500,0.7635
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2821900,2.8219
+PartialSVD100,"svds(X, k = 1)",536000,0.5359999999999999
+PartialSVD100,"svds(X, k = 1)",524200,0.5242
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2886600,2.8866
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2784600,2.7845999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",3331600,3.3316
+PartialSVD100,"svds(X, k = 1)",548000,0.5479999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2916700,2.9167
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2909500,2.9095
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2846800,2.8468
+PartialSVD100,"svds(X, k = 5)",770300,0.7703
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2999700,2.9997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2931800,2.9318
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2842700,2.8427
+PartialSVD100,"svds(X, k = 1)",551100,0.5510999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2868800,2.8688
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2757900,2.7579
+PartialSVD100,"svds(X, k = 1)",562300,0.5623
+PartialSVD100,"svds(X, k = 5)",761200,0.7612
+PartialSVD100,"svds(X, k = 5)",769300,0.7693
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2826600,2.8266
+PartialSVD100,"svds(X, k = 5)",777200,0.7772
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2915700,2.9156999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2904800,2.9048
+PartialSVD100,"svds(X, k = 5)",780600,0.7806
+PartialSVD100,"svds(X, k = 5)",767100,0.7671
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2885400,2.8853999999999997
+PartialSVD100,"svds(X, k = 10)",1042100,1.0421
+PartialSVD100,"svds(X, k = 10)",1024500,1.0245
+PartialSVD100,"svds(X, k = 1)",584700,0.5847
+PartialSVD100,"svds(X, k = 10)",1013000,1.013
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2870900,2.8709
+PartialSVD100,"svds(X, k = 5)",775600,0.7756
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2865200,2.8651999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2783800,2.7838
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2818300,2.8183
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2840700,2.8407
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2844200,2.8442
+PartialSVD100,"svds(X, k = 5)",797500,0.7975
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2795800,2.7958
+PartialSVD100,"svds(X, k = 10)",1023700,1.0237
+PartialSVD100,"svds(X, k = 5)",771500,0.7715
+PartialSVD100,"svds(X, k = 5)",741700,0.7416999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2718000,2.718
+PartialSVD100,"svds(X, k = 1)",535200,0.5352
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2834100,2.8341
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2812000,2.812
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2694900,2.6949
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2752700,2.7527
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2747600,2.7476
+PartialSVD100,"svds(X, k = 10)",1033500,1.0334999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2722300,2.7222999999999997
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2779700,2.7797
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2785600,2.7856
+PartialSVD100,"svds(X, k = 10)",1028100,1.0281
+PartialSVD100,"svds(X, k = 5)",765300,0.7653
+PartialSVD100,"svds(X, k = 10)",1010500,1.0105
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2725300,2.7253
+PartialSVD100,"svds(X, k = 1)",538200,0.5382
+PartialSVD100,"svds(X, k = 1)",526800,0.5267999999999999
+PartialSVD100,"svds(X, k = 1)",528900,0.5288999999999999
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2731900,2.7319
+PartialSVD100,"svds(X, k = 1)",534400,0.5344
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2826600,2.8266
+PartialSVD100,"svds(X, k = 5)",758700,0.7586999999999999
+PartialSVD100,"svds(X, k = 10)",991400,0.9914
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2773900,2.7739
+PartialSVD100,"svds(X, k = 10)",1009100,1.0090999999999999
+PartialSVD100,"svds(X, k = 10)",1011400,1.0113999999999999
+PartialSVD100,"svds(X, k = 1)",524800,0.5247999999999999
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2750400,2.7504
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2701100,2.7011
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2771800,2.7718
+PartialSVD100,"svds(X, k = 1)",544400,0.5444
+PartialSVD100,"svds(X, k = 1)",529300,0.5293
+PartialSVD100,"svds(X, k = 1)",525400,0.5254
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2845700,2.8457
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2724400,2.7243999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2766700,2.7666999999999997
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2802500,2.8024999999999998
+PartialSVD100,"svds(X, k = 5)",782500,0.7825
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2733700,2.7337
+PartialSVD100,"svds(X, k = 1)",535800,0.5357999999999999
+PartialSVD100,"svds(X, k = 10)",991400,0.9914
+PartialSVD100,"svds(X, k = 5)",743000,0.743
+PartialSVD100,"svds(X, k = 1)",517400,0.5174
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2834300,2.8343
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2811800,2.8118
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2754500,2.7544999999999997
+PartialSVD100,"svds(X, k = 5)",779100,0.7791
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2707400,2.7074
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2749800,2.7498
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2743400,2.7434
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2705900,2.7058999999999997
+PartialSVD100,"svds(X, k = 1)",544900,0.5448999999999999
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2752800,2.7527999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2791400,2.7914
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2755300,2.7553
+PartialSVD100,"svds(X, k = 5)",770200,0.7702
+PartialSVD100,"svds(X, k = 1)",526600,0.5266
+PartialSVD100,"svds(X, k = 10)",993700,0.9936999999999999
+PartialSVD100,"svds(X, k = 1)",519600,0.5196
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2754300,2.7542999999999997
+PartialSVD100,"svds(X, k = 10)",1013900,1.0139
+PartialSVD100,"svds(X, k = 10)",1008900,1.0089
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2715400,2.7154
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2787400,2.7874
+PartialSVD100,"svds(X, k = 10)",1051400,1.0514
+PartialSVD100,"svds(X, k = 1)",576600,0.5766
+PartialSVD100,"svd(X, nu = 5, nv = 5)",2799100,2.7990999999999997
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2777200,2.7771999999999997
+PartialSVD100,"svd(X, nu = 1, nv = 1)",2691400,2.6914
+PartialSVD100,"svd(X, nu = 10, nv = 10)",2709900,2.7098999999999998
+PartialSVD100,"svds(X, k = 10)",1046800,1.0468
+PartialSVD1000,"svds(X, k = 5)",115540900,115.5409
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1669681500,1669.6815
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1661082500,1661.0825
+PartialSVD1000,"svds(X, k = 10)",151490000,151.48999999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1661479000,1661.4789999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1660433900,1660.4339
+PartialSVD1000,"svds(X, k = 10)",151307900,151.3079
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1780428700,1780.4287
+PartialSVD1000,"svds(X, k = 10)",150077600,150.0776
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1656805600,1656.8056
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1654613600,1654.6136
+PartialSVD1000,"svds(X, k = 5)",115530700,115.5307
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1651148200,1651.1481999999999
+PartialSVD1000,"svds(X, k = 10)",150532400,150.5324
+PartialSVD1000,"svds(X, k = 5)",114459100,114.45909999999999
+PartialSVD1000,"svds(X, k = 10)",148970800,148.9708
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1653492000,1653.492
+PartialSVD1000,"svds(X, k = 10)",150625300,150.62529999999998
+PartialSVD1000,"svds(X, k = 10)",148746500,148.7465
+PartialSVD1000,"svds(X, k = 10)",149014600,149.0146
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1656747900,1656.7478999999998
+PartialSVD1000,"svds(X, k = 1)",76820000,76.82
+PartialSVD1000,"svds(X, k = 10)",148414700,148.41469999999998
+PartialSVD1000,"svds(X, k = 5)",114548100,114.54809999999999
+PartialSVD1000,"svds(X, k = 5)",115364500,115.36449999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1680857000,1680.857
+PartialSVD1000,"svds(X, k = 5)",116819300,116.8193
+PartialSVD1000,"svds(X, k = 1)",75646000,75.646
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1659948600,1659.9486
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1655641200,1655.6412
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1654160000,1654.1599999999999
+PartialSVD1000,"svds(X, k = 1)",77387400,77.3874
+PartialSVD1000,"svds(X, k = 5)",115405100,115.40509999999999
+PartialSVD1000,"svds(X, k = 10)",148629600,148.62959999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659180300,1659.1803
+PartialSVD1000,"svds(X, k = 10)",150103200,150.1032
+PartialSVD1000,"svds(X, k = 10)",149180300,149.1803
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1659757100,1659.7571
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1821459800,1821.4597999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1657001900,1657.0019
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1653151900,1653.1518999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1653053700,1653.0537
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1662667700,1662.6677
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1691025900,1691.0258999999999
+PartialSVD1000,"svds(X, k = 5)",116633000,116.633
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1657633900,1657.6338999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1659633200,1659.6332
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659334600,1659.3346
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1662862300,1662.8623
+PartialSVD1000,"svds(X, k = 5)",116669700,116.66969999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1703950000,1703.9499999999998
+PartialSVD1000,"svds(X, k = 5)",116371800,116.3718
+PartialSVD1000,"svds(X, k = 1)",75566700,75.5667
+PartialSVD1000,"svds(X, k = 10)",149794900,149.79489999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1749006900,1749.0068999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1653571200,1653.5711999999999
+PartialSVD1000,"svds(X, k = 1)",77880100,77.8801
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1648955800,1648.9558
+PartialSVD1000,"svds(X, k = 1)",76189000,76.189
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1659700700,1659.7006999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1690872400,1690.8724
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1661111400,1661.1114
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1659545600,1659.5456
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1666179300,1666.1793
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1658356100,1658.3561
+PartialSVD1000,"svds(X, k = 1)",77192100,77.1921
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1656277300,1656.2773
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1666792500,1666.7925
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1801156100,1801.1561
+PartialSVD1000,"svds(X, k = 1)",76982700,76.9827
+PartialSVD1000,"svds(X, k = 5)",115830300,115.8303
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659650400,1659.6504
+PartialSVD1000,"svds(X, k = 10)",149850400,149.85039999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1653020900,1653.0209
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1682878500,1682.8785
+PartialSVD1000,"svds(X, k = 10)",150989900,150.9899
+PartialSVD1000,"svds(X, k = 10)",148745500,148.7455
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1658543200,1658.5431999999998
+PartialSVD1000,"svds(X, k = 1)",77903800,77.90379999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1655990100,1655.9901
+PartialSVD1000,"svds(X, k = 10)",149935600,149.9356
+PartialSVD1000,"svds(X, k = 10)",148615700,148.6157
+PartialSVD1000,"svds(X, k = 5)",116359400,116.3594
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1659263100,1659.2631
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1657790700,1657.7907
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1658801600,1658.8016
+PartialSVD1000,"svds(X, k = 5)",117333600,117.33359999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1656662100,1656.6621
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1737217200,1737.2171999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1696609700,1696.6097
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1658380100,1658.3800999999999
+PartialSVD1000,"svds(X, k = 5)",116763400,116.76339999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1681163000,1681.163
+PartialSVD1000,"svds(X, k = 1)",76850100,76.8501
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1667275500,1667.2755
+PartialSVD1000,"svds(X, k = 1)",76809000,76.809
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1662044100,1662.0440999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1658994600,1658.9946
+PartialSVD1000,"svds(X, k = 10)",150800900,150.80089999999998
+PartialSVD1000,"svds(X, k = 1)",75938300,75.9383
+PartialSVD1000,"svds(X, k = 1)",75645500,75.6455
+PartialSVD1000,"svds(X, k = 5)",115606600,115.6066
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1656184000,1656.184
+PartialSVD1000,"svds(X, k = 1)",78132400,78.13239999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1658957800,1658.9578
+PartialSVD1000,"svds(X, k = 5)",115633700,115.63369999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1657737800,1657.7377999999999
+PartialSVD1000,"svds(X, k = 5)",117898100,117.8981
+PartialSVD1000,"svds(X, k = 5)",114546200,114.5462
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1726870900,1726.8709
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1714223100,1714.2231
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1659655600,1659.6555999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1682987900,1682.9878999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1658016500,1658.0165
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1659934600,1659.9345999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1658561900,1658.5619
+PartialSVD1000,"svds(X, k = 10)",150173500,150.1735
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1656210000,1656.21
+PartialSVD1000,"svds(X, k = 1)",77258200,77.2582
+PartialSVD1000,"svds(X, k = 1)",76289000,76.289
+PartialSVD1000,"svds(X, k = 5)",114952500,114.9525
+PartialSVD1000,"svds(X, k = 5)",115474000,115.47399999999999
+PartialSVD1000,"svds(X, k = 10)",149231600,149.2316
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1659735100,1659.7350999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1656424800,1656.4248
+PartialSVD1000,"svds(X, k = 10)",150418500,150.4185
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1871814700,1871.8147
+PartialSVD1000,"svds(X, k = 1)",77128700,77.1287
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1655100200,1655.1001999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1682186500,1682.1865
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1656173400,1656.1734
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1657057500,1657.0575
+PartialSVD1000,"svds(X, k = 5)",115959200,115.9592
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1688279000,1688.279
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1670303000,1670.3029999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1656887500,1656.8874999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1659768600,1659.7685999999999
+PartialSVD1000,"svds(X, k = 1)",77409400,77.40939999999999
+PartialSVD1000,"svds(X, k = 10)",149394500,149.3945
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1755164700,1755.1646999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1657484300,1657.4842999999998
+PartialSVD1000,"svds(X, k = 5)",116886200,116.88619999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1680363900,1680.3638999999998
+PartialSVD1000,"svds(X, k = 1)",77372600,77.37259999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1655210600,1655.2105999999999
+PartialSVD1000,"svds(X, k = 5)",116796900,116.7969
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1654624400,1654.6244
+PartialSVD1000,"svds(X, k = 1)",77187800,77.1878
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1654301300,1654.3012999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1658766700,1658.7667
+PartialSVD1000,"svds(X, k = 1)",77430600,77.4306
+PartialSVD1000,"svds(X, k = 1)",75971000,75.971
+PartialSVD1000,"svds(X, k = 10)",148908200,148.9082
+PartialSVD1000,"svds(X, k = 10)",148559800,148.5598
+PartialSVD1000,"svds(X, k = 1)",76527900,76.5279
+PartialSVD1000,"svds(X, k = 10)",149814100,149.8141
+PartialSVD1000,"svds(X, k = 1)",76016400,76.01639999999999
+PartialSVD1000,"svds(X, k = 5)",114442200,114.4422
+PartialSVD1000,"svds(X, k = 1)",75870300,75.8703
+PartialSVD1000,"svds(X, k = 5)",115452800,115.4528
+PartialSVD1000,"svds(X, k = 10)",150365300,150.3653
+PartialSVD1000,"svds(X, k = 10)",148685300,148.68529999999998
+PartialSVD1000,"svds(X, k = 5)",115075700,115.0757
+PartialSVD1000,"svds(X, k = 5)",115740600,115.7406
+PartialSVD1000,"svds(X, k = 5)",115778100,115.7781
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1652236300,1652.2363
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1646743500,1646.7434999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1668239100,1668.2391
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1657993400,1657.9933999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1671206500,1671.2065
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1650376200,1650.3762
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1660315400,1660.3154
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1659078900,1659.0789
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1656678400,1656.6784
+PartialSVD1000,"svds(X, k = 5)",116985500,116.98549999999999
+PartialSVD1000,"svds(X, k = 5)",114892600,114.8926
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1655442500,1655.4424999999999
+PartialSVD1000,"svds(X, k = 1)",77322400,77.3224
+PartialSVD1000,"svds(X, k = 5)",115738400,115.7384
+PartialSVD1000,"svds(X, k = 5)",115000200,115.00019999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1660834300,1660.8343
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1669448300,1669.4483
+PartialSVD1000,"svds(X, k = 10)",151279900,151.2799
+PartialSVD1000,"svds(X, k = 10)",148976900,148.9769
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1656674400,1656.6743999999999
+PartialSVD1000,"svds(X, k = 1)",78155800,78.1558
+PartialSVD1000,"svds(X, k = 10)",149769400,149.7694
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1682308100,1682.3081
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1674689200,1674.6892
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1661907600,1661.9076
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1656055500,1656.0555
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1659460300,1659.4603
+PartialSVD1000,"svds(X, k = 10)",150896500,150.8965
+PartialSVD1000,"svds(X, k = 10)",148690300,148.69029999999998
+PartialSVD1000,"svds(X, k = 5)",115265100,115.26509999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1658015800,1658.0158
+PartialSVD1000,"svds(X, k = 1)",77672200,77.67219999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659947100,1659.9470999999999
+PartialSVD1000,"svds(X, k = 1)",77663200,77.6632
+PartialSVD1000,"svds(X, k = 1)",75905300,75.9053
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1872156700,1872.1567
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1680659200,1680.6591999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1658836200,1658.8362
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1662454500,1662.4544999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1658621300,1658.6213
+PartialSVD1000,"svds(X, k = 5)",116541900,116.5419
+PartialSVD1000,"svds(X, k = 1)",77192400,77.19239999999999
+PartialSVD1000,"svds(X, k = 1)",77162100,77.1621
+PartialSVD1000,"svds(X, k = 1)",76823500,76.8235
+PartialSVD1000,"svds(X, k = 1)",75447500,75.44749999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1657613400,1657.6134
+PartialSVD1000,"svds(X, k = 1)",77922100,77.9221
+PartialSVD1000,"svds(X, k = 5)",114821300,114.8213
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1656726300,1656.7263
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1658595300,1658.5953
+PartialSVD1000,"svds(X, k = 5)",116189700,116.18969999999999
+PartialSVD1000,"svds(X, k = 5)",114903800,114.90379999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1656084100,1656.0841
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1761838600,1761.8385999999998
+PartialSVD1000,"svds(X, k = 5)",116416800,116.4168
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1652327200,1652.3272
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1657727400,1657.7274
+PartialSVD1000,"svds(X, k = 10)",149912200,149.91219999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1657891900,1657.8918999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1659045400,1659.0454
+PartialSVD1000,"svds(X, k = 1)",76897000,76.89699999999999
+PartialSVD1000,"svds(X, k = 5)",115000300,115.0003
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1661809500,1661.8094999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1660588900,1660.5889
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1672818200,1672.8182
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1684046300,1684.0463
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1655684100,1655.6841
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1660966700,1660.9667
+PartialSVD1000,"svds(X, k = 1)",76467400,76.4674
+PartialSVD1000,"svds(X, k = 5)",116012700,116.0127
+PartialSVD1000,"svds(X, k = 5)",115421300,115.42129999999999
+PartialSVD1000,"svds(X, k = 5)",115062000,115.062
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1646798200,1646.7982
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1651216100,1651.2160999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1647865700,1647.8656999999998
+PartialSVD1000,"svds(X, k = 1)",77202000,77.202
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1645046500,1645.0465
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1650096600,1650.0965999999999
+PartialSVD1000,"svds(X, k = 1)",76425900,76.4259
+PartialSVD1000,"svds(X, k = 5)",115497200,115.49719999999999
+PartialSVD1000,"svds(X, k = 1)",76115900,76.1159
+PartialSVD1000,"svds(X, k = 1)",76045500,76.04549999999999
+PartialSVD1000,"svds(X, k = 5)",115221500,115.22149999999999
+PartialSVD1000,"svds(X, k = 10)",149111800,149.1118
+PartialSVD1000,"svds(X, k = 1)",75661300,75.6613
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1668962800,1668.9628
+PartialSVD1000,"svds(X, k = 1)",77698600,77.6986
+PartialSVD1000,"svds(X, k = 10)",149812200,149.8122
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1647284900,1647.2848999999999
+PartialSVD1000,"svds(X, k = 5)",116344200,116.3442
+PartialSVD1000,"svds(X, k = 1)",75645600,75.6456
+PartialSVD1000,"svds(X, k = 5)",115337900,115.33789999999999
+PartialSVD1000,"svds(X, k = 1)",76550200,76.55019999999999
+PartialSVD1000,"svds(X, k = 5)",115970800,115.9708
+PartialSVD1000,"svds(X, k = 1)",75698900,75.6989
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1645513100,1645.5131
+PartialSVD1000,"svds(X, k = 10)",150507700,150.5077
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1646811900,1646.8119
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1646502600,1646.5026
+PartialSVD1000,"svds(X, k = 10)",150537400,150.5374
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1647854800,1647.8547999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1649202200,1649.2022
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1776974500,1776.9744999999998
+PartialSVD1000,"svds(X, k = 1)",77408500,77.40849999999999
+PartialSVD1000,"svds(X, k = 10)",149506100,149.5061
+PartialSVD1000,"svds(X, k = 5)",114911400,114.9114
+PartialSVD1000,"svds(X, k = 10)",149971000,149.971
+PartialSVD1000,"svds(X, k = 5)",114972200,114.9722
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1652242500,1652.2424999999998
+PartialSVD1000,"svds(X, k = 10)",151482900,151.4829
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1656510900,1656.5109
+PartialSVD1000,"svds(X, k = 1)",77064300,77.0643
+PartialSVD1000,"svds(X, k = 10)",148877300,148.8773
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1652466100,1652.4660999999999
+PartialSVD1000,"svds(X, k = 5)",116207800,116.20779999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1650102800,1650.1028
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1662490100,1662.4901
+PartialSVD1000,"svds(X, k = 5)",116604400,116.6044
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1657228100,1657.2280999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1704183400,1704.1834
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1685858700,1685.8587
+PartialSVD1000,"svds(X, k = 5)",117064300,117.06429999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1684925600,1684.9256
+PartialSVD1000,"svds(X, k = 10)",150698500,150.6985
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1643766300,1643.7663
+PartialSVD1000,"svds(X, k = 1)",77746600,77.7466
+PartialSVD1000,"svds(X, k = 1)",76298000,76.298
+PartialSVD1000,"svds(X, k = 1)",75414000,75.414
+PartialSVD1000,"svds(X, k = 1)",76054900,76.0549
+PartialSVD1000,"svds(X, k = 5)",115613300,115.6133
+PartialSVD1000,"svds(X, k = 1)",75545000,75.545
+PartialSVD1000,"svds(X, k = 5)",114597100,114.5971
+PartialSVD1000,"svds(X, k = 1)",75924400,75.92439999999999
+PartialSVD1000,"svds(X, k = 5)",115887600,115.88759999999999
+PartialSVD1000,"svds(X, k = 10)",148609200,148.6092
+PartialSVD1000,"svds(X, k = 1)",75396600,75.39659999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1664784600,1664.7846
+PartialSVD1000,"svds(X, k = 10)",149951400,149.9514
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1643139600,1643.1396
+PartialSVD1000,"svds(X, k = 10)",150454300,150.4543
+PartialSVD1000,"svds(X, k = 10)",149186200,149.18619999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1656822100,1656.8220999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1655364900,1655.3649
+PartialSVD1000,"svds(X, k = 5)",116339800,116.3398
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1652011000,1652.011
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1647850900,1647.8509
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1646355700,1646.3556999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1835526700,1835.5267
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659021100,1659.0211
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1652272200,1652.2721999999999
+PartialSVD1000,"svds(X, k = 10)",149733100,149.7331
+PartialSVD1000,"svds(X, k = 5)",115253600,115.25359999999999
+PartialSVD1000,"svds(X, k = 1)",76076500,76.0765
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1681625900,1681.6259
+PartialSVD1000,"svds(X, k = 10)",151167300,151.16729999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1656381000,1656.3809999999999
+PartialSVD1000,"svds(X, k = 1)",77510200,77.5102
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1656753800,1656.7538
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1652970900,1652.9709
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1658131500,1658.1315
+PartialSVD1000,"svds(X, k = 1)",77040500,77.0405
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1656746000,1656.7459999999999
+PartialSVD1000,"svds(X, k = 1)",76941800,76.9418
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1654293100,1654.2930999999999
+PartialSVD1000,"svds(X, k = 1)",77747800,77.7478
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1658269800,1658.2698
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1697951600,1697.9515999999999
+PartialSVD1000,"svds(X, k = 10)",150563500,150.5635
+PartialSVD1000,"svds(X, k = 10)",148178400,148.17839999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1641711500,1641.7115
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1670650000,1670.6499999999999
+PartialSVD1000,"svds(X, k = 1)",76304900,76.3049
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1658151100,1658.1510999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1800436600,1800.4366
+PartialSVD1000,"svds(X, k = 10)",151524400,151.52439999999999
+PartialSVD1000,"svds(X, k = 5)",115825000,115.82499999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1655716300,1655.7162999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1652218500,1652.2185
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1653838700,1653.8387
+PartialSVD1000,"svds(X, k = 10)",149131500,149.1315
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1683706300,1683.7062999999998
+PartialSVD1000,"svds(X, k = 5)",117391700,117.3917
+PartialSVD1000,"svds(X, k = 10)",149219900,149.2199
+PartialSVD1000,"svds(X, k = 1)",76097600,76.0976
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1704293900,1704.2939
+PartialSVD1000,"svds(X, k = 10)",184310900,184.3109
+PartialSVD1000,"svds(X, k = 1)",87472600,87.4726
+PartialSVD1000,"svds(X, k = 5)",127604100,127.60409999999999
+PartialSVD1000,"svds(X, k = 10)",156040100,156.0401
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1783885400,1783.8854
+PartialSVD1000,"svds(X, k = 10)",161512400,161.51239999999999
+PartialSVD1000,"svds(X, k = 5)",119764100,119.7641
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1691665400,1691.6653999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1684831400,1684.8314
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1664646300,1664.6462999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1663837700,1663.8376999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1670300700,1670.3007
+PartialSVD1000,"svds(X, k = 1)",77100900,77.1009
+PartialSVD1000,"svds(X, k = 5)",116863900,116.8639
+PartialSVD1000,"svds(X, k = 1)",76188600,76.1886
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1669599500,1669.5995
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1665402000,1665.4019999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1678379100,1678.3790999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1671785700,1671.7857
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1711155800,1711.1558
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1652120400,1652.1204
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1693785200,1693.7852
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1656996700,1656.9967
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1662324700,1662.3247
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1653431900,1653.4318999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1661866900,1661.8669
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1663903700,1663.9036999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1668577000,1668.577
+PartialSVD1000,"svds(X, k = 10)",151062000,151.06199999999998
+PartialSVD1000,"svds(X, k = 5)",114783900,114.78389999999999
+PartialSVD1000,"svds(X, k = 10)",148894300,148.8943
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1787355300,1787.3553
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1661210300,1661.2103
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1687058600,1687.0585999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1663785200,1663.7852
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1670585200,1670.5852
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1675411500,1675.4115
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1672908900,1672.9089
+PartialSVD1000,"svds(X, k = 5)",116783000,116.783
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1660818300,1660.8183
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1666418700,1666.4187
+PartialSVD1000,"svds(X, k = 1)",78040200,78.0402
+PartialSVD1000,"svds(X, k = 10)",149664500,149.6645
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1673003700,1673.0037
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1764124400,1764.1244
+PartialSVD1000,"svds(X, k = 1)",77625100,77.6251
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1683534700,1683.5347
+PartialSVD1000,"svds(X, k = 5)",117786700,117.7867
+PartialSVD1000,"svds(X, k = 10)",148685500,148.6855
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1665854000,1665.8539999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1667699800,1667.6997999999999
+PartialSVD1000,"svds(X, k = 1)",77795400,77.7954
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1680073000,1680.0729999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1687642900,1687.6428999999998
+PartialSVD1000,"svds(X, k = 10)",151533400,151.5334
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1678984500,1678.9845
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1688067200,1688.0672
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1692548700,1692.5486999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1788213400,1788.2133999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1691726900,1691.7269
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1665902500,1665.9025
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1667485900,1667.4859
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1670988100,1670.9881
+PartialSVD1000,"svds(X, k = 1)",77773300,77.77329999999999
+PartialSVD1000,"svds(X, k = 10)",149375500,149.3755
+PartialSVD1000,"svds(X, k = 10)",148659700,148.6597
+PartialSVD1000,"svds(X, k = 5)",115797500,115.7975
+PartialSVD1000,"svds(X, k = 10)",149740200,149.7402
+PartialSVD1000,"svds(X, k = 1)",76123100,76.1231
+PartialSVD1000,"svds(X, k = 10)",150365800,150.3658
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1670074200,1670.0742
+PartialSVD1000,"svds(X, k = 10)",150899200,150.89919999999998
+PartialSVD1000,"svds(X, k = 10)",149411500,149.4115
+PartialSVD1000,"svds(X, k = 5)",114934200,114.93419999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1664690900,1664.6908999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1649722100,1649.7221
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1656265600,1656.2656
+PartialSVD1000,"svds(X, k = 10)",150683200,150.6832
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1716209100,1716.2091
+PartialSVD1000,"svds(X, k = 1)",76675800,76.6758
+PartialSVD1000,"svds(X, k = 5)",114375800,114.3758
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1672615800,1672.6158
+PartialSVD1000,"svds(X, k = 5)",116153900,116.1539
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1655408700,1655.4087
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1651123200,1651.1232
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1654353300,1654.3533
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659849400,1659.8493999999998
+PartialSVD1000,"svds(X, k = 10)",150626800,150.6268
+PartialSVD1000,"svds(X, k = 1)",76548900,76.5489
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1660540300,1660.5403
+PartialSVD1000,"svds(X, k = 1)",77034800,77.03479999999999
+PartialSVD1000,"svds(X, k = 5)",115119600,115.11959999999999
+PartialSVD1000,"svds(X, k = 1)",75746100,75.7461
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1657338800,1657.3388
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1858503600,1858.5036
+PartialSVD1000,"svds(X, k = 1)",77648100,77.6481
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1681640400,1681.6404
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1658632000,1658.6319999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1658033300,1658.0332999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1660853900,1660.8538999999998
+PartialSVD1000,"svds(X, k = 1)",76928900,76.9289
+PartialSVD1000,"svds(X, k = 10)",150494900,150.4949
+PartialSVD1000,"svds(X, k = 5)",115386900,115.3869
+PartialSVD1000,"svds(X, k = 1)",75573000,75.573
+PartialSVD1000,"svds(X, k = 5)",115191100,115.19109999999999
+PartialSVD1000,"svds(X, k = 5)",115443200,115.44319999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1653270700,1653.2707
+PartialSVD1000,"svds(X, k = 5)",116567800,116.56779999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1652827700,1652.8276999999998
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1656312000,1656.312
+PartialSVD1000,"svds(X, k = 5)",116203100,116.20309999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659554500,1659.5545
+PartialSVD1000,"svds(X, k = 1)",77079100,77.0791
+PartialSVD1000,"svds(X, k = 1)",78697200,78.6972
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1782107900,1782.1079
+PartialSVD1000,"svds(X, k = 10)",151586700,151.58669999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1663332800,1663.3328
+PartialSVD1000,"svds(X, k = 1)",76863800,76.8638
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1658588000,1658.588
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1655559500,1655.5594999999998
+PartialSVD1000,"svds(X, k = 1)",76235800,76.2358
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1652962900,1652.9629
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1661940500,1661.9405
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1654664500,1654.6644999999999
+PartialSVD1000,"svds(X, k = 1)",76476300,76.4763
+PartialSVD1000,"svds(X, k = 1)",76282600,76.2826
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1660524100,1660.5240999999999
+PartialSVD1000,"svds(X, k = 1)",78265600,78.26559999999999
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1687391400,1687.3914
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1670474800,1670.4748
+PartialSVD1000,"svds(X, k = 10)",150537600,150.5376
+PartialSVD1000,"svds(X, k = 5)",115187900,115.1879
+PartialSVD1000,"svds(X, k = 5)",115893800,115.8938
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1665225500,1665.2255
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1662376500,1662.3764999999999
+PartialSVD1000,"svds(X, k = 10)",150454500,150.4545
+PartialSVD1000,"svds(X, k = 5)",115167500,115.16749999999999
+PartialSVD1000,"svds(X, k = 5)",114955400,114.9554
+PartialSVD1000,"svds(X, k = 5)",116457900,116.4579
+PartialSVD1000,"svds(X, k = 5)",115757400,115.75739999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1658561600,1658.5616
+PartialSVD1000,"svds(X, k = 1)",76578100,76.57809999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1654300700,1654.3007
+PartialSVD1000,"svds(X, k = 1)",76399500,76.3995
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1652545800,1652.5457999999999
+PartialSVD1000,"svds(X, k = 10)",151569300,151.5693
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1684825800,1684.8257999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1678719500,1678.7195
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659368200,1659.3682
+PartialSVD1000,"svds(X, k = 10)",150326400,150.3264
+PartialSVD1000,"svds(X, k = 1)",76866000,76.866
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1657382900,1657.3828999999998
+PartialSVD1000,"svds(X, k = 10)",150490900,150.49089999999998
+PartialSVD1000,"svds(X, k = 5)",115393600,115.39359999999999
+PartialSVD1000,"svds(X, k = 5)",114342900,114.3429
+PartialSVD1000,"svds(X, k = 5)",114677900,114.6779
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1645846500,1645.8464999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1645736300,1645.7363
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1652965500,1652.9655
+PartialSVD1000,"svds(X, k = 10)",151087800,151.0878
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1645239700,1645.2396999999999
+PartialSVD1000,"svds(X, k = 5)",115377100,115.3771
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1713307100,1713.3071
+PartialSVD1000,"svds(X, k = 10)",150380000,150.38
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1650014100,1650.0140999999999
+PartialSVD1000,"svds(X, k = 1)",77031100,77.0311
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1647095400,1647.0954
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1649628100,1649.6281
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1648878700,1648.8787
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1648631100,1648.6310999999998
+PartialSVD1000,"svds(X, k = 5)",115379200,115.3792
+PartialSVD1000,"svds(X, k = 10)",148756800,148.7568
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1647165000,1647.165
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1672912300,1672.9123
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1647236800,1647.2368
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1649732100,1649.7321
+PartialSVD1000,"svds(X, k = 10)",149813200,149.8132
+PartialSVD1000,"svds(X, k = 10)",148538000,148.53799999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1646097200,1646.0972
+PartialSVD1000,"svds(X, k = 1)",77542400,77.5424
+PartialSVD1000,"svds(X, k = 5)",114891600,114.8916
+PartialSVD1000,"svds(X, k = 1)",76110400,76.1104
+PartialSVD1000,"svds(X, k = 10)",148740900,148.74089999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1648690300,1648.6903
+PartialSVD1000,"svds(X, k = 5)",115633300,115.63329999999999
+PartialSVD1000,"svds(X, k = 5)",115536400,115.5364
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1655744000,1655.744
+PartialSVD1000,"svds(X, k = 10)",150672600,150.6726
+PartialSVD1000,"svds(X, k = 5)",115057100,115.05709999999999
+PartialSVD1000,"svds(X, k = 5)",115523300,115.52329999999999
+PartialSVD1000,"svds(X, k = 1)",75730600,75.7306
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659383300,1659.3833
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1728472200,1728.4722
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1661490000,1661.49
+PartialSVD1000,"svds(X, k = 5)",116173400,116.1734
+PartialSVD1000,"svds(X, k = 5)",115092300,115.0923
+PartialSVD1000,"svds(X, k = 1)",75693300,75.6933
+PartialSVD1000,"svds(X, k = 1)",75889900,75.8899
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1668394200,1668.3942
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659385700,1659.3856999999998
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1650107000,1650.107
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1662853400,1662.8534
+PartialSVD1000,"svds(X, k = 5)",116624700,116.62469999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1664972900,1664.9729
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1682284800,1682.2848
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1670923000,1670.923
+PartialSVD1000,"svds(X, k = 10)",151251900,151.2519
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659783900,1659.7839
+PartialSVD1000,"svds(X, k = 10)",151019000,151.019
+PartialSVD1000,"svds(X, k = 10)",149633400,149.6334
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1662100800,1662.1008
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1662474900,1662.4749
+PartialSVD1000,"svds(X, k = 10)",151530000,151.53
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1658890500,1658.8905
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1732966800,1732.9668
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1665755100,1665.7550999999999
+PartialSVD1000,"svds(X, k = 10)",151542200,151.54219999999998
+PartialSVD1000,"svds(X, k = 1)",75785000,75.785
+PartialSVD1000,"svds(X, k = 5)",114548400,114.5484
+PartialSVD1000,"svds(X, k = 5)",114843500,114.84349999999999
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1659847700,1659.8477
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1657121700,1657.1217
+PartialSVD1000,"svd(X, nu = 1, nv = 1)",1664728900,1664.7288999999998
+PartialSVD1000,"svds(X, k = 10)",150017500,150.01749999999998
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1661574000,1661.5739999999998
+PartialSVD1000,"svds(X, k = 10)",150443200,150.4432
+PartialSVD1000,"svds(X, k = 10)",149397900,149.3979
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1698783100,1698.7830999999999
+PartialSVD1000,"svds(X, k = 5)",116098100,116.09809999999999
+PartialSVD1000,"svds(X, k = 10)",148771100,148.7711
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1656177200,1656.1771999999999
+PartialSVD1000,"svds(X, k = 5)",117935500,117.93549999999999
+PartialSVD1000,"svds(X, k = 10)",148530700,148.5307
+PartialSVD1000,"svds(X, k = 10)",147895700,147.8957
+PartialSVD1000,"svds(X, k = 1)",75516400,75.51639999999999
+PartialSVD1000,"svds(X, k = 1)",75308000,75.30799999999999
+PartialSVD1000,"svds(X, k = 1)",76322500,76.32249999999999
+PartialSVD1000,"svds(X, k = 5)",114185700,114.1857
+PartialSVD1000,"svds(X, k = 10)",148291100,148.2911
+PartialSVD1000,"svds(X, k = 1)",75247500,75.2475
+PartialSVD1000,"svds(X, k = 1)",76598600,76.59859999999999
+PartialSVD1000,"svds(X, k = 10)",148635600,148.63559999999998
+PartialSVD1000,"svds(X, k = 10)",149403700,149.4037
+PartialSVD1000,"svds(X, k = 5)",114265100,114.26509999999999
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1653299300,1653.2993
+PartialSVD1000,"svd(X, nu = 5, nv = 5)",1667002900,1667.0029
+PartialSVD1000,"svds(X, k = 1)",77091600,77.0916
+PartialSVD1000,"svds(X, k = 10)",148165000,148.165
+PartialSVD1000,"svd(X, nu = 10, nv = 10)",1663764800,1663.7648
+PartialSVD1000,"svds(X, k = 10)",150419700,150.4197
