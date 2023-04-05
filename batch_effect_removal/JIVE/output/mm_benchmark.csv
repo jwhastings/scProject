@@ -1,19 +1,19 @@
 benchmark,expr,time,time_ms
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",169300,0.1693
 MM100,"armaMatMult(A, B)",562000,0.5619999999999999
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",106800,0.10679999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",106800,0.1068
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",98300,0.0983
 MM100,A %*% B,372400,0.3724
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",109500,0.1095
 MM100,A %*% B,351200,0.35119999999999996
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",107600,0.1076
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",111100,0.11109999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",111100,0.1111
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",562800,0.5628
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",88600,0.0886
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",431800,0.43179999999999996
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",431800,0.4318
 MM100,A %*% B,686100,0.6860999999999999
 MM100,A %*% B,525900,0.5258999999999999
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",111600,0.11159999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",111600,0.1116
 MM100,"armaMatMult(A, B)",1389300,1.3893
 MM100,A %*% B,329200,0.3292
 MM100,"armaMatMult(A, B)",344100,0.34409999999999996
@@ -23,12 +23,12 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 2)",126600,0.1266
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",442200,0.4422
 MM100,"armaMatMult(A, B)",409400,0.4094
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",90100,0.0901
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",109700,0.10969999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",109700,0.1097
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",135400,0.1354
 MM100,A %*% B,506300,0.5063
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",127500,0.1275
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",163700,0.16369999999999998
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",152100,0.15209999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",152100,0.1521
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",536000,0.5359999999999999
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",154500,0.1545
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",415300,0.4153
@@ -42,15 +42,15 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 1)",99300,0.0993
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",115200,0.1152
 MM100,"armaMatMult(A, B)",968900,0.9689
 MM100,"armaMatMult(A, B)",584400,0.5843999999999999
-MM100,"armaMatMult(A, B)",431300,0.43129999999999996
+MM100,"armaMatMult(A, B)",431300,0.4313
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",100100,0.1001
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",99300,0.0993
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",508700,0.5086999999999999
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",214900,0.21489999999999998
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",214900,0.2149
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",203500,0.2035
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",149600,0.14959999999999998
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",178700,0.1787
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",199300,0.19929999999999998
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",199300,0.1993
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",115300,0.1153
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",404800,0.4048
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",92600,0.0926
@@ -66,22 +66,22 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 4)",118000,0.118
 MM100,A %*% B,368900,0.3689
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",135100,0.1351
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",292000,0.292
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",123300,0.12329999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",123300,0.1233
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",171400,0.1714
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",277100,0.2771
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",350400,0.3504
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",108100,0.1081
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133300,0.1333
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",120700,0.12069999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",120700,0.1207
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",158000,0.158
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",415400,0.4154
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",135700,0.1357
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",434400,0.43439999999999995
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",434400,0.4343999999999999
 MM100,A %*% B,355700,0.35569999999999996
 MM100,"armaMatMult(A, B)",426100,0.4261
 MM100,"armaMatMult(A, B)",370100,0.3701
 MM100,"armaMatMult(A, B)",358700,0.35869999999999996
-MM100,"armaMatMult(A, B)",367200,0.36719999999999997
+MM100,"armaMatMult(A, B)",367200,0.3672
 MM100,A %*% B,332000,0.33199999999999996
 MM100,A %*% B,370500,0.3705
 MM100,A %*% B,369500,0.3695
@@ -93,11 +93,11 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 2)",124500,0.1245
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",246700,0.2467
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",126700,0.1267
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",128800,0.1288
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",106800,0.10679999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",106800,0.1068
 MM100,"armaMatMult(A, B)",344000,0.344
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",422800,0.42279999999999995
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",422800,0.4227999999999999
 MM100,A %*% B,360900,0.3609
-MM100,"armaMatMult(A, B)",379800,0.37979999999999997
+MM100,"armaMatMult(A, B)",379800,0.3798
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",130300,0.1303
 MM100,A %*% B,369000,0.369
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",136900,0.1369
@@ -118,13 +118,13 @@ MM100,A %*% B,514100,0.5141
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",409000,0.409
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",113200,0.1132
 MM100,"armaMatMult(A, B)",619200,0.6192
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",402600,0.40259999999999996
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",402600,0.4026
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",137300,0.1373
 MM100,"armaMatMult(A, B)",514700,0.5146999999999999
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",397200,0.3972
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",120600,0.1206
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",138000,0.13799999999999998
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",92200,0.09219999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",92200,0.0922
 MM100,A %*% B,501500,0.5015
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",170900,0.1709
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",162100,0.1621
@@ -134,10 +134,10 @@ MM100,A %*% B,490000,0.49
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",112800,0.1128
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",168400,0.1684
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",126300,0.1263
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",115500,0.11549999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",115500,0.1155
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",255000,0.255
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",95600,0.09559999999999999
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133200,0.13319999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",95600,0.0956
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133200,0.1332
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",92900,0.0929
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",135900,0.1359
 MM100,A %*% B,380700,0.3807
@@ -152,9 +152,9 @@ MM100,A %*% B,355800,0.3558
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",253300,0.25329999999999997
 MM100,A %*% B,367100,0.3671
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",144200,0.1442
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",121300,0.12129999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",121300,0.1213
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",463400,0.4634
-MM100,A %*% B,365700,0.36569999999999997
+MM100,A %*% B,365700,0.3657
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",98300,0.0983
 MM100,"armaMatMult(A, B)",403900,0.4039
 MM100,A %*% B,401200,0.4012
@@ -178,28 +178,28 @@ MM100,A %*% B,588600,0.5886
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",115700,0.1157
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",147000,0.147
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",131400,0.1314
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",99500,0.09949999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",99500,0.0995
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",97300,0.0973
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",117400,0.11739999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",117400,0.1174
 MM100,"armaMatMult(A, B)",447800,0.4478
-MM100,"armaMatMult(A, B)",378300,0.37829999999999997
+MM100,"armaMatMult(A, B)",378300,0.3783
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",131600,0.1316
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",140000,0.13999999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",140000,0.14
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133400,0.1334
 MM100,"armaMatMult(A, B)",412300,0.4123
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",132400,0.1324
 MM100,A %*% B,354800,0.3548
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",448000,0.44799999999999995
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",448000,0.4479999999999999
 MM100,"armaMatMult(A, B)",505800,0.5058
-MM100,A %*% B,471700,0.47169999999999995
+MM100,A %*% B,471700,0.4716999999999999
 MM100,"armaMatMult(A, B)",372100,0.3721
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",150000,0.15
 MM100,A %*% B,772500,0.7725
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",381500,0.3815
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",119900,0.11989999999999999
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",373300,0.37329999999999997
-MM100,A %*% B,488700,0.48869999999999997
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",189700,0.18969999999999998
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",119900,0.1199
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",373300,0.3733
+MM100,A %*% B,488700,0.4887
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",189700,0.1897
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",335200,0.3352
 MM100,A %*% B,682000,0.6819999999999999
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",114300,0.1143
@@ -208,7 +208,7 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 1)",174400,0.1744
 MM100,"armaMatMult(A, B)",646200,0.6462
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",469200,0.4692
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",136100,0.1361
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133200,0.13319999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133200,0.1332
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",150100,0.15009999999999998
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",149000,0.149
 MM100,A %*% B,381600,0.3816
@@ -220,7 +220,7 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 4)",264000,0.264
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",113400,0.1134
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",159000,0.159
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",266200,0.2662
-MM100,"armaMatMult(A, B)",379800,0.37979999999999997
+MM100,"armaMatMult(A, B)",379800,0.3798
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",130500,0.1305
 MM100,"armaMatMult(A, B)",370000,0.37
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",386600,0.3866
@@ -228,7 +228,7 @@ MM100,A %*% B,914500,0.9145
 MM100,A %*% B,761600,0.7615999999999999
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",268800,0.2688
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",537300,0.5373
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",227700,0.22769999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",227700,0.2277
 MM100,"armaMatMult(A, B)",428600,0.4286
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",277300,0.2773
 MM100,"armaMatMult(A, B)",424100,0.4241
@@ -238,7 +238,7 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 1)",136700,0.1367
 MM100,A %*% B,397900,0.3979
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",123800,0.1238
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",167700,0.1677
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",414600,0.41459999999999997
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",414600,0.4146
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",177900,0.1779
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",170500,0.17049999999999998
 MM100,"armaMatMult(A, B)",381700,0.3817
@@ -251,21 +251,21 @@ MM100,A %*% B,383000,0.383
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",253200,0.2532
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",136600,0.1366
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",302200,0.30219999999999997
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",187900,0.18789999999999998
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",187900,0.1879
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",276000,0.27599999999999997
 MM100,"armaMatMult(A, B)",378500,0.3785
-MM100,A %*% B,368200,0.36819999999999997
+MM100,A %*% B,368200,0.3682
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",111700,0.1117
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",105900,0.1059
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133200,0.13319999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133200,0.1332
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",312100,0.3121
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",121000,0.121
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",231700,0.2317
 MM100,A %*% B,369900,0.3699
-MM100,A %*% B,367300,0.36729999999999996
+MM100,A %*% B,367300,0.3673
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",116700,0.1167
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",416500,0.4165
-MM100,"armaMatMult(A, B)",379300,0.37929999999999997
+MM100,"armaMatMult(A, B)",379300,0.3793
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",137700,0.1377
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",153900,0.15389999999999998
 MM100,"armaMatMult(A, B)",373600,0.3736
@@ -284,9 +284,9 @@ MM100,"armaMatMult(A, B)",671100,0.6710999999999999
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",98600,0.0986
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",135200,0.1352
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",93500,0.0935
-MM100,"armaMatMult(A, B)",499800,0.49979999999999997
+MM100,"armaMatMult(A, B)",499800,0.4998
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",135500,0.13549999999999998
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",101500,0.10149999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",101500,0.1015
 MM100,A %*% B,367500,0.3675
 MM100,"armaMatMult(A, B)",380500,0.3805
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",331900,0.3319
@@ -295,7 +295,7 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 8)",69600,0.0696
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",150200,0.1502
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",148900,0.1489
 MM100,"armaMatMult(A, B)",624800,0.6248
-MM100,"armaMatMult(A, B)",480700,0.48069999999999996
+MM100,"armaMatMult(A, B)",480700,0.4807
 MM100,"armaMatMult(A, B)",438600,0.4386
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",171700,0.1717
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",320000,0.32
@@ -314,7 +314,7 @@ MM100,A %*% B,361600,0.3616
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",131500,0.1315
 MM100,A %*% B,367400,0.3674
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",434200,0.4342
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",189200,0.18919999999999998
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",189200,0.1892
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",187100,0.1871
 MM100,"armaMatMult(A, B)",584500,0.5845
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",132800,0.1328
@@ -332,7 +332,7 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 2)",133600,0.1336
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",270400,0.2704
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",156200,0.1562
 MM100,"armaMatMult(A, B)",419500,0.4195
-MM100,A %*% B,426200,0.42619999999999997
+MM100,A %*% B,426200,0.4262
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",413900,0.4139
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",98600,0.0986
 MM100,A %*% B,618600,0.6185999999999999
@@ -340,21 +340,21 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 4)",80300,0.0803
 MM100,"armaMatMult(A, B)",422900,0.4229
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",311100,0.3111
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",86800,0.0868
-MM100,"armaMatMult(A, B)",479100,0.47909999999999997
+MM100,"armaMatMult(A, B)",479100,0.4791
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",93400,0.0934
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",155100,0.1551
 MM100,A %*% B,451300,0.4513
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",117500,0.1175
 MM100,A %*% B,373500,0.3735
-MM100,A %*% B,367300,0.36729999999999996
+MM100,A %*% B,367300,0.3673
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",96500,0.0965
 MM100,A %*% B,372900,0.3729
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",137800,0.1378
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",131500,0.1315
 MM100,A %*% B,337300,0.3373
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",108200,0.10819999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",108200,0.1082
 MM100,"armaMatMult(A, B)",346700,0.3467
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",434300,0.43429999999999996
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",434300,0.4343
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",109500,0.1095
 MM100,"armaMatMult(A, B)",374600,0.3746
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",132600,0.1326
@@ -369,7 +369,7 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 1)",143700,0.1437
 MM100,A %*% B,360100,0.3601
 MM100,A %*% B,347700,0.3477
 MM100,A %*% B,333400,0.3334
-MM100,"armaMatMult(A, B)",362200,0.36219999999999997
+MM100,"armaMatMult(A, B)",362200,0.3622
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",130700,0.13069999999999998
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",83400,0.0834
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",113200,0.1132
@@ -377,26 +377,26 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 2)",117200,0.1172
 MM100,"armaMatMult(A, B)",682100,0.6820999999999999
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",429900,0.4299
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",152200,0.1522
-MM100,A %*% B,368300,0.36829999999999996
+MM100,A %*% B,368300,0.3683
 MM100,"armaMatMult(A, B)",372600,0.3726
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",115500,0.11549999999999999
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",104300,0.10429999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",115500,0.1155
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",104300,0.1043
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",331900,0.3319
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",93000,0.093
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",126200,0.1262
 MM100,A %*% B,377100,0.3771
-MM100,"armaMatMult(A, B)",380400,0.38039999999999996
+MM100,"armaMatMult(A, B)",380400,0.3804
 MM100,"armaMatMult(A, B)",368100,0.3681
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",90000,0.09
-MM100,"armaMatMult(A, B)",376800,0.37679999999999997
+MM100,"armaMatMult(A, B)",376800,0.3768
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",97200,0.0972
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",92000,0.092
 MM100,A %*% B,363500,0.3635
-MM100,"armaMatMult(A, B)",376800,0.37679999999999997
+MM100,"armaMatMult(A, B)",376800,0.3768
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",325700,0.3257
 MM100,"armaMatMult(A, B)",370900,0.3709
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",121900,0.1219
-MM100,"armaMatMult(A, B)",367800,0.36779999999999996
+MM100,"armaMatMult(A, B)",367800,0.3678
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",129600,0.1296
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",334700,0.3347
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",150700,0.1507
@@ -409,10 +409,10 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 4)",96400,0.0964
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",330200,0.3302
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",157100,0.1571
 MM100,"armaMatMult(A, B)",378500,0.3785
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",402600,0.40259999999999996
-MM100,A %*% B,477200,0.47719999999999996
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",93200,0.09319999999999999
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",117400,0.11739999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",402600,0.4026
+MM100,A %*% B,477200,0.4772
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",93200,0.0932
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",117400,0.1174
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",411800,0.4118
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",69200,0.0692
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",160200,0.16019999999999998
@@ -421,7 +421,7 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 8)",88100,0.0881
 MM100,"armaMatMult(A, B)",414300,0.4143
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",125600,0.1256
 MM100,"armaMatMult(A, B)",395600,0.3956
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",380300,0.38029999999999997
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",380300,0.3803
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",148100,0.14809999999999998
 MM100,A %*% B,372400,0.3724
 MM100,A %*% B,373500,0.3735
@@ -471,18 +471,18 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 8)",69500,0.06949999999999999
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",139900,0.1399
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",526500,0.5265
 MM100,A %*% B,382100,0.3821
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",117400,0.11739999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",117400,0.1174
 MM100,A %*% B,364400,0.3644
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",101400,0.10139999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",101400,0.1014
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",128700,0.12869999999999998
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",405500,0.40549999999999997
-MM100,"eigenMapMatMult2(A, B, n_cores = 2)",101500,0.10149999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",405500,0.4055
+MM100,"eigenMapMatMult2(A, B, n_cores = 2)",101500,0.1015
 MM100,"armaMatMult(A, B)",357100,0.3571
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",427900,0.4279
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",119800,0.11979999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",119800,0.1198
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",92600,0.0926
 MM100,A %*% B,360200,0.36019999999999996
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",91200,0.09119999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",91200,0.0912
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",69100,0.0691
 MM100,A %*% B,356200,0.35619999999999996
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",109300,0.1093
@@ -493,16 +493,16 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 8)",411400,0.4114
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",103000,0.103
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",349400,0.3494
 MM100,"armaMatMult(A, B)",370400,0.3704
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133200,0.13319999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",133200,0.1332
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",305700,0.30569999999999997
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",119600,0.1196
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",307000,0.307
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",122300,0.12229999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",122300,0.1223
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",100100,0.1001
-MM100,"armaMatMult(A, B)",448500,0.44849999999999995
+MM100,"armaMatMult(A, B)",448500,0.4484999999999999
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",66800,0.0668
-MM100,A %*% B,426300,0.42629999999999996
-MM100,"armaMatMult(A, B)",431200,0.43119999999999997
+MM100,A %*% B,426300,0.4263
+MM100,"armaMatMult(A, B)",431200,0.43120000000000003
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",116300,0.1163
 MM100,A %*% B,338900,0.3389
 MM100,A %*% B,336500,0.33649999999999997
@@ -513,14 +513,14 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 8)",308100,0.3081
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",95300,0.0953
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",119500,0.1195
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",122900,0.1229
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",110200,0.11019999999999999
-MM100,"eigenMapMatMult2(A, B, n_cores = 1)",106700,0.10669999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",110200,0.1102
+MM100,"eigenMapMatMult2(A, B, n_cores = 1)",106700,0.1067
 MM100,"armaMatMult(A, B)",350600,0.35059999999999997
 MM100,"armaMatMult(A, B)",348500,0.3485
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",393800,0.3938
 MM100,"armaMatMult(A, B)",383200,0.3832
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",130800,0.1308
-MM100,"armaMatMult(A, B)",378400,0.37839999999999996
+MM100,"armaMatMult(A, B)",378400,0.3784
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",86000,0.086
 MM100,"armaMatMult(A, B)",368900,0.3689
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",144700,0.1447
@@ -528,7 +528,7 @@ MM100,"armaMatMult(A, B)",380100,0.3801
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",254700,0.2547
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",335500,0.33549999999999996
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",135800,0.1358
-MM100,"armaMatMult(A, B)",374300,0.37429999999999997
+MM100,"armaMatMult(A, B)",374300,0.3743
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",70600,0.0706
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",113400,0.1134
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",314600,0.3146
@@ -538,20 +538,20 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 4)",230200,0.2302
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",125500,0.1255
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",137400,0.1374
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",250900,0.2509
-MM100,A %*% B,364200,0.36419999999999997
+MM100,A %*% B,364200,0.3642
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",128800,0.1288
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",88600,0.0886
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",90900,0.0909
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",136000,0.13599999999999998
-MM100,"armaMatMult(A, B)",380300,0.38029999999999997
+MM100,"armaMatMult(A, B)",380300,0.3803
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",332000,0.33199999999999996
-MM100,A %*% B,365700,0.36569999999999997
+MM100,A %*% B,365700,0.3657
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",130000,0.13
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",164100,0.1641
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",321200,0.3212
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",137500,0.13749999999999998
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",353400,0.3534
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",102900,0.10289999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",102900,0.1029
 MM100,A %*% B,429400,0.4294
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",159500,0.1595
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",146900,0.1469
@@ -559,26 +559,26 @@ MM100,"armaMatMult(A, B)",534100,0.5341
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",422500,0.4225
 MM100,"armaMatMult(A, B)",379200,0.3792
 MM100,"armaMatMult(A, B)",372500,0.3725
-MM100,"armaMatMult(A, B)",373300,0.37329999999999997
-MM100,A %*% B,366800,0.36679999999999996
-MM100,A %*% B,366700,0.36669999999999997
+MM100,"armaMatMult(A, B)",373300,0.3733
+MM100,A %*% B,366800,0.3668
+MM100,A %*% B,366700,0.3667
 MM100,A %*% B,363600,0.3636
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",116800,0.1168
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",139200,0.1392
-MM100,A %*% B,363700,0.36369999999999997
+MM100,A %*% B,363700,0.3637
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",337600,0.3376
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",132000,0.132
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",105900,0.1059
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",152800,0.1528
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",138300,0.1383
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",127700,0.1277
-MM100,"armaMatMult(A, B)",380400,0.38039999999999996
+MM100,"armaMatMult(A, B)",380400,0.3804
 MM100,A %*% B,371000,0.371
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",434500,0.4345
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",102300,0.1023
 MM100,"armaMatMult(A, B)",382300,0.3823
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",97700,0.0977
-MM100,"eigenMapMatMult2(A, B, n_cores = 4)",115500,0.11549999999999999
+MM100,"eigenMapMatMult2(A, B, n_cores = 4)",115500,0.1155
 MM100,A %*% B,364400,0.3644
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",350100,0.35009999999999997
 MM100,"eigenMapMatMult2(A, B, n_cores = 8)",108800,0.1088
@@ -590,7 +590,7 @@ MM100,"eigenMapMatMult2(A, B, n_cores = 2)",137200,0.1372
 MM100,"armaMatMult(A, B)",381800,0.3818
 MM100,"eigenMapMatMult2(A, B, n_cores = 4)",246500,0.2465
 MM100,"eigenMapMatMult2(A, B, n_cores = 2)",138100,0.1381
-MM100,"eigenMapMatMult2(A, B, n_cores = 8)",401500,0.40149999999999997
+MM100,"eigenMapMatMult2(A, B, n_cores = 8)",401500,0.4015
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",129300,0.1293
 MM100,A %*% B,345800,0.3458
 MM100,"eigenMapMatMult2(A, B, n_cores = 1)",136000,0.13599999999999998
@@ -615,24 +615,24 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27423500,27.423499999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93517200,93.5172
 MM1000,"armaMatMult(A, B)",288771300,288.7713
 MM1000,"armaMatMult(A, B)",287500000,287.5
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93256100,93.25609999999999
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26453800,26.453799999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93256100,93.2561
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26453800,26.4538
 MM1000,"armaMatMult(A, B)",287355100,287.3551
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93719400,93.7194
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93426500,93.42649999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93426500,93.4265
 MM1000,A %*% B,282798200,282.7982
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27744400,27.7444
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27076500,27.0765
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26939900,26.939899999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26939900,26.9399
 MM1000,"armaMatMult(A, B)",290911000,290.911
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17800800,17.8008
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26884600,26.8846
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17214400,17.214399999999998
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26970300,26.970299999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26970300,26.9703
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48123000,48.123
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47364400,47.364399999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47364400,47.3644
 MM1000,"armaMatMult(A, B)",292819700,292.8197
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93338800,93.33879999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93338800,93.3388
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93497500,93.4975
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17694800,17.6948
 MM1000,"armaMatMult(A, B)",291631700,291.63169999999997
@@ -641,18 +641,18 @@ MM1000,A %*% B,286366400,286.3664
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47278800,47.2788
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47187500,47.1875
 MM1000,"armaMatMult(A, B)",290308000,290.308
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46629600,46.629599999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46629600,46.6296
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46829100,46.8291
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46677500,46.677499999999995
 MM1000,"armaMatMult(A, B)",288254700,288.2547
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46724700,46.7247
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27532700,27.5327
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94120500,94.12049999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94120500,94.1205
 MM1000,A %*% B,284399300,284.3993
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48242700,48.2427
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27483200,27.4832
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47235500,47.235499999999995
-MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18089300,18.089299999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18089300,18.0893
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16992800,16.9928
 MM1000,A %*% B,285347900,285.3479
 MM1000,A %*% B,284536700,284.5367
@@ -669,16 +669,16 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47105900,47.1059
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47001900,47.0019
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27303400,27.3034
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46838800,46.8388
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26821100,26.821099999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26821100,26.8211
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17361300,17.3613
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26231900,26.2319
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27353500,27.3535
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17462800,17.462799999999998
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26241700,26.241699999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26241700,26.2417
 MM1000,A %*% B,284822100,284.8221
 MM1000,A %*% B,284345700,284.34569999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93697200,93.6972
-MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27752500,27.752499999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27752500,27.7525
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16771300,16.7713
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26867000,26.866999999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93331400,93.3314
@@ -691,7 +691,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47223700,47.2237
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27280300,27.2803
 MM1000,A %*% B,284238600,284.23859999999996
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93823200,93.8232
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26357600,26.357599999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26357600,26.3576
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47189000,47.189
 MM1000,A %*% B,288451500,288.4515
 MM1000,A %*% B,286067200,286.0672
@@ -702,7 +702,7 @@ MM1000,A %*% B,285170100,285.1701
 MM1000,"armaMatMult(A, B)",291937900,291.9379
 MM1000,"armaMatMult(A, B)",289584600,289.58459999999997
 MM1000,"armaMatMult(A, B)",289243900,289.2439
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93367900,93.36789999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93367900,93.3679
 MM1000,A %*% B,286764900,286.7649
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94010200,94.0102
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47921700,47.9217
@@ -713,16 +713,16 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26797400,26.7974
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48287000,48.287
 MM1000,A %*% B,286010900,286.0109
 MM1000,A %*% B,289841700,289.8417
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",95515100,95.51509999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",95515100,95.5151
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17963400,17.9634
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17441200,17.4412
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48317800,48.3178
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26971300,26.9713
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17097600,17.0976
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48434800,48.434799999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48434800,48.4348
 MM1000,"armaMatMult(A, B)",288776700,288.7767
 MM1000,"armaMatMult(A, B)",291049700,291.0497
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47126800,47.126799999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47126800,47.1268
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93285600,93.2856
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27457700,27.4577
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",30357100,30.3571
@@ -733,11 +733,11 @@ MM1000,A %*% B,288124000,288.12399999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17298000,17.298
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27200400,27.2004
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93428500,93.4285
-MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18028500,18.028499999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18028500,18.0285
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93083700,93.0837
 MM1000,A %*% B,286916800,286.91679999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48249600,48.2496
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93768500,93.76849999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93768500,93.7685
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26832100,26.8321
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26257700,26.2577
 MM1000,"armaMatMult(A, B)",291123400,291.1234
@@ -753,15 +753,15 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26690300,26.690299999999997
 MM1000,A %*% B,288818800,288.8188
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93591200,93.5912
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47232200,47.2322
-MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27215800,27.215799999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27215800,27.2158
 MM1000,A %*% B,284832600,284.8326
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93657500,93.6575
 MM1000,"armaMatMult(A, B)",291142500,291.1425
 MM1000,"armaMatMult(A, B)",291882800,291.8828
 MM1000,"armaMatMult(A, B)",287963600,287.9636
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92044400,92.0444
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",91272900,91.27289999999999
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",91956000,91.95599999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",91272900,91.2729
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",91956000,91.956
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92230300,92.2303
 MM1000,"armaMatMult(A, B)",291333900,291.33389999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92653300,92.6533
@@ -773,7 +773,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",68642000,68.642
 MM1000,A %*% B,289515100,289.51509999999996
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",49606500,49.6065
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17535000,17.535
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26301300,26.301299999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26301300,26.3013
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27399200,27.3992
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16763100,16.763099999999998
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94294500,94.2945
@@ -781,7 +781,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93205400,93.2054
 MM1000,A %*% B,283313900,283.3139
 MM1000,"armaMatMult(A, B)",289112800,289.1128
 MM1000,"armaMatMult(A, B)",292837300,292.83729999999997
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47864400,47.864399999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47864400,47.8644
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94040500,94.0405
 MM1000,"armaMatMult(A, B)",291026700,291.0267
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93154900,93.1549
@@ -796,8 +796,8 @@ MM1000,A %*% B,286639900,286.6399
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27679500,27.679499999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94393200,94.3932
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47365600,47.3656
-MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18103100,18.103099999999998
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47513800,47.513799999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18103100,18.1031
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47513800,47.5138
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26984900,26.9849
 MM1000,"armaMatMult(A, B)",287789400,287.7894
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92448200,92.4482
@@ -818,18 +818,18 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92717300,92.7173
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",29038600,29.0386
 MM1000,A %*% B,285505100,285.50509999999997
 MM1000,"armaMatMult(A, B)",342517900,342.5179
-MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27377400,27.377399999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27377400,27.3774
 MM1000,"armaMatMult(A, B)",329885400,329.8854
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16962900,16.962899999999998
 MM1000,"armaMatMult(A, B)",289893100,289.8931
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92519300,92.5193
 MM1000,A %*% B,288500700,288.5007
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47186300,47.186299999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47186300,47.1863
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17987500,17.9875
 MM1000,A %*% B,280601400,280.6014
 MM1000,A %*% B,280429000,280.429
 MM1000,A %*% B,282626800,282.6268
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93022900,93.02289999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93022900,93.0229
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",23914900,23.9149
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16732600,16.732599999999998
 MM1000,"armaMatMult(A, B)",289027800,289.0278
@@ -839,19 +839,19 @@ MM1000,"armaMatMult(A, B)",288837100,288.83709999999996
 MM1000,"armaMatMult(A, B)",289642800,289.64279999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27916800,27.9168
 MM1000,"armaMatMult(A, B)",290478800,290.4788
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93163200,93.16319999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93163200,93.1632
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94515800,94.5158
 MM1000,"armaMatMult(A, B)",289741700,289.7417
 MM1000,"armaMatMult(A, B)",287951900,287.95189999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47455900,47.4559
 MM1000,"armaMatMult(A, B)",291171300,291.1713
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27950500,27.950499999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27950500,27.9505
 MM1000,A %*% B,288500200,288.5002
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17965800,17.965799999999998
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26978900,26.9789
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27418400,27.4184
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48143100,48.1431
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94042900,94.04289999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94042900,94.0429
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18210400,18.2104
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92343700,92.3437
 MM1000,"armaMatMult(A, B)",310837800,310.83779999999996
@@ -859,9 +859,9 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",50502200,50.502199999999995
 MM1000,A %*% B,290305400,290.30539999999996
 MM1000,A %*% B,284729400,284.7294
 MM1000,"armaMatMult(A, B)",290566700,290.56669999999997
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27185500,27.185499999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27185500,27.1855
 MM1000,A %*% B,286850000,286.84999999999997
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26979500,26.979499999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26979500,26.9795
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26729800,26.729799999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26772700,26.7727
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26342100,26.3421
@@ -871,10 +871,10 @@ MM1000,A %*% B,284453600,284.4536
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27001200,27.001199999999997
 MM1000,"armaMatMult(A, B)",291093700,291.0937
 MM1000,A %*% B,286658800,286.6588
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26944600,26.944599999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26944600,26.9446
 MM1000,"armaMatMult(A, B)",291314900,291.31489999999997
 MM1000,"armaMatMult(A, B)",290354400,290.3544
-MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",19911000,19.910999999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",19911000,19.911
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16933600,16.9336
 MM1000,A %*% B,291081400,291.0814
 MM1000,A %*% B,285537500,285.53749999999997
@@ -886,7 +886,7 @@ MM1000,"armaMatMult(A, B)",289161500,289.1615
 MM1000,A %*% B,286268700,286.26869999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94052200,94.0522
 MM1000,"armaMatMult(A, B)",294523500,294.5235
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94522000,94.52199999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94522000,94.522
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48130200,48.130199999999995
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47572200,47.572199999999995
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17607200,17.6072
@@ -895,7 +895,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17129100,17.129099999999998
 MM1000,A %*% B,283805500,283.8055
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47612500,47.6125
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27638700,27.6387
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26786100,26.786099999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26786100,26.7861
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17115700,17.1157
 MM1000,A %*% B,289043700,289.0437
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27104800,27.104799999999997
@@ -903,7 +903,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47540400,47.5404
 MM1000,A %*% B,285291500,285.2915
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47534800,47.5348
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46541700,46.5417
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27148800,27.148799999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27148800,27.1488
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93786000,93.786
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26931200,26.9312
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26271600,26.2716
@@ -928,7 +928,7 @@ MM1000,A %*% B,286233200,286.2332
 MM1000,A %*% B,283997800,283.9978
 MM1000,"armaMatMult(A, B)",288418100,288.4181
 MM1000,"armaMatMult(A, B)",289974700,289.9747
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93062700,93.06269999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93062700,93.0627
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17606600,17.6066
 MM1000,"armaMatMult(A, B)",286754100,286.7541
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27093500,27.0935
@@ -936,7 +936,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47605700,47.6057
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27692300,27.6923
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",91672600,91.6726
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26923600,26.9236
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",91864500,91.86449999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",91864500,91.8645
 MM1000,"armaMatMult(A, B)",290504500,290.5045
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27342100,27.3421
 MM1000,"armaMatMult(A, B)",310817700,310.8177
@@ -959,7 +959,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93213000,93.213
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93338500,93.3385
 MM1000,A %*% B,285254900,285.25489999999996
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93681300,93.6813
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93469700,93.46969999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93469700,93.4697
 MM1000,A %*% B,288603000,288.603
 MM1000,"armaMatMult(A, B)",289520700,289.5207
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18042900,18.0429
@@ -968,7 +968,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27596500,27.5965
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93699500,93.6995
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17531800,17.5318
 MM1000,"armaMatMult(A, B)",286008200,286.0082
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48067100,48.067099999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48067100,48.0671
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47511400,47.511399999999995
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47197400,47.197399999999995
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26996600,26.996599999999997
@@ -984,19 +984,19 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92965600,92.9656
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17174900,17.1749
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26442500,26.4425
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26435100,26.4351
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26501000,26.500999999999998
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26385100,26.385099999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26501000,26.501
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26385100,26.3851
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26228800,26.2288
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17196000,17.195999999999998
 MM1000,A %*% B,289223400,289.22339999999997
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94691100,94.69109999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94691100,94.6911
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16913500,16.9135
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92271500,92.27149999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92271500,92.2715
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17656300,17.656299999999998
 MM1000,"armaMatMult(A, B)",288260800,288.26079999999996
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17056500,17.0565
 MM1000,"armaMatMult(A, B)",286279300,286.2793
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93333200,93.33319999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93333200,93.3332
 MM1000,A %*% B,283862400,283.8624
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17102200,17.1022
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16939000,16.939
@@ -1012,8 +1012,8 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16980200,16.9802
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48320200,48.3202
 MM1000,A %*% B,284276900,284.2769
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93800800,93.8008
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46887500,46.887499999999996
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27155000,27.154999999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46887500,46.8875
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27155000,27.155
 MM1000,"armaMatMult(A, B)",291435700,291.4357
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17534000,17.534
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17135200,17.135199999999998
@@ -1031,7 +1031,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48044000,48.044
 MM1000,A %*% B,284726200,284.7262
 MM1000,"armaMatMult(A, B)",289693300,289.69329999999997
 MM1000,A %*% B,287716200,287.7162
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27131900,27.131899999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27131900,27.1319
 MM1000,"armaMatMult(A, B)",288290900,288.29089999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47476800,47.4768
 MM1000,A %*% B,283724300,283.72429999999997
@@ -1040,7 +1040,7 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",27256600,27.2566
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16641900,16.6419
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92780800,92.7808
 MM1000,A %*% B,285162300,285.16229999999996
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92655600,92.65559999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92655600,92.6556
 MM1000,A %*% B,284816300,284.8163
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17081600,17.081599999999998
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16942500,16.9425
@@ -1055,7 +1055,7 @@ MM1000,"armaMatMult(A, B)",287129600,287.1296
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92879100,92.8791
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93867600,93.8676
 MM1000,"armaMatMult(A, B)",288231800,288.23179999999996
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92986400,92.98639999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92986400,92.9864
 MM1000,A %*% B,283203500,283.20349999999996
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92574000,92.574
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48456700,48.4567
@@ -1066,7 +1066,7 @@ MM1000,"armaMatMult(A, B)",289663100,289.6631
 MM1000,A %*% B,284560900,284.5609
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93809300,93.8093
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46649900,46.649899999999995
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93879400,93.87939999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93879400,93.8794
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47638500,47.6385
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26971500,26.9715
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93328600,93.3286
@@ -1077,7 +1077,7 @@ MM1000,"armaMatMult(A, B)",348437000,348.437
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",28779000,28.779
 MM1000,"armaMatMult(A, B)",363084500,363.0845
 MM1000,A %*% B,286888700,286.8887
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48340200,48.340199999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48340200,48.3402
 MM1000,A %*% B,291555200,291.5552
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94642800,94.6428
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27332500,27.3325
@@ -1094,14 +1094,14 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92931000,92.931
 MM1000,"armaMatMult(A, B)",287853500,287.8535
 MM1000,A %*% B,285405700,285.40569999999997
 MM1000,A %*% B,284020400,284.0204
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27456800,27.456799999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27456800,27.4568
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48040900,48.0409
 MM1000,"armaMatMult(A, B)",289028500,289.0285
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18565600,18.5656
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93260300,93.2603
 MM1000,"armaMatMult(A, B)",290537100,290.5371
 MM1000,"armaMatMult(A, B)",287302600,287.3026
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27116800,27.116799999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27116800,27.1168
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47075100,47.0751
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93001700,93.0017
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27299300,27.2993
@@ -1115,12 +1115,12 @@ MM1000,A %*% B,290927000,290.92699999999996
 MM1000,"armaMatMult(A, B)",292391700,292.3917
 MM1000,A %*% B,286388400,286.3884
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27643700,27.6437
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48148200,48.148199999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48148200,48.1482
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93918100,93.9181
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",46802800,46.8028
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26986000,26.985999999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92444400,92.4444
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92877300,92.87729999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92877300,92.8773
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17713400,17.7134
 MM1000,"armaMatMult(A, B)",287962500,287.9625
 MM1000,"armaMatMult(A, B)",285893300,285.8933
@@ -1142,13 +1142,13 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",94798200,94.7982
 MM1000,A %*% B,288140800,288.1408
 MM1000,"armaMatMult(A, B)",292253800,292.2538
 MM1000,A %*% B,287875400,287.8754
-MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47928600,47.928599999999996
+MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47928600,47.9286
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93072400,93.0724
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27876200,27.876199999999997
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",31146500,31.1465
 MM1000,"armaMatMult(A, B)",294114800,294.1148
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93598600,93.59859999999999
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27215900,27.215899999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93598600,93.5986
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27215900,27.2159
 MM1000,A %*% B,284036600,284.03659999999996
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92667600,92.6676
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",48974700,48.9747
@@ -1171,14 +1171,14 @@ MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47474600,47.474599999999995
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47214300,47.214299999999994
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18344300,18.3443
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26804900,26.8049
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",95129900,95.12989999999999
-MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18472000,18.471999999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",95129900,95.1299
+MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",18472000,18.472
 MM1000,"armaMatMult(A, B)",287659600,287.6596
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",92444400,92.4444
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16936700,16.9367
 MM1000,"armaMatMult(A, B)",290367800,290.3678
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",16589500,16.5895
-MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26981100,26.981099999999998
+MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26981100,26.9811
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",27004400,27.0044
 MM1000,"armaMatMult(A, B)",289036500,289.0365
 MM1000,"eigenMapMatMult2(A, B, n_cores = 2)",47465100,47.4651
@@ -1198,4 +1198,4 @@ MM1000,A %*% B,310624400,310.6244
 MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",93610500,93.6105
 MM1000,"eigenMapMatMult2(A, B, n_cores = 4)",26171100,26.1711
 MM1000,"eigenMapMatMult2(A, B, n_cores = 8)",17486700,17.4867
-MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",91966800,91.96679999999999
+MM1000,"eigenMapMatMult2(A, B, n_cores = 1)",91966800,91.9668

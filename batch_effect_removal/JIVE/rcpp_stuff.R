@@ -5,9 +5,10 @@ library(RcppArmadillo)
 library(tidyverse)
 library(RSpectra)
 library(r.jive)
+library(cowplot)
 source("jive_speedup.R")
 
-sourceCpp("matrix_multiplication.cpp")
+# sourceCpp("matrix_multiplication.cpp")
 
 set.seed(1)
 
@@ -30,8 +31,7 @@ plot_data <- function(matrix) {
     theme(legend.position="none") +
     scale_fill_gradient2(low = "blue", mid = "white", high = "red") +
     coord_flip() +
-    theme_nothing() +
-    theme(plot.background = element_rect(color = "black"))
+    theme_nothing()
 }
 
 # 50 x 100, two datasets
@@ -90,13 +90,19 @@ orig_plot <- plot_grid(
   plot_data(E2)
 )
 
+ggsave("output/simdata2_orig.png", orig_plot, width = 9, height = 4)
+
 ###
 
 SimData2 <- list()
 SimData2[["Data1"]] <- D1
 SimData2[["Data2"]] <- D2
 
+jive_object <- jive(SimData2, rankJ = 1, rankA = c(1, 1), method = "given")
+print(jive_object)
+
 jive_v2_object <- jive_v2(SimData2, rankJ = 1, rankA = c(1, 1), method = "given")
+print(jive_v2_object)
 
 est_plot <- plot_grid(
   nrow = 2,
@@ -110,6 +116,8 @@ est_plot <- plot_grid(
   plot_data(jive_v2_object[["individual"]][[2]]),
   plot_data(jive_v2_object[["data"]][[2]] - jive_v2_object[["joint"]][[2]] - jive_v2_object[["individual"]][[2]])
 )
+
+ggsave("output/simdata2_jive.png", est_plot, width = 9, height = 4)
 
 ###
 
@@ -264,22 +272,88 @@ mm_bench2 <- microbenchmark(
 # Save Results #
 ################
 
+#####
+theme_Publication <- function(base_size=14, base_family="helvetica") {
+  library(grid)
+  library(ggthemes)
+  (theme_foundation(base_size=base_size, base_family=base_family)
+    + theme(plot.title = element_text(face = "bold",
+                                      size = rel(1.2), hjust = 0.5),
+            text = element_text(),
+            panel.background = element_rect(colour = NA),
+            plot.background = element_rect(colour = NA),
+            panel.border = element_rect(colour = NA),
+            axis.title = element_text(face = "bold",size = rel(1)),
+            axis.title.y = element_text(angle=90,vjust =2),
+            axis.title.x = element_text(vjust = -0.2),
+            axis.text = element_text(), 
+            axis.line = element_line(colour="black"),
+            axis.ticks = element_line(),
+            panel.grid.major = element_line(colour="#f0f0f0"),
+            panel.grid.minor = element_blank(),
+            legend.key = element_rect(colour = NA),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            legend.key.size= unit(0.2, "cm"),
+            legend.margin = unit(0, "cm"),
+            legend.title = element_text(face="italic"),
+            plot.margin=unit(c(10,5,5,5),"mm"),
+            strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
+            strip.text = element_text(face="bold")
+    ))
+  
+}
+
+scale_fill_Publication <- function(...){
+  library(scales)
+  discrete_scale("fill","Publication",manual_pal(values = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")), ...)
+  
+}
+
+scale_colour_Publication <- function(...){
+  library(scales)
+  discrete_scale("colour","Publication",manual_pal(values = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")), ...)
+  
+}
+
+####
+
 simulation_dat <- bind_rows(
   bind_cols(benchmark = "SimData", simulation_bench1),
   bind_cols(benchmark = "SimData2", simulation_bench2)
 )
 
-ggplot(data = simulation_bench1, aes(x = expr, y = time_ms)) +
-  geom_boxplot() +
-  labs(x = "Method", y = "Time (milliseconds)",
-       title = "Simulated Data", subtitle = "(Two 50x100 Matrices)")
-
-ggplot(data = simulation_bench2, aes(x = expr, y = time_ms)) +
-  geom_boxplot() +
-  labs(x = "Method", y = "Time (milliseconds)",
-       title = "Simulated Data", subtitle = "(Two 200x1000 Matrices)")
-
 write_csv(simulation_dat, file = "output/simulation_benchmark.csv")
+
+simulation_dat <- read_csv("output/simulation_benchmark.csv")
+
+simulation_bench1_plot <- simulation_dat %>%
+  filter(benchmark == "SimData") %>%
+  ggplot(aes(x = expr, y = time_ms, color = expr)) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(x = "Method", y = "Time (milliseconds)",
+       title = "Simulated Data Benchmark") +
+  scale_colour_Publication() +
+  theme_Publication()
+
+simulation_dat %>% filter(benchmark == "SimData") %>% group_by(expr) %>% summarize(mean = mean(time_ms))
+
+simulation_bench1_plot
+ggsave("output/jive_v2_simdata_benchmark.png", simulation_bench1_plot, width = 9, height = 4)
+
+simulation_bench2_plot <- simulation_dat %>%
+  filter(benchmark == "SimData2") %>%
+  ggplot(aes(x = expr, y = time_ms, color = expr)) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(x = "", y = "Time (milliseconds)",
+       title = "Simulated Data", color = "Function") +
+  scale_colour_Publication() +
+  theme_Publication()
+
+simulation_dat %>% filter(benchmark == "SimData2") %>% group_by(expr) %>% summarize(mean = mean(time_ms))
+
+simulation_bench2_plot
+ggsave("output/jive_v2_simdata2_benchmark.png", simulation_bench2_plot, width = 9, height = 4)
 
 ###
 
@@ -289,25 +363,42 @@ full_svd_dat <- bind_rows(
   bind_cols(benchmark = "FullSVDfat", full_svd_bench3)
 )
 
-ggplot(data = full_svd_bench1, aes(x = expr, y = time_ms)) +
-  geom_boxplot() +
-  labs(x = "Method", y = "Time (milliseconds)",
-       title = "Full SVD", subtitle = "(100x100 Matrix)") +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-
-ggplot(data = full_svd_bench2, aes(x = expr, y = time_ms)) +
-  geom_boxplot() +
-  labs(x = "Method", y = "Time (milliseconds)",
-       title = "Full SVD", subtitle = paste0("(", N, "x", k, " Matrix)")) +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-
-ggplot(data = full_svd_bench3, aes(x = expr, y = time_ms)) +
-  geom_boxplot() +
-  labs(x = "Method", y = "Time (milliseconds)",
-       title = "Full SVD", subtitle = paste0("(", N, "x", k, " Matrix)")) +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-
 write_csv(full_svd_dat, file = "output/full_svd_benchmark.csv")
+
+full_svd_dat <- read_csv("output/full_svd_benchmark.csv") %>%
+  mutate(
+    expr = factor(
+      expr,
+      levels = c("svd(X)", "eigenBDCSVD(X, n_cores = 1)", "eigenBDCSVD(X, n_cores = 4)", "eigenBDCSVD(X, n_cores = 8)", "eigenBDCSVD(X, n_cores = 16)")
+    )
+  )
+
+full_svd_dat %>%
+  filter(benchmark == "FullSVD100") %>%
+  ggplot(aes(x = expr, y = time_ms, color = expr)) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(x = "Method", y = "Time (milliseconds)",
+       title = "Full SVD") +
+  scale_colour_Publication() +
+  theme_Publication() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+full_svd_dat %>%
+  filter(benchmark == "FullSVD1000") %>%
+  ggplot(aes(x = expr, y = time_ms, color = expr)) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(x = "Method", y = "Time (milliseconds)",
+       title = "Full SVD") +
+  scale_colour_Publication() +
+  theme_Publication()
+
+full_svd_dat %>%
+  filter(benchmark == "FullSVDfat") %>%
+  ggplot(aes(x = expr, y = time_ms)) +
+  geom_boxplot() +
+  labs(x = "Method", y = "Time (milliseconds)",
+       title = "Full SVD") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 ###
 
@@ -316,19 +407,41 @@ partial_svd_dat <- bind_rows(
   bind_cols(benchmark = "PartialSVD1000", partial_svd_bench2)
 )
 
-ggplot(data = partial_svd_bench1, aes(x = expr, y = time_ms)) +
-  geom_boxplot() +
-  labs(x = "Method", y = "Time (milliseconds)",
-       title = "Partial SVD", subtitle = "(100x100 Matrix)") +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-
-ggplot(data = partial_svd_bench2, aes(x = expr, y = time_ms)) +
-  geom_boxplot() +
-  labs(x = "Method", y = "Time (milliseconds)",
-       title = "Partial SVD", subtitle = "(1000x1000 Matrix)") +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-
 write_csv(partial_svd_dat, file = "output/partial_svd_benchmark.csv")
+
+partial_svd_dat <- read_csv("output/partial_svd_benchmark.csv") %>%
+  mutate(
+    expr = factor(
+      expr,
+      levels = c(
+        "svd(X, nu = 1, nv = 1)", "svds(X, k = 1)",
+        "svd(X, nu = 5, nv = 5)", "svds(X, k = 5)",
+        "svd(X, nu = 10, nv = 10)", "svds(X, k = 10)"
+      )
+    )
+  )
+
+# ggplot(data = partial_svd_bench1, aes(x = expr, y = time_ms)) +
+#   geom_boxplot() +
+#   labs(x = "Method", y = "Time (milliseconds)",
+#        title = "Partial SVD", subtitle = "(100x100 Matrix)") +
+#   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+partial_svd_dat %>% filter(benchmark == "PartialSVD1000") %>% group_by(expr) %>% summarize(mean = mean(time_ms))
+
+partial_svd_plot <- partial_svd_dat %>%
+  filter(benchmark == "PartialSVD1000") %>%
+  ggplot(aes(x = expr, y = time_ms, color = expr)) +
+  geom_boxplot() +
+  labs(x = "", y = "Time (milliseconds)",
+       title = "Partial SVD", color = "Function") +
+  scale_colour_Publication() +
+  theme_Publication() +
+  theme(axis.text.x = element_blank())
+
+partial_svd_plot
+
+ggsave("output/partial_svd_benchmark.png", partial_svd_plot, width = 9, height = 4)
 
 ###
 
@@ -337,16 +450,39 @@ mm_dat <- bind_rows(
   bind_cols(benchmark = "MM1000", mm_bench2)
 )
 
+write_csv(mm_dat, file = "output/mm_benchmark.csv")
+
+mm_dat <- read_csv("output/mm_benchmark.csv") %>%
+  mutate(
+    expr = factor(
+      expr,
+      levels = c(
+        "A %*% B", "armaMatMult(A, B)", "eigenMapMatMult2(A, B, n_cores = 1)",
+        "eigenMapMatMult2(A, B, n_cores = 2)", "eigenMapMatMult2(A, B, n_cores = 4)",
+        "eigenMapMatMult2(A, B, n_cores = 8)"
+      )
+    )
+  )
+
+mm_dat %>% filter(benchmark == "MM1000") %>% group_by(expr) %>% summarize(mean = mean(time_ms))
+
 ggplot(data = mm_bench1, aes(x = expr, y = time_ms)) +
   geom_boxplot() +
   labs(x = "Method", y = "Time (milliseconds)",
        title = "Matrix Multiplication", subtitle = "(100x100 Matrix) * (100x100 Matrix)") +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
-ggplot(data = mm_bench2, aes(x = expr, y = time_ms)) +
-  geom_boxplot() +
-  labs(x = "Method", y = "Time (milliseconds)",
-       title = "Matrix Multiplication", subtitle = "(1000x1000 Matrix) * (1000x1000 Matrix)") +
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
-write_csv(mm_dat, file = "output/mm_benchmark.csv")
+mm_plot <- mm_dat %>%
+  filter(benchmark == "MM1000") %>%
+  ggplot(aes(x = expr, y = time_ms, color = expr)) +
+  geom_boxplot() +
+  labs(x = "", y = "Time (milliseconds)",
+       title = "Matrix Multiplication", color = "Function") +
+  scale_colour_Publication() +
+  theme_Publication() +
+  theme(axis.text.x = element_blank())
+
+mm_plot
+
+ggsave("output/mm_benchmark.png", mm_plot, width = 9, height = 4)
