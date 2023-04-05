@@ -192,6 +192,8 @@ names(pvca_means) <- c(colnames(meta), "Residual")
 # Plot PVCA
 pvca_plot <- PlotPVCA(pvca_means, "PVCA of Raw Count Data")
 pvca_plot
+
+ggsave("output/pvca_simdata.png", pvca_plot, width = 9, height = 4)
 ```
 
 
@@ -1145,6 +1147,8 @@ tsne_legend_both <- plot_grid(legend_batch, legend_cluster, nrow = 2, align = "v
 all_tsne_plot <- plot_grid(tsne_prow_grob, tsne_legend_both, rel_widths = c(3, 1))
 
 all_tsne_plot
+
+ggsave("output/tsne_simdata.png", all_tsne_plot, width = 9, height = 4)
 ```
 
 ## UMAP Plots
@@ -1281,6 +1285,8 @@ umap_legend_both <- plot_grid(legend_batch, legend_cluster, nrow = 2, align = "v
 all_umap_plot <- plot_grid(umap_prow_grob, umap_legend_both, rel_widths = c(3, 1))
 
 all_umap_plot
+
+ggsave("output/umap_simdata.png", all_umap_plot, width = 9, height = 4)
 ```
 
 ## kBET
@@ -1378,7 +1384,9 @@ legend <- get_legend(
 
 # add the legend to the row we made earlier. Give it one-third of 
 # the width of one plot (via rel_widths).
-plot_grid(prow, legend, ncol = 1, rel_heights = c(1, .1))
+all_metrics_lot <- plot_grid(prow, legend, ncol = 1, rel_heights = c(1, .1))
+all_metrics_lot
+ggsave("output/metrics_simdata.png", all_metrics_lot, width = 9, height = 4)
 ```
 
 # Session Information
