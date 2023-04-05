@@ -2,3 +2,16 @@
 README.html
 *.Rhistory
 *.rds
+paper/bibliography.bib
+paper/Figures/.DS_Store
+paper/paper.aux
+paper/paper.bbl
+paper/paper.blg
+paper/paper.fdb_latexmk
+paper/paper.fls
+paper/paper.lof
+paper/paper.log
+paper/paper.lot
+paper/paper.out
+paper/paper.synctex.gz
+paper/paper.toc
