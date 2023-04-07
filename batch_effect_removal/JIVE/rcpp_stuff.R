@@ -37,13 +37,13 @@ plot_data <- function(matrix) {
 # 50 x 100, two datasets
 data(SimData)
 
-tic("regular")
+tic("old")
 jive_object <- jive(SimData, rankJ = 1, rankA = c(1, 1), method = "given")
 toc()
 
 summary(jive_object)
 
-tic("regular")
+tic("new")
 jive_v2_object <- jive_v2(SimData, rankJ = 1, rankA = c(1, 1), method = "given")
 toc()
 
