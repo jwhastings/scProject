@@ -143,7 +143,7 @@ data_SCE <- runUMAP(data_SCE)
 orig_title <- labs(title = "Original Data")
 brew_colors <- RColorBrewer::brewer.pal(9, "Set1")
 p1_options <- scale_color_manual(name = "Batch", values = brew_colors[1:2])
-p2_options <- scale_color_manual(name = "Cluster", values = brew_colors[c(3:5)])
+p2_options <- scale_color_manual(name = "Cell Type", values = brew_colors[c(3:5)])
 
 orig_p1 <- plot_grid(
   plotPCA(data_SCE, color_by = "Batch")   + orig_title + p1_options,
@@ -187,10 +187,16 @@ for (i in 1:10){
 
 # Average effect size across samples
 pvca_means <- colMeans(pvca_res)
-names(pvca_means) <- c(colnames(meta), "Residual")
 
 # Plot PVCA
-pvca_plot <- PlotPVCA(pvca_means, "PVCA of Raw Count Data")
+pvca_plot <- data.frame(name = c("Batch", "Cell Type", "Residual"), values = pvca_means) %>%
+  ggplot(aes(x = name, y = values)) +
+  geom_col(aes(fill = name), width = 0.5, color = "black", show.legend = FALSE, linewidth = 0.25) +
+  geom_label(aes(label = round(values, 3)), nudge_y = 0.05) +
+  labs(x = "Effects", y = "Weighted Average Proportion Variance", title = "PVCA of Simulated Data") +
+  theme(
+    plot.title = element_text(face = "bold", size = rel(1.2), hjust = 0.5)
+  )
 pvca_plot
 
 ggsave("output/pvca_simdata.png", pvca_plot, width = 9, height = 4)
@@ -1026,20 +1032,31 @@ jive_tsne_batch <- jive_tsne_df %>%
   ggplot(aes(x = V1, y = V2, color = Batch)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"), legend.position = "right") +
-  labs(title = "JIVE") + p1_options
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p1_options
 
 jive_tsne_cluster <- jive_tsne_df %>%
   ggplot(aes(x = V1, y = V2, color = Cluster)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(legend.position = "right") + p2_options
+  theme(
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p2_options
+
+jive_title <- ggdraw() + draw_label("JIVE", fontface = "bold")
 
 jive_tsne_plot <- plot_grid(
+  jive_title,
   jive_tsne_batch + theme(legend.position = "none"),
   jive_tsne_cluster + theme(legend.position = "none"),
-  nrow = 2, align = "hv"
-) + theme(plot.background = element_rect(color = "black"))
+  ncol = 1, align = "hv", rel_heights=c(0.1, 1, 1)
+)
 
 # Seurat
 seurat_tsne_df <- Embeddings(seurat_integrated, "tsne") %>%
@@ -1051,20 +1068,31 @@ seurat_tsne_batch <- seurat_tsne_df %>%
   ggplot(aes(x = tSNE_1, y = tSNE_2, color = Batch)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
-  labs(title = "Seurat") + p1_options
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p1_options
 
 seurat_tsne_cluster <- seurat_tsne_df %>%
   ggplot(aes(x = tSNE_1, y = tSNE_2, color = Cluster)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
+  theme(
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
   p2_options
 
+seurat_title <- ggdraw() + draw_label("Seurat", fontface = "bold")
+
 seurat_tsne_plot <- plot_grid(
-  seurat_tsne_batch,
-  seurat_tsne_cluster,
-  nrow = 2, align = "hv"
-) + theme(plot.background = element_rect(color = "black"))
+  seurat_title,
+  seurat_tsne_batch + theme(legend.position = "none"),
+  seurat_tsne_cluster + theme(legend.position = "none"),
+  ncol = 1, align = "hv", rel_heights = c(0.1, 1, 1)
+)
 
 # Harmony
 harmony_tsne_df <- reducedDim(harmony_integrated, "TSNE") %>%
@@ -1076,20 +1104,31 @@ harmony_tsne_batch <- harmony_tsne_df %>%
   ggplot(aes(x = V1, y = V2, color = Batch)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
-  labs(title = "Harmony") + p1_options
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p1_options
 
 harmony_tsne_cluster <- harmony_tsne_df %>%
   ggplot(aes(x = V1, y = V2, color = Cluster)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
+  theme(
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
   p2_options
 
+harmony_title <- ggdraw() + draw_label("Harmony", fontface = "bold")
+
 harmony_tsne_plot <- plot_grid(
-  harmony_tsne_batch,
-  harmony_tsne_cluster,
-  nrow = 2, align = "hv"
-) + theme(plot.background = element_rect(color = "black"))
+  harmony_title,
+  harmony_tsne_batch + theme(legend.position = "none"),
+  harmony_tsne_cluster + theme(legend.position = "none"),
+  ncol = 1, align = "hv", rel_heights=c(0.1, 1, 1)
+)
 
 # Raw
 raw_tsne_df <- reducedDim(data_SCE, "TSNE") %>%
@@ -1101,20 +1140,31 @@ raw_tsne_batch <- raw_tsne_df %>%
   ggplot(aes(x = V1, y = V2, color = Batch)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
-  labs(title = "Raw") + p1_options
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p1_options
 
 raw_tsne_cluster <- raw_tsne_df %>%
   ggplot(aes(x = V1, y = V2, color = Cluster)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
+  theme(
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
   p2_options
 
+raw_title <- ggdraw() + draw_label("Raw", fontface = "bold")
+
 raw_tsne_plot <- plot_grid(
-  raw_tsne_batch,
-  raw_tsne_cluster,
-  nrow = 2, align = "hv"
-) + theme(plot.background = element_rect(color = "black"))
+  raw_title,
+  raw_tsne_batch + theme(legend.position = "none"),
+  raw_tsne_cluster + theme(legend.position = "none"),
+  ncol = 1, align = "hv", rel_heights=c(0.1, 1, 1)
+)
 
 # All
 legend_batch <- get_legend(
@@ -1164,20 +1214,31 @@ jive_umap_batch <- jive_umap_df %>%
   ggplot(aes(x = V1, y = V2, color = Batch)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"), legend.position = "right") +
-  labs(title = "JIVE") + p1_options
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p1_options
 
 jive_umap_cluster <- jive_umap_df %>%
   ggplot(aes(x = V1, y = V2, color = Cluster)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(legend.position = "right") + p2_options
+  theme(
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p2_options
+
+jive_title <- ggdraw() + draw_label("JIVE", fontface = "bold")
 
 jive_umap_plot <- plot_grid(
+  jive_title,
   jive_umap_batch + theme(legend.position = "none"),
   jive_umap_cluster + theme(legend.position = "none"),
-  nrow = 2, align = "hv"
-) + theme(plot.background = element_rect(color = "black"))
+  ncol = 1, align = "hv", rel_heights=c(0.1, 1, 1)
+)
 
 # Seurat
 seurat_umap_df <- Embeddings(seurat_integrated, "umap") %>%
@@ -1189,20 +1250,31 @@ seurat_umap_batch <- seurat_umap_df %>%
   ggplot(aes(x = UMAP_1, y = UMAP_2, color = Batch)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
-  labs(title = "Seurat") + p1_options
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p1_options
 
 seurat_umap_cluster <- seurat_umap_df %>%
   ggplot(aes(x = UMAP_1, y = UMAP_2, color = Cluster)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
+  theme(
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
   p2_options
 
+seurat_title <- ggdraw() + draw_label("Seurat", fontface = "bold")
+
 seurat_umap_plot <- plot_grid(
-  seurat_umap_batch,
-  seurat_umap_cluster,
-  nrow = 2, align = "hv"
-) + theme(plot.background = element_rect(color = "black"))
+  seurat_title,
+  seurat_umap_batch + theme(legend.position = "none"),
+  seurat_umap_cluster + theme(legend.position = "none"),
+  ncol = 1, align = "hv", rel_heights = c(0.1, 1, 1)
+)
 
 # Harmony
 harmony_umap_df <- reducedDim(harmony_integrated, "UMAP") %>%
@@ -1214,20 +1286,31 @@ harmony_umap_batch <- harmony_umap_df %>%
   ggplot(aes(x = V1, y = V2, color = Batch)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
-  labs(title = "Harmony") + p1_options
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p1_options
 
 harmony_umap_cluster <- harmony_umap_df %>%
   ggplot(aes(x = V1, y = V2, color = Cluster)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
+  theme(
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
   p2_options
 
+harmony_title <- ggdraw() + draw_label("Harmony", fontface = "bold")
+
 harmony_umap_plot <- plot_grid(
-  harmony_umap_batch,
-  harmony_umap_cluster,
-  nrow = 2, align = "hv"
-) + theme(plot.background = element_rect(color = "black"))
+  harmony_title,
+  harmony_umap_batch + theme(legend.position = "none"),
+  harmony_umap_cluster + theme(legend.position = "none"),
+  ncol = 1, align = "hv", rel_heights=c(0.1, 1, 1)
+)
 
 # Raw
 raw_umap_df <- reducedDim(data_SCE, "UMAP") %>%
@@ -1239,20 +1322,31 @@ raw_umap_batch <- raw_umap_df %>%
   ggplot(aes(x = V1, y = V2, color = Batch)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
-  labs(title = "Raw") + p1_options
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
+  p1_options
 
 raw_umap_cluster <- raw_umap_df %>%
   ggplot(aes(x = V1, y = V2, color = Cluster)) +
   geom_point(alpha = 0.5) +
   theme_nothing() +
+  theme(
+    legend.position = "right",
+    plot.background = element_rect(color = "black")
+  ) +
   p2_options
 
+raw_title <- ggdraw() + draw_label("Raw", fontface = "bold")
+
 raw_umap_plot <- plot_grid(
-  raw_umap_batch,
-  raw_umap_cluster,
-  nrow = 2, align = "hv"
-) + theme(plot.background = element_rect(color = "black"))
+  raw_title,
+  raw_umap_batch + theme(legend.position = "none"),
+  raw_umap_cluster + theme(legend.position = "none"),
+  ncol = 1, align = "hv", rel_heights=c(0.1, 1, 1)
+)
 
 # All
 legend_batch <- get_legend(

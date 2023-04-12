@@ -273,48 +273,7 @@ mm_bench2 <- microbenchmark(
 ################
 
 #####
-theme_Publication <- function(base_size=14, base_family="helvetica") {
-  library(grid)
-  library(ggthemes)
-  (theme_foundation(base_size=base_size, base_family=base_family)
-    + theme(plot.title = element_text(face = "bold",
-                                      size = rel(1.2), hjust = 0.5),
-            text = element_text(),
-            panel.background = element_rect(colour = NA),
-            plot.background = element_rect(colour = NA),
-            panel.border = element_rect(colour = NA),
-            axis.title = element_text(face = "bold",size = rel(1)),
-            axis.title.y = element_text(angle=90,vjust =2),
-            axis.title.x = element_text(vjust = -0.2),
-            axis.text = element_text(), 
-            axis.line = element_line(colour="black"),
-            axis.ticks = element_line(),
-            panel.grid.major = element_line(colour="#f0f0f0"),
-            panel.grid.minor = element_blank(),
-            legend.key = element_rect(colour = NA),
-            legend.position = "bottom",
-            legend.direction = "horizontal",
-            legend.key.size= unit(0.2, "cm"),
-            legend.margin = unit(0, "cm"),
-            legend.title = element_text(face="italic"),
-            plot.margin=unit(c(10,5,5,5),"mm"),
-            strip.background=element_rect(colour="#f0f0f0",fill="#f0f0f0"),
-            strip.text = element_text(face="bold")
-    ))
-  
-}
-
-scale_fill_Publication <- function(...){
-  library(scales)
-  discrete_scale("fill","Publication",manual_pal(values = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")), ...)
-  
-}
-
-scale_colour_Publication <- function(...){
-  library(scales)
-  discrete_scale("colour","Publication",manual_pal(values = c("#386cb0","#fdb462","#7fc97f","#ef3b2c","#662506","#a6cee3","#fb9a99","#984ea3","#ffff33")), ...)
-  
-}
+theme_set(ggthemes::theme_few())
 
 ####
 
@@ -347,8 +306,7 @@ simulation_bench2_plot <- simulation_dat %>%
   geom_boxplot(show.legend = FALSE) +
   labs(x = "", y = "Time (milliseconds)",
        title = "Simulated Data", color = "Function") +
-  scale_colour_Publication() +
-  theme_Publication()
+  scale_color_tableau()
 
 simulation_dat %>% filter(benchmark == "SimData2") %>% group_by(expr) %>% summarize(mean = mean(time_ms))
 
@@ -418,6 +376,14 @@ partial_svd_dat <- read_csv("output/partial_svd_benchmark.csv") %>%
         "svd(X, nu = 5, nv = 5)", "svds(X, k = 5)",
         "svd(X, nu = 10, nv = 10)", "svds(X, k = 10)"
       )
+    ),
+    library = case_when(
+      expr %in% c("svd(X, nu = 1, nv = 1)", "svd(X, nu = 5, nv = 5)", "svd(X, nu = 10, nv = 10)") ~ "Base R",
+      TRUE ~ "RSpectra"
+    ),
+    library = factor(
+      library,
+      levels = c("Base R", "RSpectra")
     )
   )
 
@@ -431,17 +397,18 @@ partial_svd_dat %>% filter(benchmark == "PartialSVD1000") %>% group_by(expr) %>%
 
 partial_svd_plot <- partial_svd_dat %>%
   filter(benchmark == "PartialSVD1000") %>%
-  ggplot(aes(x = expr, y = time_ms, color = expr)) +
+  ggplot(aes(x = expr, y = time_ms, color = library)) +
   geom_boxplot() +
   labs(x = "", y = "Time (milliseconds)",
-       title = "Partial SVD", color = "Function") +
-  scale_colour_Publication() +
-  theme_Publication() +
-  theme(axis.text.x = element_blank())
+       title = "Partial SVD", color = "") +
+  scale_x_discrete(labels = c("svd 1", "svds 1", "svd 5", "svds 5", "svd 10", "svds 10")) +
+  scale_color_tableau() +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5), legend.position = "bottom")
 
 partial_svd_plot
 
 ggsave("output/partial_svd_benchmark.png", partial_svd_plot, width = 9, height = 4)
+ggsave("output/partial_svd_benchmark_thin.png", partial_svd_plot, width = 5, height = 4)
 
 ###
 
@@ -461,6 +428,15 @@ mm_dat <- read_csv("output/mm_benchmark.csv") %>%
         "eigenMapMatMult2(A, B, n_cores = 2)", "eigenMapMatMult2(A, B, n_cores = 4)",
         "eigenMapMatMult2(A, B, n_cores = 8)"
       )
+    ),
+    library = case_when(
+      expr == "A %*% B" ~ "Base R",
+      expr == "armaMatMult(A, B)" ~ "Armadillo",
+      TRUE ~ "Eigen"
+    ),
+    library = factor(
+      library,
+      levels = c("Base R", "Armadillo", "Eigen")
     )
   )
 
@@ -475,14 +451,20 @@ ggplot(data = mm_bench1, aes(x = expr, y = time_ms)) +
 
 mm_plot <- mm_dat %>%
   filter(benchmark == "MM1000") %>%
-  ggplot(aes(x = expr, y = time_ms, color = expr)) +
+  ggplot(aes(x = expr, y = time_ms, color = library)) +
   geom_boxplot() +
   labs(x = "", y = "Time (milliseconds)",
-       title = "Matrix Multiplication", color = "Function") +
-  scale_colour_Publication() +
-  theme_Publication() +
-  theme(axis.text.x = element_blank())
+       title = "Matrix Multiplication", color = "") +
+  scale_x_discrete(labels = c("Base R", "Armadillo", "Eigen 1", "Eigen 2", "Eigen 4", "Eigen 8")) +
+  scale_color_tableau() +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5), legend.position = "bottom")
 
 mm_plot
 
 ggsave("output/mm_benchmark.png", mm_plot, width = 9, height = 4)
+ggsave("output/mm_benchmark_thin.png", mm_plot, width = 5, height = 4)
+
+
+### both?
+
+ggsave("output/both_benchmark.png", plot_grid(partial_svd_plot, mm_plot, nrow = 1, labels = c("A", "B")), width = 9, height = 4)
