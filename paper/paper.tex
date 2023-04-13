@@ -71,7 +71,7 @@ BCOR5mm, % Binding correction
 
 \section*{Abstract} % This section will not appear in the table of contents due to the star (\section*)
 
-Correcting for batch effects is an important step in preprocessing scRNA-seq data prior to analysis. Batch effects are technical artifacts in the data that arise from a multitude of factors: different sequencing technologies, equipment used, or even capture times. These effects are not of interest and obfuscate the true underyling biological signal. In this paper we introduce a novel application of the JIVE method which we use to perform batch-effect correction on multiple scRNA-seq datasets. We expect that the JIVE algorithm will be able to capture the common structure between the datasets which will be representative of the true biological variability of the cells and not be obscured by batch effects. We employ four evaluation metrics and compare the results against two other tools, Seurat v3 and Harmony, which were developed for this purpose. We found that JIVE performed best in metrics that consider local neighborhoods (kBET and LISI) and in scenarios in which the original data contained distinct differences between batches and cell types.
+Correcting for batch effects is an important step in preprocessing scRNA-seq data prior to analysis. Batch effects are technical artifacts in the data that arise from a multitude of factors: different sequencing technologies, equipment used, or even capture times. These effects are not of interest and obfuscate the underlying biological signal. In this paper we introduce a novel application of the JIVE method which we use to perform batch-effect correction on multiple scRNA-seq datasets. We expect that the JIVE algorithm will be able to decompose scRNA-seq data into a joint structure capturing the true biological variability and individual structures which capture technical variability within each batch. This joint structure would then be suitable for use in downstream analyses. We employ four evaluation metrics and compare the results against two other tools, Seurat v3 and Harmony, which were developed for this purpose. We found that JIVE performed best in metrics that consider local neighborhoods (kBET and LISI) and in scenarios in which the original data contained distinct differences between batches and cell types.
 
 %----------------------------------------------------------------------------------------
 %	AUTHOR AFFILIATIONS
@@ -115,14 +115,12 @@ Each row represents a gene and each column is a cell. The library size for a cel
 Once the count data are obtained, it is typically normalized to help account for any variability caused by sampling effects within the given sequencing protocol \citep{grun2015design}.
 A few examples of normalization methods include counts per million (CPM) normalization, upper quartile (UQ) normalization, and trimmed mean of M values (TMM) normalization \citep{vallejos2017normalizing}. In CPM normalization, each count is divided by its cell's library size and multiplied by a million. UQ normalization uses a scaling factor proportional to the 75th percentile of the counts for a given cell. TMM normalization seeks to trim away cell counts that exhibit large log fold differences within a cell.
 
-Another common preprocessing step is the integration of multiple data sets that are obtained from different batches. Unwanted technical variation and differences between count data are known as batch effects \citep{zhang2020combat}. These effects can arise due different sequencing technologies being used or cells being sequenced at different times.
-There have been over a dozen methods developed to integrate multiple sources of scRNA-seq data that aim to remove these unwanted batch effects \citep{tran2020benchmark}. Each method produces a "batch-corrected" data set which is then used for downstream analyses.
+Another common preprocessing step is the integration of multiple data sets that are obtained from different batches. Unwanted technical variation and differences between count data are known as batch effects \citep{zhang2020combat}. These effects can arise due to different sequencing technologies being used or cells being sequenced at different times.
+There have been over a dozen methods developed to integrate multiple sources of scRNA-seq data that aim to remove these unwanted batch effects \citep{tran2020benchmark}. Each method produces a batch-corrected data set which is then used for downstream analyses.
 
 %------------------------------------------------
 
-\subsection{Batch-Effect Correction Methods}
-
-\subsubsection*{JIVE}
+\subsection{JIVE}
 
 \paragraph*{}
 The joint and individual variation explained (JIVE) method \citep{lock2013joint} decomposes two or more biological datasets into three low-rank approximation components: a joint structure among the datasets, individual structures unique to each distinct dataset, and residual noise. JIVE was originally created for integrating different types of bulk sequencing data. For example, \citet{lock2013joint} used gene expression and miRNA data from a set of 234 Glioblastoma Multiforme tumor cells in an attempt to identify any joint or individual variation between the data types. 
@@ -160,15 +158,17 @@ The JIVE decomposition estimates the joint and individual structures by minimizi
 
 Our main interest is how well this method performs when we apply it in the context of scRNA-seq data batch-effect correction. We expect the joint structure matrix to capture the shared biological structure between scRNA-seq data from different batches and to serve as the batch-corrected dataset.
 
+\subsection{Batch-Effect Correction Methods}
+
 \subsubsection*{Seurat v3}
 
 \paragraph*{}
-Seurat v3 \citep{stuart2019comprehensive} is software package developed by the Satija lab which provides a comprehensive set of tools for single-cell data analysis and integration. The Seurat v3 integration method employs a strategy which anchors diverse datasets together. First, log-normalization is performed on all datasets and expression values are standardized for each gene. A subset of features are selected which exhibit high variance across all datasets. Then an initial dimension reduction method utilizing canonical correlation analysis (CCA) is performed to ensure similarities across datasets are preserved. Canonical correlation vectors (CCV) are then approximated and used to identify K-nearest neighbors (KNN) for each cell within their paired dataset. Mutual nearest neighbors (MNN) are then identified to act as anchors between datasets. These anchors are then filtered, scores, weighted, and used to perform the batch correction.
+Seurat v3 \citep{stuart2019comprehensive} is software package developed by the Satija lab which provides a comprehensive set of tools for single-cell data analysis and integration. The Seurat v3 integration method builds upon their previous work by leveraging a new graph-based approach. First, log-normalization is performed on all datasets and expression values are standardized for each gene. A subset of features are selected which exhibit high variance across all datasets. Then an initial dimension reduction method utilizing canonical correlation analysis (CCA) is performed to ensure similarities across datasets are preserved. Canonical correlation vectors (CCV) are then approximated and used to identify K-nearest neighbors (KNN) for each cell within their paired dataset. Mutual nearest neighbors (MNN) are then identified to act as anchors between datasets. These anchors are then filtered, scored, and weighted using the new shared nearest neighbors (SNN) approach, and finally used to perform the batch correction.
 
 \subsubsection*{Harmony}
 
 \paragraph*{}
-The Harmony integration method \citep{korsunsky2019fast} utilizes PCA for dimensionality reduction and then iterates between two algorithms until convergence is reached. The first algorithm clusters cells from multiple batches but ensures that the diversity of batches within each cluster are maximized (i.e., maximum diversity clustering). The second algorithm then uses a mixture model based approach to perform linear batch correction from a given vector of the known batches. The clustering step assigns soft clusters to cells and the correction step uses these clusters to compute new cell embeddings from the previous iteration.
+Harmony is an integration method designed to model and eliminate effects of known sources of variation \citep{korsunsky2019fast}. The method utilizes with an initial low-dimensional representation of the data, such as principal components, and then iterates between two algorithms until convergence is reached. The first algorithm clusters cells from multiple batches but ensures that the diversity of batches within each cluster are maximized (i.e., maximum diversity clustering). The second algorithm then uses a mixture model based approach to perform linear batch correction from a given vector of the known batches. The clustering step assigns soft clusters to cells and the correction step uses these clusters to compute new cell embeddings from the previous iteration.
 
 %----------------------------------------------------------------------------------------
 %	METHODS
@@ -179,7 +179,7 @@ The Harmony integration method \citep{korsunsky2019fast} utilizes PCA for dimens
 \subsection{scRNA-seq Datasets}
 
 \paragraph*{}
-One simulated dataset and two real scRNA-seq datasets were used to evaluate the performance of the batch correction methods. The two real data sets were acquired using the scRNAseq R package \citep{risso2022scRNAseq}. Principal variance component analysis (PVCA) \citep{li2009principal} was performed for each raw dataset to get an estimation of how much variability is attributed to batch effects, cell type effects, and random error. PVCA uses principal components from PCA and variance components analysis (VCA) to fit a mixed linear model using the factors of interest as random effects to partition the total observed variability into varability due to batches, cell types, or residual error. This helps to quantify the impact of each source of variation on subsequent analyses.
+One simulated dataset and two real scRNA-seq datasets were used to evaluate the performance of the batch correction methods. The two real data sets were acquired using the scRNAseq R package \citep{risso2022scRNAseq}. Principal variance component analysis (PVCA) \citep{li2009principal} was performed for each raw dataset to get an estimation of how much variability is attributed to batch effects, cell type effects, and random error. PVCA uses principal components from PCA and variance components analysis (VCA) to fit a mixed linear model using the factors of interest as random effects to partition the total observed variability into variability due to batches, cell types, or residual error. This helps to quantify the impact of each source of variation on subsequent analyses.
 
 \subsubsection*{Simulated Data}
 
@@ -223,7 +223,7 @@ The Bacher CD4+ T-cell RNA sequencing data \citep{bacher2020low} was obtained fr
 \subsubsection*{Zilionis Mouse Lung Data}
 
 \paragraph*{}
-The Zilionis mouse lung data \citep{zilionis2019single} analyzed tumor-infiltrating myeloid cells in mouse lung cancers. There are a total of three different batches and seven different cell clusters provided. This data was chosen as there is some distinct separation due to a batch effect and the cell clusters are well seperated. The frequency of cells in each batch and cell group can be seen in Table~\ref{tab:freq_zilionis}.
+The Zilionis mouse lung data \citep{zilionis2019single} analyzed tumor-infiltrating myeloid cells in mouse lung cancers. There are a total of three different batches and seven different cell clusters provided. This data was chosen as there is some distinct separation due to a batch effect and the cell clusters are well separated. The frequency of cells in each batch and cell group can be seen in Table~\ref{tab:freq_zilionis}.
 
 \begin{table}[ht]
     \caption{Batch and Cell Type Frequency for Zilionis Mouse Lung Data}
@@ -257,13 +257,13 @@ We compared the runtimes of the original R.JIVE functions to the updated version
 \begin{figure}[ht]
     \centering 
     \includegraphics[width=1\columnwidth]{simdata2_orig} 
-    \caption[Simulation Data for JIVE Benchmarks]{Simulation Data for JIVE Benchmarks.}
+    \caption[Simulation Data for JIVE Benchmarks]{Heatmaps for simulation data used in JIVE benchmarks. The first row shows the final data matrix $A$ and the second row shows the final data matrix $B$ and their respective decompositions. The first column is the data used as input into the JIVE algorithm. These final datasets were created by adding the second column representing the same joint structure shared between datasets, the third column representing the individual structure unique to each dataset, and the fourth column representing white noise.}
     \label{fig:simdata2_orig} 
 \end{figure}
 
 The first and second row contain the final matrix in the first column, the joint matrix in the second column, the individual matrix in the third column, and the error matrix in the fourth column for $A$ and $B$, respectively. Matrix values range from between approximately -2 (represented by the color blue) and 2 (represented by the color red). A benchmark was performed in which both the old R.JIVE implementation and the updated version were repeated 20 times to record runtimes. We used given ranks of 1 for the joint structure and each individual structure.
 
-All benchmarks were performed on a laptop with a 3.20 GHz AMD Ryzen 7 processor with 16.0 GB RAM.
+All benchmarks were performed on a laptop with a 3.20 GHz AMD Ryzen 7 processor with 16.0 GB RAM using R version 4.2.2.
 
 %------------------------------------------------
 
@@ -294,14 +294,14 @@ We calculate the rejection rates with neighborhood sizes equal to 5\%, 10\%, 15\
 \subsubsection*{Average Silhouette Width}
 
 \paragraph*{}
-A silhouette is a measure of consistency within clusters of a given dataset \citep{rousseeuw1987silhouettes}. For each data point in a given cluster, we calculate the mean distance between itself and all other points within the same cluster. We also calculate the smallest mean distance between itself and any other data point not in the same cluster. Then a silhouette is the difference of these two values scaled by the largest of the two. A silhouette takes on values between -1 and 1, with values close to 1 indicating that a particular point is appropriately clustered and values close to -1 indicating the opposite. The ASW is the average of all silhouette values which gives an measure of how well-clustered the data are as a whole. We performed ASW calculations using the cluster R package \citep{maechler2022cluster} version 2.1.4.
+A silhouette is a measure of consistency within clusters of a given dataset \citep{rousseeuw1987silhouettes}. For each data point in a given cluster, we calculate the mean distance between itself and all other points within the same cluster. We also calculate the smallest mean distance between itself and any other data point not in the same cluster. Then a silhouette is the difference of these two values scaled by the largest of the two. A silhouette takes on values between -1 and 1, with values close to 1 indicating that a particular point is appropriately clustered and values close to -1 indicating the opposite. The ASW is the average of all silhouette values which gives a measure of how well-clustered the data are as a whole. We performed ASW calculations using the cluster R package \citep{maechler2022cluster} version 2.1.4.
 
 For our purposes, we use the Euclidean distance metric for all calculations. We then subsample our data down to 80\% of the original and use the first 30 principal components from the subsampled batch-effect corrected datasets. We calculate two ASW metrics: ASW batch (the batch labels are the clusters) and ASW cell type (cell type labels are the clusters), and this process is repeated 20 times for each method. ASW batch and ASW cell type results from all methods are separately scaled to be between 0 and 1. We report 1 - ASW batch values so that large values are more desirable. The median values of each of these scores are then used for comparison across all methods.
 
 \subsubsection*{Local Inverse Simpson's Index}
 
 \paragraph*{}
-The local inverse Simpon's index \citep{korsunsky2019fast} first builds local Gaussian kernel-based distributions of neighborhoods around each cell. These neighborhoods are then used in conjuction with the inverse Simpon's index to calculate a diversity score which corresponds to the effective number of clusters in a particular cell's neighborhood. We performed LISI calculations using the lisi R package \citep{korsunky2019lisi} version 1.0.
+The local inverse Simpon's index \citep{korsunsky2019fast} first builds local Gaussian kernel-based distributions of neighborhoods around each cell. These neighborhoods are then used in conjunction with the inverse Simpon's index to calculate a diversity score which corresponds to the effective number of clusters in a particular cell's neighborhood. We performed LISI calculations using the lisi R package \citep{korsunky2019lisi} version 1.0.
 
 We calculate two LISI metrics: LISI for batch label clusters (iLISI batch) and LISI for cell type clusters (cLISI cell type). Both LISI scores are calculated for each cell in the batch-effect corrected datasets for each method. iLISI and cLISI results from all methods are separately scaled to be between 0 and 1. We report 1 - cLISI cell type so that large values are more desirable. The median values of each of these scores are then used for comparison across all methods.
 
@@ -316,34 +316,30 @@ We calculate two LISI metrics: LISI for batch label clusters (iLISI batch) and L
 \paragraph*{}
 The runtimes comparing the new implementations of partial SVD and matrix multiplication can be seen in Figure~\ref{fig:both_benchmark}. We see that the original functions perform the decompositions in approximately 1.67 seconds on average, while partial SVD functions are performed in 0.08, 0.12, and 0.15 seconds on average. The implementation of a partial SVD function had significant improvements on the overall runtime of the JIVE algorithm. We observed a 95.4\% shorter runtime when estimating one singular value/vector, a 93.1\% shorter runtime when estimating five singular values/vectors, and a 91.0\% shorter runtime when estimating ten singular values/vectors. This is of particular importance because a partial SVD is computed for the joint structure matrix and each individual structure matrix in every iteration of the JIVE estimation algorithm.
 
-We can also see the original multiplication operator and the function using RcppArmadillo both averaged just under 0.3 seconds. The next four functions use the RcppEigen utilizing 1, 2, 4, and 8 CPU cores with runtimes of 0.093, 0.047, 0.027, and 0.02 on average, respectively. Performing matrix multiplication using precompiled C++ code also provided a sizeable decrease in runtime. The difference between the \%*\% operator and the function implemented in RcppArmadillo were neglible. The function implemented in RcppEigen not only provided singificant improvements over the base R operator, but it also allows for the user to specify the amount of CPU cores to utilize during runtime. We observed 67.5\% shorter runtime when using the function with one core, a 83.2\% shorter runtime when using two cores, a 90.6\% shorter runtime when using four cores, and a 92.9\% shorter runtime when using eight cores. Note that using a larger number of available CPU cores does not always provide an increase in speed. Computation on smaller matrices tend to be faster without using multiple cores, but computations on large matrices typically run faster on multiple cores.
+We can also see the original multiplication operator and the function using RcppArmadillo both averaged just under 0.3 seconds. The next four functions use the RcppEigen utilizing 1, 2, 4, and 8 CPU cores with runtimes of 0.093, 0.047, 0.027, and 0.02 seconds on average, respectively. Performing matrix multiplication using precompiled C++ code also provided a sizable decrease in runtime. The difference between the \%*\% operator and the function implemented in RcppArmadillo were negligible. The function implemented in RcppEigen not only provided significant improvements over the base R operator, but it also allows for the user to specify the amount of CPU cores to utilize during runtime. We observed 67.5\% shorter runtime when using the function with one core, a 83.2\% shorter runtime when using two cores, a 90.6\% shorter runtime when using four cores, and a 92.9\% shorter runtime when using eight cores. Note that using a larger number of available CPU cores does not always provide an increase in speed. Computation on smaller matrices tend to be faster without using multiple cores, but computations on large matrices typically run faster on multiple cores. Overall runtime improvements can be seen in Figure~\ref{fig:jive_v2_simdata2_benchmark}.
 
 \begin{figure}[H]
     \centering 
     \includegraphics[width=1\columnwidth]{both_benchmark} 
-    \caption[Benchmark for Partial SVD and Matrix Multiplication Runtimes.]{Benchmark for Partial SVD and Matrix Multiplication Runtimes.}
+    \caption[Benchmark for Partial SVD and Matrix Multiplication Runtimes.]{Benchmarks for (A) partial SVD and (B) matrix multiplication runtimes for matrices of size $1000 \times 1000$ colored by their respective R package. The columns in (A) represent the base R function svd estimating $n$ singular value(s)/vector(s) and the RSpectra function svds estimating the same, where $n$ is one, five, and 10, respectively. The columns in (B) represent matrix multiplication performed using the base R operator \%*\%, Armadillo via the RcppArmadillo R package, and Eigen via the RcppEigen R package. The last four columns of (B) represent calls to the same Eigen function utilizing one, two, four, and eight CPU cores, respectively.}
     \label{fig:both_benchmark} 
 \end{figure}
 
-Overall runtime improvements can be seen in Figure~\ref{fig:jive_v2_simdata2_benchmark}.
-
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering 
     \includegraphics[width=1\columnwidth]{jive_v2_simdata2_benchmark} 
-    \caption[Benchmark for JIVE Improvements]{Benchmark for JIVE Improvements.}
+    \caption[Benchmark for JIVE Improvements]{Benchmark for overall JIVE improvements colored by version. The datasets described in \ref{jive_improvements} were used as inputs for the original JIVE function and the updated JIVE function. The first column represents the original JIVE function and the second represents our updated JIVE function.}
     \label{fig:jive_v2_simdata2_benchmark} 
 \end{figure}
 
-We see that the original R.JIVE function performs the decomposition in about 35.8 seconds on average, while the improved function completes it in 4.1 seconds on average.
-
-The two procedures produced close to identical results. Table~\ref{tab:simdata2_variance} shows the proportion of variance attributable to joint structure, individual structure, and residual variance for the two methods.
+We see that the original R.JIVE function performs the decomposition in about 35.8 seconds on average, while the improved function completes it in 4.1 seconds on average. The two procedures produced close to identical results. Table~\ref{tab:simdata2_variance} shows the proportion of variance attributable to joint structure, individual structure, and residual variance for the two methods.
 
 \begin{table}[ht]
     \caption{Proportion of Variance Attributed to JIVE Decomposition}
     \centering
     \begin{tabular}{lrrclrr}
         \toprule
-        Original   & Data1 & Data 2    & $\mid$ & Updated    & Data1 & Data 2 \\
+        Original   & Data 1  & Data 2  & $\mid$ & Updated    & Data 1  & Data 2  \\
         \midrule
         Joint      & $0.346$ & $0.161$ & $\mid$ & Joint      & $0.346$ & $0.161$ \\
         Individual & $0.400$ & $0.582$ & $\mid$ & Individual & $0.400$ & $0.582$ \\
@@ -358,16 +354,16 @@ The two procedures produced close to identical results. Table~\ref{tab:simdata2_
 \subsection{Simulated Data}
 
 \paragraph*{}
-The only preprocessing step performed for the simulated data is a log-normalization \citep{davis2017scater}. Each cell count is divided by factor proportional to its library size, a pseudo-count of 1 is added (for zero counts), and a log2-transformation is applied. The PVCA plot for the simulated dataset can be seen in Figure~\ref{fig:pvca_simdata}.
+The only preprocessing step performed for the simulated data is a log-normalization \citep{davis2017scater}. Each cell count is divided by a factor proportional to its library size, a pseudo-count of 1 is added (for zero counts), and a log2-transformation is applied. The PVCA plot for the simulated dataset can be seen in Figure~\ref{fig:pvca_simdata}.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering 
     \includegraphics[width=1\columnwidth]{pvca_simdata} 
     \caption[PVCA Breakdown for Simulated Data]{PVCA breakdown for simulated data.}
     \label{fig:pvca_simdata} 
 \end{figure}
 
-We observe that almost 95\% of the variability within the data is not due to the batch or cell clusters which is consistent with most scRNA-seq data. The t-SNE plots can be seen in Figure~\ref{fig:tsne_simdata} and the UMAP plots can be seen in in Figure~\ref{fig:umap_simdata}.
+We observe that almost 95\% of the variability within the data is not due to the batch or cell clusters which is consistent with most scRNA-seq data. The t-SNE plots can be seen in Figure~\ref{fig:tsne_simdata} and the UMAP plots can be seen in Figure~\ref{fig:umap_simdata}.
 
 \begin{figure}[H]
     \centering 
@@ -383,16 +379,16 @@ We observe that almost 95\% of the variability within the data is not due to the
     \label{fig:umap_simdata} 
 \end{figure}
 
-The top half of each plot has cells colored by batch label and the bottom half has cells colored by their respective cell type/cluster label. Each method has the batches overlapping while the cell clusters are still preserved and distinct from one another. In contrast, the raw plots show some clear seperation between batches. The numeric evaluation metrics can be seen in Figure~\ref{fig:metrics_simdata}.
+The top half of each plot has cells colored by batch label and the bottom half has cells colored by their respective cell type/cluster label. Each method has the batches overlapping while the cell clusters are still preserved and distinct from one another. In contrast, the raw plots show some clear separation between batches. The numeric evaluation metrics can be seen in Figure~\ref{fig:metrics_simdata}.
+
+The best performing method for the kBET metric is Harmony followed closely by JIVE. Seurat surprisingly performed worse than the data without any batch correction performed. JIVE and Harmony performed well for the ASW batch metric, closely followed by Seurat. However, Seurat outperformed all methods with regards to the ASW cell type metric. This indicates that Seurat was much better at preserving the different cell types within its cell embeddings than JIVE and Harmony, but not able to distinguish between batches. Harmony and JIVE were the top performers on both the iLISI batch and cLISI cell type metrics. Seurat did not do well with regards to iLISI batch, but was serviceable for the cLISI cell type metric. Overall, JIVE and Harmony were the best performing batch-effect correction methods for the simulated data.
 
 \begin{figure}[H]
     \centering 
     \includegraphics[width=1\columnwidth]{metrics_simdata} 
-    \caption[Metrics for Simulated Data]{Quantitative evaluation of JIVE, Seurat, and Harmony batch-effect correction methods using (A) kBET, (B) ASW, and (C) LISI for the simulated data. Methods with higher kBET acceptance rates performed best. Methods in the top right of the ASW and LISI plots peformed best.}
+    \caption[Metrics for Simulated Data]{Quantitative evaluation of JIVE, Seurat, and Harmony batch-effect correction methods using (A) kBET, (B) ASW, and (C) LISI for the simulated data. Methods with higher kBET acceptance rates performed best. Methods in the top right of the ASW and LISI plots performed best.}
     \label{fig:metrics_simdata} 
 \end{figure}
-
-The best performing method for the kBET metric is Harmony followed by closely JIVE. Seurat surprisingly performed worse than the data without any batch correction performed. JIVE and Harmony performed well for the ASW batch metric, closely followed by Seurat. However, Seurat outperformed all methods with regards to the ASW cell type metric. This indicates that Seurat was much better at preserving the different cell types within its cell embeddings than JIVE and Harmony, but not able to distinguish between batches. Harmony and JIVE were the top performers on both the iLISI batch and cLISI cell type metrics. Seurat did not do well with regards to iLISI batch, but was serviceable for the cLISI cell type metric. Overall, JIVE and Harmony were the best performing batch-effect correction methods for the simulated data.
 
 %------------------------------------------------
 
@@ -401,16 +397,16 @@ The best performing method for the kBET metric is Harmony followed by closely JI
 \subsubsection*{Bacher T-Cell Data}
 
 \paragraph*{}
-Data preprocessing for the Bacher T-cell data consisted of log-normalization (as described for the simulated data), and the top 2000 genes with the highest variability across all batches were selected for analysis. This was performed using using a standard workflow provided in the Seurat R package. We also chose to select only two of the fifteen total batches. This reduced our total dataset size from $33538 \times 104417$ to $2000 \times 1867$. The PVCA plot for the Bacher T-cell dataset can be seen in Figure~\ref{fig:pvca_bacherdata}.
+Data preprocessing for the Bacher T-cell data consisted of log-normalization (as described for the simulated data), and the top 2000 genes with the highest variability across all batches were selected for analysis. This was performed using a standard workflow suggested in the Seurat R package. We also chose to select only two of the fifteen total batches. This reduced our total dataset size from $33538 \times 104417$ to $2000 \times 1867$. The PVCA plot for the Bacher T-cell dataset can be seen in Figure~\ref{fig:pvca_bacherdata}.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering 
     \includegraphics[width=1\columnwidth]{pvca_bacherdata} 
     \caption[PVCA Breakdown for the Bacher T-Cell Data]{PVCA breakdown for the Bacher T-cell data.}
     \label{fig:pvca_bacherdata} 
 \end{figure}
 
-We see more variability attributed to the batch and cell clusters than in our simulated data, with almost 5\% and 10\%, respectively. The t-SNE plots can be seen in Figure~\ref{fig:tsne_bacherdata} and the UMAP plots can be seen in in Figure~\ref{fig:umap_bacherdata}.
+We see more variability attributed to the batch and cell clusters than in our simulated data, with almost 5\% and 10\%, respectively. The t-SNE plots can be seen in Figure~\ref{fig:tsne_bacherdata} and the UMAP plots can be seen in Figure~\ref{fig:umap_bacherdata}.
 
 \begin{figure}[H]
     \centering 
@@ -431,11 +427,11 @@ We see that Seurat and Harmony both have well-mixed batches in the dimensionalit
 \begin{figure}[H]
     \centering 
     \includegraphics[width=1\columnwidth]{metrics_bacherdata} 
-    \caption[Metrics for the Bacher T-Cell Data]{Quantitative evaluation of JIVE, Seurat, and Harmony batch-effect correction methods using (A) kBET, (B) ASW, and (C) LISI for the Bacher T-cell data. Methods with higher kBET acceptance rates performed best. Methods in the top right of the ASW and LISI plots peformed best.}
+    \caption[Metrics for the Bacher T-Cell Data]{Quantitative evaluation of JIVE, Seurat, and Harmony batch-effect correction methods using (A) kBET, (B) ASW, and (C) LISI for the Bacher T-cell data. Methods with higher kBET acceptance rates performed best. Methods in the top right of the ASW and LISI plots performed best.}
     \label{fig:metrics_bacherdata} 
 \end{figure}
 
-JIVE performs the best with regards to kBET, with JIVE close behind. The acceptance rates for Harmony are just slightly larger than the raw data. Harmony and Seurat both perform best in the ASW metrics, while JIVE only outperforms the raw data with regards to ASW batch and actually performs worse in ASW cell type. Harmony is the clear winner in the LISI metrics followed closely by Seurat. Notably, JIVE performs worse than the raw data in both metrics. It is worth noting that the cLISI cell type is on a much tighter scale than the iLISI batch metric in the plot, so the percieved differences are not as larger as they appear.
+JIVE performs the best with regards to kBET, with JIVE close behind. The acceptance rates for Harmony are just slightly larger than the raw data. Harmony and Seurat both perform best in the ASW metrics, while JIVE only outperforms the raw data with regards to ASW batch and actually performs worse in ASW cell type. Harmony is the clear winner in the LISI metrics followed closely by Seurat. Notably, JIVE performs worse than the raw data in both metrics. It is worth noting that the cLISI cell type is on a much tighter scale than the iLISI batch metric in the plot, so the perceived differences are not as large as they appear.
 
 %------------------------------------------------
 
@@ -451,7 +447,7 @@ We perform the same preprocessing as described for the Bacher T-cell data, selec
     \label{fig:pvca_zilionisdata} 
 \end{figure}
 
-We see a similar breakdown of total variability as the Bacher T-cell data except a bit more is attributed to the cell clusters. The t-SNE plots can be seen in Figure~\ref{fig:tsne_zilionisdata} and the UMAP plots can be seen in in Figure~\ref{fig:umap_zilionisdata}.
+We see a similar breakdown of total variability as the Bacher T-cell data except a bit more is attributed to the cell clusters. The t-SNE plots can be seen in Figure~\ref{fig:tsne_zilionisdata} and the UMAP plots can be seen in Figure~\ref{fig:umap_zilionisdata}.
 
 \begin{figure}[H]
     \centering 
@@ -472,11 +468,11 @@ We see that each method has well-mixed batches and cell clusters are preserved. 
 \begin{figure}[H]
     \centering 
     \includegraphics[width=1\columnwidth]{metrics_zilionisdata} 
-    \caption[Metrics for the Zilionis Mouse Lung Data]{Quantitative evaluation of JIVE, Seurat, and Harmony batch-effect correction methods using (A) kBET, (B) ASW, and (C) LISI for the Zilionis mouse lung data. Methods with higher kBET acceptance rates performed best. Methods in the top right of the ASW and LISI plots peformed best.}
+    \caption[Metrics for the Zilionis Mouse Lung Data]{Quantitative evaluation of JIVE, Seurat, and Harmony batch-effect correction methods using (A) kBET, (B) ASW, and (C) LISI for the Zilionis mouse lung data. Methods with higher kBET acceptance rates performed best. Methods in the top right of the ASW and LISI plots performed best.}
     \label{fig:metrics_zilionisdata} 
 \end{figure}
 
-We see that all three methods perform similarly at low neighorhood levels. However as the size increases, Seurat drops off dramatically. Harmony performs best at kBET with JIVE close behind. The ASW metric performances are a bit of a mixed bag: each method is better than another at either ASW batch or ASW cell type. Harmony performs best at ASW batch, followed by JIVE and then Seurat. Seurat performs best at ASW cell type, followed by Harmony and then JIVE. JIVE and Harmony are the best performers in the LISI metrics, with JIVE being the best with regards to iLISI batch and Harmony winning out in cLISI cell type. Seurat performs worse than both JIVE and Harmony, and only beats the raw data with regards to iLISI batch.
+We see that all three methods perform similarly at low neighborhood levels. However as the size increases, Seurat drops off dramatically. Harmony performs best at kBET with JIVE close behind. The ASW metric performances are a bit of a mixed bag: each method is better than another at either ASW batch or ASW cell type. Harmony performs best at ASW batch, followed by JIVE and then Seurat. Seurat performs best at ASW cell type, followed by Harmony and then JIVE. JIVE and Harmony are the best performers in the LISI metrics, with JIVE being the best with regards to iLISI batch and Harmony winning out in cLISI cell type. Seurat performs worse than both JIVE and Harmony, and only beats the raw data with regards to iLISI batch.
 
 %----------------------------------------------------------------------------------------
 %	DISCUSSION
@@ -485,27 +481,30 @@ We see that all three methods perform similarly at low neighorhood levels. Howev
 \section{Discussion}
 
 \paragraph*{}
-In this paper, we explored if the JIVE method was effective at performing batch-effect correction in scRNA-seq data. We expected JIVE to provide a more flexible alternative to other commonly used methods because it estimates joint structure and individual structure simultaneously and allows the user to specify the ranks chosen for the low-rank approximations. We predicted that the simulataneous estimation of both joint and individual structure would essentially perform both batch integration and batch correction at the same time. 
-
-Initially, the use of JIVE for this purpose was impractical due to its prohibitively long runtimes with data on the scale commonly observed in scRNA-seq datasets. The significant increase in speed due to the improvements we made to the algorithm make it a much more realistic tool to use for bach-effect correction.
+In this paper, we explored if the JIVE method was effective at performing batch-effect correction in scRNA-seq data.
+Initially, the use of JIVE for this purpose was impractical due to its prohibitively long runtimes with data on the scale commonly seen in scRNA-seq datasets. The significant increase in speed due to the improvements we made to the algorithm make it a much more realistic tool to use for batch-effect correction.
+We expected JIVE to provide a more flexible alternative to other commonly used methods because not only does it allow the user to specify the ranks chosen for the low-rank approximations, but primarily because it estimates joint structure and individual structure simultaneously.
+This simultaneous estimation procedure means that JIVE performs both batch correction and dimension reduction at the same time. This is preferred compared to other batch-effect correction methods because no information is lost: any effects not captured in the joint structure will be present in the individual structure, and vice versa. This implies that it is possible to reconstruct the original data using these two estimated structures. This approach differs from Seurat and Harmony where batch correction is performed first and then dimension reduction second. Some information is lost during the batch correction step because only the corrected datasets are estimated and everything else is discarded. 
+One other potential advantage of the simultaneous estimation in JIVE is that one could theoretically use the individual structures as the basis for QC measures to evaluate whether technical effects were truly removed from the joint structure.
 
 %------------------------------------------------
 
 \subsection{JIVE Batch-Effect Correction Performance}
 
 \paragraph*{}
-In each scRNA-seq dataset, we tested the performance of each batch correction method on their ability mix batches while still preserving the purity of the cell types/clusters. A commonly used method for evaluating batch integration is by visual inspection of dimension reduction plots, with the most common being PCA, t-SNE, or UMAP plots \citep{tran2020benchmark}. This method works well for simple cases like in the simulated data where the batch effects and cell clusters are clearly defined. However, this subjective method tends to become more difficult if there is not clear seperation between batches or when cell types are very similar, as is the case in the Bacher T-cell data. This ambiguity that stems from visual inspection is the reason we employed the use of three numeric evaluation metrics to objectively assess the performance of each method. Note that while objective measurements are useful, we still believe that visual inspection can still provide useful insight during exploratory analysis. Note that none of the metrics simultaneously test both the quality of batch mixing and preservation of cell types, and the development of such a metric would be of great interest.
+In each scRNA-seq dataset, we tested the performance of each batch correction method on their ability to mix batches while still preserving the purity of the cell types/clusters. A commonly used method for evaluating batch integration is by visual inspection of dimension reduction plots, with the most common being PCA, t-SNE, or UMAP plots \citep{tran2020benchmark}. This method works well for simple cases like in the simulated data where the batch effects and cell clusters are clearly defined. However, this subjective method tends to become more difficult if there is not clear separation between batches or when cell types are very similar, as is the case in the Bacher T-cell data. This ambiguity that stems from visual inspection is the reason we employed the use of three numeric evaluation metrics to objectively assess the performance of each method. Note that while objective measurements are useful, we still believe that visual inspection can still provide useful insight during exploratory analysis. Note that none of the metrics simultaneously test both the quality of batch mixing and preservation of cell types, and the development of such a metric would be of great interest.
 
-Overall, Harmony performed the best in the simulated data and Zilionis mouse lung data where batch effects were distinct and cell types effets were large. It consistenly performed well on kBET and LISI metrics that take into account the structure of each cell's local neighborhood. The t-SNE and UMAP plots were also consistent with its performance in the numeric metrics. JIVE performed second best with regards to metrics concerning batch mixing, but it struggled greatly with cell type purity metrics. The only dataset where it outperformed the raw data was the cLISI metric in the simulated data. Despite this, it was encouraging to see that JIVE was able keep up with Harmony in both the simulated data and the Zilonis mouse lung data. Seurat performed second best at metrics concerning cell type purity and had its best performance in the nebulous Bacher T-cell data. The increase in neighorhood size did not have much impact on its kBET performance and it did well in both ASW metrics and both LISI metrics. The most interesting result was Seurat's poor kBET performance in the simulated data, which seem to contradict the t-SNE and UMAP plots. 
+Overall, Harmony performed the best in the simulated data and Zilionis mouse lung data where batch effects were distinct and cell types effets were large. It consistently performed well on kBET and LISI metrics that take into account the structure of each cell's local neighborhood. The t-SNE and UMAP plots were also consistent with its performance in the numeric metrics. JIVE performed second best with regards to metrics concerning batch mixing, but it struggled with cell type purity metrics. The only dataset where it outperformed the data without batch correction was the cLISI metric in the simulated data. Despite this, it was encouraging to see that JIVE was able to keep up with Harmony in both the simulated data and the Zilonis mouse lung data. Seurat performed second best at metrics concerning cell type purity and had its best performance in the nebulous Bacher T-cell data. The increase in neighborhood size did not have much impact on its kBET performance and it did well in both ASW metrics and both LISI metrics. The most interesting result was Seurat's poor kBET performance in the simulated data, which seem to contradict the t-SNE and UMAP plots.
+We recommend using JIVE in scenarios where the original data contains distinct differences between batches and cell types, as it performed best in the simulated data and the Zilionis mouse lung data.
 
 \subsection{Limitations and Future Work}
 
 \paragraph*{}
-A limitation that leaves room for future work may involve exploring different data normalization techniques. The JIVE decomposition is best suited to data that is normally distributed, which scRNA-seq data clearly does not adhere to even after normalization. The normalization methods in this study were chosen for simplicity and consistency between integration methods. It is therefore likely that a more sophisticated method which takes into account the zero-inflated nature of scRNA-seq data will provide a better input for the JIVE algorithm and lead to more accurate results. Another method to address this issue would be adapting JIVE to work with other distributions (e.g., negative binomial), akin to generalized linear models. This would also help to relieve the issue of scRNA-seq not being normally distributed.
+The comparison of runtimes between JIVE and other integration methods is an important area for future research. While algorithmic improvements greatly reduced the runtime of JIVE, we did not compare it to Seurat or Harmony. An analysis of the memory requirements for each method would also be of interest.
 
-Another limitation is the narrow scope of datasets used in this study. We only compared three datasets and considered a maximum of two batches at a time with at most six cell types. Subsets of batches in the real datasets were chosen for the sake of simplicity, however in practice it may be of interest to integrate datasets from much more than two experiments or batches. \citet{tran2020benchmark} considered a more comprehensive set of ten different datasets that analyzed five distinct scenarios: identical cell types sequenced by different technologies, non-identical cell types across batches, data from more than two batches, big data sets ($>100,000$ cells each), and multiple simulated datasets. 
+One limitation that leaves room for future work may involve exploring different data normalization techniques. The JIVE decomposition is best suited to data that is normally distributed, which scRNA-seq data clearly does not adhere to even after normalization. The normalization methods in this study were chosen for simplicity and consistency between integration methods. It is therefore likely that a more sophisticated method which takes into account the zero-inflated nature of scRNA-seq data will provide a better input for the JIVE algorithm and lead to more accurate results. Another method to address this issue would be adapting JIVE to work with other distributions (e.g., negative binomial), akin to generalized linear models. This would also help to relieve the issue of scRNA-seq not being normally distributed.
 
-The comparison of runtimes between JIVE and other integration methods is also an area for future research. While algorithmic improvements greatly reduced the runtime of JIVE, we did not compare it to Seurat or Harmony. An analysis of the memory requirements for each method would also be of interest.
+Another limitation is the narrow scope of datasets used in this study. We only compared three datasets and considered a maximum of two batches at a time with at most six cell types. Subsets of batches in the real datasets were chosen for the sake of simplicity, however in practice it may be of interest to integrate datasets from much more than two experiments or batches. \citet{tran2020benchmark} considered a more comprehensive set of ten different datasets that analyzed five distinct scenarios: identical cell types sequenced by different technologies, non-identical cell types across batches, data from more than two batches, big data sets ($>100,000$ cells each), and multiple simulated datasets. Assessing the performance of JIVE in a wider range of data scenarios would help give a better sense of its ability to perform batch-effect correction.
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
