@@ -38,10 +38,12 @@ digits_tsne_df <- data.frame(
   digit = as.character(digits_label)
 )
 
-digits_tsne_df %>%
+digits_tsne_plot <- digits_tsne_df %>%
   ggplot(aes(x = X1, y = X2, color = digit)) +
   geom_point() +
   labs(x = "t-SNE 1", y = "t-SNE 2")
+
+digits_tsne_plot
 
 # UMAP
 
@@ -53,10 +55,12 @@ digits_umap_df <- data.frame(
   digit = as.character(digits_label)
 )
 
-digits_umap_df %>%
+digits_umap_plot <- digits_umap_df %>%
   ggplot(aes(x = X1, y = X2, color = digit)) +
   geom_point() +
   labs(x = "UMAP 1", y = "UMAP 2")
+
+digits_umap_plot
 
 ####################################################################################################
 # Quantitative Evaluation Metrics
@@ -224,7 +228,7 @@ asw_density <- ggplot() +
   scale_color_tableau() +
   scale_fill_tableau()
 
-plot_grid(
+asw_plot_both <- plot_grid(
   asw_plot,
   asw_density,
   ncol = 1,
@@ -232,6 +236,8 @@ plot_grid(
   axis = "tlbr",
   rel_heights = c(1, 0.5)
 )
+
+asw_plot_both
 
 ####################################################################################################
 # LISI
@@ -278,11 +284,13 @@ lisi_density <- ggplot() +
   scale_color_tableau() +
   scale_fill_tableau()
 
-plot_grid(
+lisi_plot_both <- plot_grid(
   lisi_plot,
   lisi_density,
   ncol = 1,
   align = "hv",
   axis = "tlbr",
-  rel_heights = c(1, 0.3)
+  rel_heights = c(1, 0.5)
 )
+
+lisi_plot_both
