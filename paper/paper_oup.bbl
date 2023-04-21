@@ -1,0 +1,208 @@
+\begin{thebibliography}{10}
+
+\bibitem{argelaguet2018multi}
+Ricard Argelaguet, Britta Velten, Damien Arnol, Sascha Dietrich, Thorsten Zenz,
+  John~C Marioni, Florian Buettner, Wolfgang Huber, and Oliver Stegle.
+\newblock Multi-omics factor analysis—a framework for unsupervised
+  integration of multi-omics data sets.
+\newblock {\em Molecular systems biology}, 14(6):e8124, 2018.
+
+\bibitem{bacher2020low}
+Petra Bacher, Elisa Rosati, Daniela Esser, Gabriela~Rios Martini, Carina
+  Saggau, Esther Schiminsky, Justina Dargvainiene, Ina Schr{\"o}der, Imke
+  Wieters, Yascha Khodamoradi, et~al.
+\newblock Low-avidity cd4+ t cell responses to sars-cov-2 in unexposed
+  individuals and humans with severe covid-19.
+\newblock {\em Immunity}, 53(6):1258--1271, 2020.
+
+\bibitem{bates2013fast}
+Douglas Bates and Dirk Eddelbuettel.
+\newblock Fast and elegant numerical linear algebra using the {RcppEigen}
+  package.
+\newblock {\em Journal of Statistical Software}, 52(5):1--24, 2013.
+
+\bibitem{buttner2019test}
+Maren B{\"u}ttner, Zhichao Miao, F~Alexander Wolf, Sarah~A Teichmann, and
+  Fabian~J Theis.
+\newblock A test metric for assessing single-cell rna-seq batch correction.
+\newblock {\em Nature methods}, 16(1):43--49, 2019.
+
+\bibitem{buttner2017kbet}
+Maren Büttner, Alex Wolf, and Fabian Theis.
+\newblock {\em kBET: k-nearest neighbour batch effect test}.
+\newblock Helmholtz-Zentrum München, Ingolstädter Landstraße 1, Neuherberg,
+  Germany, 2017.
+\newblock More information at <https://github.com/theislab/kBET>.
+
+\bibitem{chen2013promise}
+Rui Chen and Michael Snyder.
+\newblock Promise of personalized omics to precision medicine.
+\newblock {\em Wiley Interdisciplinary Reviews: Systems Biology and Medicine},
+  5(1):73--82, 2013.
+
+\bibitem{edelbuettel2011rcpp}
+Dirk Eddelbuettel and Romain Fran\c{c}ois.
+\newblock {Rcpp}: Seamless {R} and {C++} integration.
+\newblock {\em Journal of Statistical Software}, 40(8):1--18, 2011.
+
+\bibitem{eddelbuettel2014rcpparmadillo}
+Dirk Eddelbuettel and Conrad Sanderson.
+\newblock Rcpparmadillo: Accelerating r with high-performance c++ linear
+  algebra.
+\newblock {\em Computational Statistics and Data Analysis}, 71:1054--1063,
+  March 2014.
+
+\bibitem{grun2015design}
+Dominic Gr{\"u}n and Alexander van Oudenaarden.
+\newblock Design and analysis of single-cell sequencing experiments.
+\newblock {\em Cell}, 163(4):799--810, 2015.
+
+\bibitem{korsunky2019lisi}
+Ilya Korsunsky.
+\newblock lisi: Local inverse simpson index (lisi) for scrnaseq data.
+\newblock 2019.
+\newblock R package version 1.0.
+
+\bibitem{korsunsky2019fast}
+Ilya Korsunsky, Nghia Millard, Jean Fan, Kamil Slowikowski, Fan Zhang, Kevin
+  Wei, Yuriy Baglaenko, Michael Brenner, Po-ru Loh, and Soumya Raychaudhuri.
+\newblock Fast, sensitive and accurate integration of single-cell data with
+  harmony.
+\newblock {\em Nature methods}, 16(12):1289--1296, 2019.
+
+\bibitem{li2009principal}
+Jianying Li, Pierre~R Bushel, Tzu-Ming Chu, and Russell~D Wolfinger.
+\newblock Principal variance components analysis: estimating batch effects in
+  microarray gene expression data.
+\newblock {\em Batch Effects and Noise in Microarray Experiments: Sources and
+  Solutions}, pages 141--154, 2009.
+
+\bibitem{lock2013joint}
+Eric~F Lock, Katherine~A Hoadley, James~Stephen Marron, and Andrew~B Nobel.
+\newblock Joint and individual variation explained (jive) for integrated
+  analysis of multiple data types.
+\newblock {\em The annals of applied statistics}, 7(1):523, 2013.
+
+\bibitem{lock2022bidimensional}
+Eric~F Lock, Jun~Young Park, and Katherine~A Hoadley.
+\newblock Bidimensional linked matrix factorization for pan-omics pan-cancer
+  analysis.
+\newblock {\em The annals of applied statistics}, 16(1):193, 2022.
+
+\bibitem{luecken2019current}
+Malte~D Luecken and Fabian~J Theis.
+\newblock Current best practices in single-cell rna-seq analysis: a tutorial.
+\newblock {\em Molecular systems biology}, 15(6):e8746, 2019.
+
+\bibitem{maechler2022cluster}
+Martin Maechler, Peter Rousseeuw, Anja Struyf, Mia Hubert, and Kurt Hornik.
+\newblock cluster: Cluster analysis basics and extensions.
+\newblock 2022.
+\newblock R package version 2.1.4 --- For new features, see the 'Changelog'
+  file (in the package source).
+
+\bibitem{davis2017scater}
+Davis~J. McCarthy, Kieran~R. Campbell, Aaron T.~L. Lun, and Quin~F. Willis.
+\newblock Scater: pre-processing, quality control, normalisation and
+  visualisation of single-cell {R}{N}{A}-seq data in {R}.
+\newblock {\em Bioinformatics}, 33:1179--1186, 2017.
+
+\bibitem{mcinnes2018umap}
+Leland McInnes, John Healy, and James Melville.
+\newblock Umap: Uniform manifold approximation and projection for dimension
+  reduction.
+\newblock {\em arXiv preprint arXiv:1802.03426}, 2018.
+
+\bibitem{o2016r}
+Michael~J O’Connell and Eric~F Lock.
+\newblock R. jive for exploration of multi-source molecular data.
+\newblock {\em Bioinformatics}, 32(18):2877--2879, 2016.
+
+\bibitem{qiu2019rspectra}
+Yixuan Qiu and Jiali Mei.
+\newblock Rspectra: Solvers for large-scale eigenvalue and svd problems.
+\newblock 2022.
+\newblock R package version 0.16-1.
+
+\bibitem{risso2022scRNAseq}
+Davide Risso and Michael Cole.
+\newblock scrnaseq: Collection of public single-cell rna-seq datasets.
+\newblock 2022.
+\newblock R package version 2.12.0.
+
+\bibitem{rousseeuw1987silhouettes}
+Peter~J Rousseeuw.
+\newblock Silhouettes: a graphical aid to the interpretation and validation of
+  cluster analysis.
+\newblock {\em Journal of computational and applied mathematics}, 20:53--65,
+  1987.
+
+\bibitem{stuart2019comprehensive}
+Tim Stuart, Andrew Butler, Paul Hoffman, Christoph Hafemeister, Efthymia
+  Papalexi, William~M Mauck~III, Yuhan Hao, Marlon Stoeckius, Peter Smibert,
+  and Rahul Satija.
+\newblock Comprehensive integration of single-cell data.
+\newblock {\em Cell}, 177(7):1888--1902, 2019.
+
+\bibitem{tran2020benchmark}
+Hoa Thi~Nhu Tran, Kok~Siong Ang, Marion Chevrier, Xiaomeng Zhang, Nicole
+  Yee~Shin Lee, Michelle Goh, and Jinmiao Chen.
+\newblock A benchmark of batch-effect correction methods for single-cell rna
+  sequencing data.
+\newblock {\em Genome biology}, 21:1--32, 2020.
+
+\bibitem{vallejos2017normalizing}
+Catalina~A Vallejos, Davide Risso, Antonio Scialdone, Sandrine Dudoit, and
+  John~C Marioni.
+\newblock Normalizing single-cell rna sequencing data: challenges and
+  opportunities.
+\newblock {\em Nature methods}, 14(6):565--571, 2017.
+
+\bibitem{van2008visualizing}
+Laurens Van~der Maaten and Geoffrey Hinton.
+\newblock Visualizing data using t-sne.
+\newblock {\em Journal of machine learning research}, 9(11), 2008.
+
+\bibitem{wang2014similarity}
+Bo~Wang, Aziz~M Mezlini, Feyyaz Demir, Marc Fiume, Zhuowen Tu, Michael Brudno,
+  Benjamin Haibe-Kains, and Anna Goldenberg.
+\newblock Similarity network fusion for aggregating data types on a genomic
+  scale.
+\newblock {\em Nature methods}, 11(3):333--337, 2014.
+
+\bibitem{wang2015advances}
+Yong Wang and Nicholas~E Navin.
+\newblock Advances and applications of single-cell sequencing technologies.
+\newblock {\em Molecular cell}, 58(4):598--609, 2015.
+
+\bibitem{wang2009rna}
+Zhong Wang, Mark Gerstein, and Michael Snyder.
+\newblock Rna-seq: a revolutionary tool for transcriptomics.
+\newblock {\em Nature reviews genetics}, 10(1):57--63, 2009.
+
+\bibitem{zappia2017splatter}
+Luke Zappia, Belinda Phipson, and Alicia Oshlack.
+\newblock Splatter: simulation of single-cell rna sequencing data.
+\newblock {\em Genome biology}, 18(1):174, 2017.
+
+\bibitem{zhang2020combat}
+Yuqing Zhang, Giovanni Parmigiani, and W~Evan Johnson.
+\newblock Combat-seq: batch effect adjustment for rna-seq count data.
+\newblock {\em NAR genomics and bioinformatics}, 2(3):lqaa078, 2020.
+
+\bibitem{ziegenhain2017comparative}
+Christoph Ziegenhain, Beate Vieth, Swati Parekh, Bj{\"o}rn Reinius, Amy
+  Guillaumet-Adkins, Martha Smets, Heinrich Leonhardt, Holger Heyn, Ines
+  Hellmann, and Wolfgang Enard.
+\newblock Comparative analysis of single-cell rna sequencing methods.
+\newblock {\em Molecular cell}, 65(4):631--643, 2017.
+
+\bibitem{zilionis2019single}
+Rapolas Zilionis, Camilla Engblom, Christina Pfirschke, Virginia Savova, David
+  Zemmour, Hatice~D Saatcioglu, Indira Krishnan, Giorgia Maroni, Claire~V
+  Meyerovitz, Clara~M Kerwin, et~al.
+\newblock Single-cell transcriptomics of human and mouse lung cancers reveals
+  conserved myeloid populations across individuals and species.
+\newblock {\em Immunity}, 50(5):1317--1334, 2019.
+
+\end{thebibliography}

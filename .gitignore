@@ -15,3 +15,11 @@ paper/paper.lot
 paper/paper.out
 paper/paper.synctex.gz
 paper/paper.toc
+paper/paper_oup.aux
+paper/paper_oup.blg
+paper/paper_oup.fdb_latexmk
+paper/paper_oup.fls
+paper/paper_oup.log
+paper/paper_oup.out
+paper/paper_oup.synctex.gz
+*.gz
