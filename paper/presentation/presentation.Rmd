@@ -461,7 +461,7 @@ We employed five tools/metrics to evaluate the performance of each batch correct
 
 * Qualitative Metrics:
   * t-distributed stochastic neighbor embedding (t-SNE) plots
-  * uniform manifold approximation and project (UMAP) plots
+  * uniform manifold approximation and projection (UMAP) plots
 * Quantitative Metrics
   * k-nearest neighbor batch effect test (kBET)
   * average silhouette width (ASW)
@@ -506,7 +506,7 @@ We employed five tools/metrics to evaluate the performance of each batch correct
 ### k-nearest neighbors batch effect test
 
 * Constructed with the following premise in mind:
-  * a subset of a well-mixed (i.e., batch corrected) dataset with batch effects removed should have the same distribution of batch labels as the full dataset
+  * a subset of a well-mixed (i.e., batch corrected) datasets with batch effects removed should have the same distribution of batch labels as the fully integrated dataset
 * kBET is a $\chi^2$-based test for random subsets of the data for a fixed sized neighborhood around points
 * Test is repeated for many points and results from each test (i.e., reject or failed to reject) are averaged to provide an overall rejection rate
   * If rejection rates are low, then the batch label distributions at the local level are similar to the global distribution
@@ -528,7 +528,7 @@ We employed five tools/metrics to evaluate the performance of each batch correct
 ### k-nearest neighbors batch effect test
 
 * We use the first 30 principal components from the batch-effect corrected datasets as input for kBET
-* We calculate rejection rates for neighborhood sizes equal to 5%, 10%, 15%, 20%, and 25% of the number of cells being integrated
+* We calculate rejection rates for fixed neighborhood sizes equal to 5%, 10%, 15%, 20%, and 25% of the number of cells being integrated
 * We calculate the acceptance rate (1 - rejection rate) so that larger values are more desirable
 * Acceptance rates for each method are then used for comparison
 
