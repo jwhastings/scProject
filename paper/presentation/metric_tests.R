@@ -111,7 +111,7 @@ cluster1 <- data.frame(
   true_cluster = "Cluster 1"
   ) %>%
   mutate(
-    good_mixing = if_else(row_number() %% 2 == 0, "Batch 1", "Batch 2"),
+    good_mixing = if_else(row_number() %% 5 == 0, "Batch 1", "Batch 2"),
     bad_mixing = good_mixing
   ) %>%
   pivot_longer(
@@ -158,10 +158,10 @@ all_cluster <- bind_rows(
 # Visualization of cluster labels
 cells_metrics_plot <- all_cluster %>%
   mutate(mixtype = if_else(mixtype == "bad_mixing", "Batch Effect", "No Batch Effect")) %>%
-  ggplot(aes(x = X1, y = X2, color = batch, shape = true_cluster)) + 
+  ggplot(aes(x = X1, y = X2, color = batch)) + 
   geom_point() +
   facet_wrap(mixtype ~ .) +
-  labs(color = "Batch Number", shape = "Cell Cluster") +
+  labs(color = "Batch Number") +
   scale_color_tableau() +
   guides(shape = guide_legend(order = 2), col = guide_legend(order = 1)) +
   theme(legend.position = "bottom")
@@ -319,13 +319,15 @@ ggsave("asw_plot_both.png", asw_plot_both)
 # LISI
 ####################################################################################################
 
+perp <- 40
+
 bad_lisi <- compute_lisi(
   bad_mixing[, 1:2],
   data.frame(
     LISI_Batch = bad_mixing$batch
   ),
   c("LISI_Batch"),
-  perplexity = 40
+  perplexity = perp
 )
 
 good_lisi <- compute_lisi(
@@ -334,7 +336,7 @@ good_lisi <- compute_lisi(
     LISI_Batch = bad_mixing$batch
   ),
   c("LISI_Batch"),
-  perplexity = 40
+  perplexity = perp
 )
 
 bad_lisi_df <- bind_cols(bad_mixing, bad_lisi)
