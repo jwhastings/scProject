@@ -160,6 +160,15 @@ orig_p3 <- plot_grid(
 orig_p1 # ggsave("orig_pca.png", orig_p1)
 orig_p2 # ggsave("orig_tsne.png", orig_p2)
 orig_p3 # ggsave("orig_umap.png", orig_p3)
+
+comparison <- compareSCEs(
+  list(
+    Batch1 = data_SCE[, data_SCE$Batch == unique(data_SCE$Batch)[1]],
+    Batch2 = data_SCE[, data_SCE$Batch == unique(data_SCE$Batch)[2]])
+  )
+
+plot_grid(plotlist = comparison$Plots[1:4])
+plot_grid(plotlist = comparison$Plots[5:8])
 ```
 
 ### PVCA
@@ -192,7 +201,7 @@ pvca_plot <- data.frame(name = c("Batch", "Cell Type", "Residual"), values = pvc
     plot.title = element_text(face = "bold", size = rel(1.2), hjust = 0.5)
   )
 pvca_plot
-ggsave("output/pvca_bacherdata.png", pvca_plot, width = 9, height = 4)
+ggsave("output/pvca_bacherdata.png", pvca_plot, width = 9, height = 4, dpi = 600)
 ```
 
 
@@ -202,7 +211,8 @@ raw_final <- t(as.matrix(logcounts(data_SCE)))
 
 # kBET
 # data: a matrix (rows: samples, columns: features (genes))
-data <- svds(raw_final, k = 30)$u
+raw_svd <- svds(raw_final, k = 30)
+data <- raw_svd$u %*% diag(raw_svd$d)
 
 # batch: vector or factor with batch label of each cell 
 batch <- batches
@@ -246,6 +256,8 @@ asw_cluster <- list()
 subset_prop <- 0.8 # subsample to 80% of the data
 subset_size_total <- floor(length(batch) * subset_prop)
 
+raw_pc <- raw_svd$u %*% diag(raw_svd$d)
+
 for (i in 1:asw_repeat) {
   set.seed(i)
   subset_index <- 
@@ -255,7 +267,7 @@ for (i in 1:asw_repeat) {
   subset_id <- subset_index %>%
     pull(index)
   
-  data_pc <- svds(raw_final[subset_id, ], k = npcs)$u
+  data_pc <- raw_pc[subset_id, ]
   
   dissimilarity_matrix <- daisy(data_pc)
   
@@ -280,7 +292,7 @@ raw_asw %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, "
 # LISI
 raw_lisi <-
   compute_lisi(
-    raw_final,
+    raw_pc,
     data.frame(Batch = batches, Cluster = clusters),
     c("Batch", "Cluster"),
     perplexity = 40
@@ -512,7 +524,8 @@ plotReducedDim(jive_integrated, dimred = "UMAP", color_by = "Cluster_UMAP", shap
   
 ```{r}
 # data: a matrix (rows: samples, columns: features (genes))
-data <- svds(jive_final, k = 30)$u
+jive_svd <- svds(jive_final, k = 30)
+data <- jive_svd$u %*% diag(jive_svd$d)
 
 # batch: vector or factor with batch label of each cell 
 batch <- batches
@@ -573,6 +586,8 @@ asw_cluster <- list()
 subset_prop <- 0.8 # subsample to 80% of the data
 subset_size_total <- floor(length(batch) * subset_prop)
 
+jive_pc <- jive_svd$u %*% diag(jive_svd$d)
+
 for (i in 1:asw_repeat) {
   set.seed(i)
   subset_index <- 
@@ -582,7 +597,7 @@ for (i in 1:asw_repeat) {
   subset_id <- subset_index %>%
     pull(index)
   
-  data_pc <- svds(jive_final[subset_id, ], k = npcs)$u
+  data_pc <- jive_pc[subset_id, ]
   
   dissimilarity_matrix <- daisy(data_pc)
   
@@ -609,7 +624,7 @@ jive_asw %>% write_csv(file = paste0("output/", method_name, "_", dataset_name, 
 # Performed for all cells
 jive_lisi <-
   compute_lisi(
-    jive_final,
+    jive_pc,
     data.frame(Batch = batches, Cluster = clusters),
     c("Batch", "Cluster"),
     perplexity = 40
@@ -661,7 +676,7 @@ DefaultAssay(seurat_integrated) <- "integrated"
 # Run the standard workflow for visualization and clustering
 set.seed(1)
 seurat_integrated <- ScaleData(seurat_integrated, verbose = FALSE)
-seurat_integrated <- RunPCA(seurat_integrated, verbose = FALSE)
+seurat_integrated <- RunPCA(seurat_integrated, verbose = FALSE, npcs = 30)
 seurat_integrated <- RunTSNE(seurat_integrated, reduction = "pca", dims = 1:30)
 seurat_integrated <- RunUMAP(seurat_integrated, reduction = "pca", dims = 1:30)
 seurat_integrated <- FindNeighbors(seurat_integrated, reduction = "pca", dims = 1:30)
@@ -761,6 +776,8 @@ asw_cluster <- list()
 subset_prop <- 0.8 # subsample to 80% of the data
 subset_size_total <- floor(length(batch) * subset_prop)
 
+seurat_pc <- Embeddings(seurat_integrated)
+
 for (i in 1:asw_repeat) {
   set.seed(i)
   subset_index <- 
@@ -770,17 +787,7 @@ for (i in 1:asw_repeat) {
   subset_id <- subset_index %>%
     pull(index)
   
-  seurat_tmp <- NULL
-  seurat_tmp <-
-    RunPCA(
-      seurat_integrated[, subset_id],
-      npcs = npcs,
-      verbose = FALSE,
-      reduction.name = "subset_pca",
-      reduction.key = "sPC_",
-      seed.use = NULL
-    )
-  data_pc <- seurat_tmp@reductions$subset_pca@cell.embeddings
+  data_pc <- seurat_pc[subset_id, ]
   
   dissimilarity_matrix <- daisy(data_pc)
   
@@ -807,7 +814,7 @@ seurat_asw %>% write_csv(file = paste0("output/", method_name, "_", dataset_name
 # Performed for all cells
 seurat_lisi <-
   compute_lisi(
-    seurat_final,
+    seurat_pc,
     data.frame(Batch = batches, Cluster = clusters),
     c("Batch", "Cluster"),
     perplexity = 40
@@ -939,6 +946,8 @@ asw_cluster <- list()
 subset_prop <- 0.8 # subsample to 80% of the data
 subset_size_total <- floor(length(batch) * subset_prop)
 
+harmony_pc <- harmony_final[, 1:30]
+
 for (i in 1:asw_repeat) {
   set.seed(i)
   subset_index <- 
@@ -948,7 +957,7 @@ for (i in 1:asw_repeat) {
   subset_id <- subset_index %>%
     pull(index)
   
-  data_pc <- svds(harmony_final[subset_id, ], k = npcs)$u
+  data_pc <- harmony_pc[subset_id, ]
   
   dissimilarity_matrix <- daisy(data_pc)
   
@@ -975,7 +984,7 @@ harmony_asw %>% write_csv(file = paste0("output/", method_name, "_", dataset_nam
 # Performed for all cells
 harmony_lisi <-
   compute_lisi(
-    harmony_final,
+    harmony_pc,
     data.frame(Batch = batches, Cluster = clusters),
     c("Batch", "Cluster"),
     perplexity = 40
@@ -1176,7 +1185,7 @@ all_tsne_plot <- plot_grid(tsne_prow_grob, tsne_legend_both, rel_widths = c(3, 1
 
 all_tsne_plot
 
-ggsave("output/tsne_bacherdata.png", all_tsne_plot, width = 9, height = 4)
+ggsave("output/tsne_bacherdata.png", all_tsne_plot, width = 9, height = 4, dpi = 600)
 ```
 
 ## UMAP Plots
@@ -1358,7 +1367,7 @@ all_umap_plot <- plot_grid(umap_prow_grob, umap_legend_both, rel_widths = c(3, 1
 
 all_umap_plot
 
-ggsave("output/umap_bacherdata.png", all_umap_plot, width = 9, height = 4)
+ggsave("output/umap_bacherdata.png", all_umap_plot, width = 9, height = 4, dpi = 600)
 ```
 
 ## kBET
@@ -1459,7 +1468,7 @@ legend <- get_legend(
 # the width of one plot (via rel_widths).
 all_metrics_lot <- plot_grid(prow, legend, ncol = 1, rel_heights = c(1, .1))
 all_metrics_lot
-ggsave("output/metrics_bacherdata.png", all_metrics_lot, width = 9, height = 4)
+ggsave("output/metrics_bacherdata.png", all_metrics_lot, width = 9, height = 4, dpi = 600)
 ```
 
 # Session Information
